@@ -26,6 +26,7 @@ typedef struct
 const uint32_t TEST_SERIES_RETRIES_IF_ERROR = 10;
 const uint32_t AVG_MEASUREMENT_RETRIES_IF_ERROR = 2;
 const uint32_t MEASUREMENT_RETRIE_DELAY_IN_MSEC = 2000;
+const uint32_t TEST_SERIES_MEASURMENT_DELAX_IN_MSEC = 100;
 const void (*testSeriesErrorCallback)(AverageMeasuementTestResult) = 0;
 const void (*SensorValuesOutOfCourseCallback)(TestSeriesTestResult) = 0;
 
@@ -63,45 +64,41 @@ void initNetworkStack()
 }
 
 //---------------------------------- M e a s u r e --------------------------
-void measureDepth()
+depth measureDepth()
 {
 	uint32_t seriesRetries;
 	uint32_t meausreRetries;
 	depth avgDepthOfSeries = 0;
 
-	AverageMeasuementTestResult averageSensorTestResult = AverageMeasurmentNotInRange;
-	for(meausreRetries = 0; averageSensorTestResult != AverageMeasurmentOK &&
-							meausreRetries < AVG_MEASUREMENT_RETRIES_IF_ERROR;
-	meausreRetries++)
+
+	TestSeriesTestResult seriesTestResult = SensorOutOfFunction;
+
+	//Try to get a valid test serie of depth measurments
+	for(seriesRetries = 0; seriesTestResult != TestSeriesOK &&
+			       seriesRetries < TEST_SERIES_RETRIES_IF_ERROR;
+	seriesRetries++)
 	{
-		TestSeriesTestResult seriesTestResult = SensorOutOfFunction;
-
-		for(seriesRetries = 0; seriesTestResult != TestSeriesOK &&
-							   seriesRetries < TEST_SERIES_RETRIES_IF_ERROR;
-		seriesRetries++)
-		{
-			takeTestSeries();
-			seriesTestResult = testTestSeries();
-			if(seriesTestResult != TestSeriesOK)
-				delay(MEASUREMENT_RETRIE_DELAY_IN_MSEC);
-		}
+		takeTestSeries();
+		seriesTestResult = testTestSeries();
 		if(seriesTestResult != TestSeriesOK)
-		{
-			if(testSeriesErrorCallback != 0)
-				testSeriesErrorCallback(seriesTestResult);
-			return 0;
-		}
-
-		avgDepthOfSeries = evaluateTestSeries();
-		averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
-		if(averageSensorTestResult != AverageMeasurmentOK)
 			delay(MEASUREMENT_RETRIE_DELAY_IN_MSEC);
 	}
+	//Could not build a vlaid test series
+	if(seriesTestResult != TestSeriesOK)
+	{
+		if(testSeriesErrorCallback != 0)
+			testSeriesErrorCallback(seriesTestResult);
+		return 0;
+	}
+
+	//Process data out of test series
+	avgDepthOfSeries = evaluateTestSeries();
+	averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
+	//Keep sensor value but generate callback if not as acpected. 
 	if(averageSensorTestResult != AverageMeasurmentOK)
 	{
 		if(SensorValuesOutOfCourseCallback != 0)
 			SensorValuesOutOfCourseCallback(averageSensorTestResult);
-		return 0;
 	}
 	return avgDepthOfSeries;
 }
@@ -110,7 +107,10 @@ void takeTestSeries()
 {
 	uint32_t measurement;
 	for(measurement = 0; measurement < AMOUNT_OF_SPOT_TESTS; measurement ++)
+	{
 		measureDepth(&(testSeries[measurement]));
+		delay(TEST_SERIES_MEASURMENT_DELAX_IN_MSEC);	
+	}		
 }
 
 inline void measureDepth(depth* measurementOfSeries)
@@ -155,13 +155,21 @@ depth evaluateTestSeries()
 AverageMeasuementTestResult testEvaluatedValue(const depth dep)
 {
 	static depth depthHistory = 0;
+	
+	AverageMeasuementTestResult res = AverageMeasurmentOK;
+	depth depthDiff;
 
-	int32_t depthDiff = dep - depthHistory;
+	//Calc diff between new and last depth
+	if(dep > depthHistory)
+		depthDiff = dep - depthHistory;
+	else	
+		depthDiff = depthHistory - dep; 
+
 	if(depthHistory != 0 && depthDiff > MAX_ALLOWED_AVERAGED_VALUE_CHANGE)
-		return AverageMeasurmentNotInRange;
+		res = AverageMeasurmentNotInRange;
 
-	depthHistory = dep;
-	return AverageMeasurmentOK;
+	depthHistory = dep;	
+	return res;
 }
 
 

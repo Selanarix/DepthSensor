@@ -14,7 +14,7 @@ const depth ALLOWED_TEST_SERIES_VARIATION 	 	= 0xffffffff;
 
 
 void initHW();
-void measureDepth();
+depth measureDepth();
 void processData();
 
 #endif /* DEPTHSENSOR_H_ */
