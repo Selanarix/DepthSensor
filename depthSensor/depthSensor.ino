@@ -28,7 +28,7 @@ typedef struct
 
 const uint32_t TEST_SERIES_RETRIES_IF_ERROR = 10;
 const uint32_t MEASUREMENT_RETRIE_DELAY_IN_MSEC = 2000;
-const uint32_t TEST_SERIES_MEASURMENT_DELAX_IN_MSEC = 100;
+const uint32_t TEST_SERIES_MEASURMENT_DELAX_IN_MSEC = 10;
 void callback1(TestSeriesTestResult);
 void callback2(AverageMeasuementTestResult);
 void (*testSeriesErrorCallback)(TestSeriesTestResult) = callback1;
@@ -123,10 +123,21 @@ inline void measureDepth(depth* measurementOfSeries)
 {
 	//TODO: //Hier fehlt noch was
 	//read value from sensor and assign it to measurementOfSeries
-        uint32_t pressure = 0;
+        double pressure = 0.0;
         
-        pressure = (analogRead(sensor::sensorPinDiff)/5.0 - 0.04)/0.18; //pressure in bar
-	*measurementOfSeries = pressure;
+//        pressure = (analogRead(sensor::sensorPinDiff)/5.0 - 0.04)/0.0018; //pressure in kPa
+   //     pressure = (analogRead(sensor::sensorPinDiff);
+        pressure = ((double)analogRead(sensor::sensorPinDiff))*(5000.0/1024.0);
+        
+        pressure = pressure - 260.0;
+        Serial.print("Rohwert: ");
+        Serial.println(pressure);
+        pressure = (pressure/5000.0)/0.0018;
+        Serial.print("Druck: ");
+        Serial.println(pressure);
+         if (pressure<0)
+           pressure = 1.0;
+	*measurementOfSeries = (depth)pressure;
 }
 
 TestSeriesTestResult testTestSeries()
@@ -211,9 +222,10 @@ MinMax evaluateMinMax(const depth* series, uint32_t size)
 	return res;
 }
 //---------------------------------- S e n d  D a t a -----------------------
-void processData(const depth )
+void processData(const depth d)
 {
-    Serial.println("hello world!");
+    //Serial.println("hello world!");
+    Serial.println(d);
 
 }
 
@@ -228,6 +240,6 @@ void setup(){
 void loop(){
 		sensor::processData(sensor::measureDepth());
             
-  delay(1000);
+  delay(100);
 
 }
