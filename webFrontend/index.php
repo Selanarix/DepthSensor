@@ -1,17 +1,20 @@
 <?php
-$files = readdir(".");
 $dataFiles = array();
-foreach($files as $file)
-	if(strpos($a,'sensorData') !== false)
-		array_push($dataFiles,$file);
+$sensorData = array();
 
-
-$sensorData = array(array());
-foreach($dataFiles as $inputSource)
+$handle = opendir('.');
+if ($handle === false) 
+    exit();
+/* This is the correct way to loop over the directory. */
+while (false !== ($entry = readdir($handle))) 
 {
-	$dataSet = array();
-	$dataSet = files($inputSource);
-	array_push($sensorData,$dataSet);
-}
+    if(strpos($entry,'sensorData') !== false)
+	{
+       echo $entry."<br>";
+        $dataSet = array();
+	    $dataSet = file($entry);
+	    array_push($sensorData,$dataSet);
+    }
+}	
 print_r($sensorData);
 ?>
