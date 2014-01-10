@@ -1,7 +1,10 @@
-#include "depthSensor.h"
-#include "stdbool.h"
-#include "stdint.h"
+namespace sensor 
+{
+#include "depthSensor.h"  
 
+int sensorPinDiff = A0;    // Input Vout of DiffSensor
+
+  
 typedef enum
 {
 	TestSeriesOK,
@@ -24,22 +27,23 @@ typedef struct
 } MinMax;
 
 const uint32_t TEST_SERIES_RETRIES_IF_ERROR = 10;
-const uint32_t AVG_MEASUREMENT_RETRIES_IF_ERROR = 2;
 const uint32_t MEASUREMENT_RETRIE_DELAY_IN_MSEC = 2000;
 const uint32_t TEST_SERIES_MEASURMENT_DELAX_IN_MSEC = 100;
-const void (*testSeriesErrorCallback)(AverageMeasuementTestResult) = 0;
-const void (*SensorValuesOutOfCourseCallback)(TestSeriesTestResult) = 0;
+void callback1(TestSeriesTestResult);
+void callback2(AverageMeasuementTestResult);
+void (*testSeriesErrorCallback)(TestSeriesTestResult) = callback1;
+void (*SensorValuesOutOfCourseCallback)(AverageMeasuementTestResult) = callback2;
+
 
 void initSensorsPart();
 void initNetworkStack();
 
 void takeTestSeries();
 TestSeriesTestResult testTestSeries();
-void evaluateTestSeries();
+depth evaluateTestSeries();
 AverageMeasuementTestResult testEvaluatedValue(const depth depth);
 inline void measureDepth(depth* measurementOfSeries);
 
-void delay(uint32_t micros);
 MinMax evaluateMinMax(const depth* series, uint32_t size);
 depth testSeries[AMOUNT_OF_SPOT_TESTS] = {0};
 
@@ -49,6 +53,7 @@ depth testSeries[AMOUNT_OF_SPOT_TESTS] = {0};
  */
 void initHW()
 {
+        pinMode(sensorPinDiff, INPUT_PULLUP); 
 	initSensorsPart();
 	initNetworkStack();
 }
@@ -67,7 +72,6 @@ void initNetworkStack()
 depth measureDepth()
 {
 	uint32_t seriesRetries;
-	uint32_t meausreRetries;
 	depth avgDepthOfSeries = 0;
 
 
@@ -80,10 +84,11 @@ depth measureDepth()
 	{
 		takeTestSeries();
 		seriesTestResult = testTestSeries();
+        //Serial.println(seriesTestResult);
 		if(seriesTestResult != TestSeriesOK)
 			delay(MEASUREMENT_RETRIE_DELAY_IN_MSEC);
 	}
-	//Could not build a vlaid test series
+	//Could not build a valid test series
 	if(seriesTestResult != TestSeriesOK)
 	{
 		if(testSeriesErrorCallback != 0)
@@ -93,7 +98,7 @@ depth measureDepth()
 
 	//Process data out of test series
 	avgDepthOfSeries = evaluateTestSeries();
-	averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
+	AverageMeasuementTestResult averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
 	//Keep sensor value but generate callback if not as acpected. 
 	if(averageSensorTestResult != AverageMeasurmentOK)
 	{
@@ -109,6 +114,7 @@ void takeTestSeries()
 	for(measurement = 0; measurement < AMOUNT_OF_SPOT_TESTS; measurement ++)
 	{
 		measureDepth(&(testSeries[measurement]));
+//                Serial.println(testSeries[measurement]);
 		delay(TEST_SERIES_MEASURMENT_DELAX_IN_MSEC);	
 	}		
 }
@@ -117,7 +123,10 @@ inline void measureDepth(depth* measurementOfSeries)
 {
 	//TODO: //Hier fehlt noch was
 	//read value from sensor and assign it to measurementOfSeries
-	*measurementOfSeries = 0;
+        uint32_t pressure = 0;
+        
+        pressure = (analogRead(sensor::sensorPinDiff)/5.0 - 0.04)/0.18; //pressure in bar
+	*measurementOfSeries = pressure;
 }
 
 TestSeriesTestResult testTestSeries()
@@ -125,13 +134,15 @@ TestSeriesTestResult testTestSeries()
 	MinMax res = evaluateMinMax(testSeries,AMOUNT_OF_SPOT_TESTS);
 
 	depth meanVariation = res.max - res.min;
-	if(meanVariation == 0)
+ // Serial.println(res.max);
+ // Serial.println(res.min);
+	if(res.min == 0)
 		return SensorOutOfFunction;
 	if(res.min < MINIMAL_EXPECTED_SENSOR_VALUE)
 		return TestSeriesUnderMinRange;
 	if(res.max > MAXIMAL_EXPECTED_SENSOR_VALUE)
 		return TestSeriesAboveMaxRange;
-	if(meanVariation < ALLOWED_TEST_SERIES_VARIATION)
+	if(meanVariation > ALLOWED_TEST_SERIES_VARIATION)
 		return TestSeriesMeanVariationToBig;
 
 	return TestSeriesOK;
@@ -172,39 +183,51 @@ AverageMeasuementTestResult testEvaluatedValue(const depth dep)
 	return res;
 }
 
+//-------------------------------------- E r r o r s ------------------------
+
+void callback1(TestSeriesTestResult){
+  Serial.println("Series Error");
+}
+
+void callback2(AverageMeasuementTestResult){
+    Serial.println("Avrg Error");
+}
 
 //-------------------------------------- U t i l l s ------------------------
-void delay(uint32_t micros)
-{
-	//TODO: //Hier fehlt noch was
-}
 
 MinMax evaluateMinMax(const depth* series, uint32_t size)
 {
 	MinMax res;
-	res.min = res.max = 0;
-	for(; size > 0; size --)
+	res.min = 0xffffffff;
+        res.max = 0;
+        
+	for(uint32_t i=0; i<size; i++)
 	{
-			if(series[size] < res.min)
-				res.min = series[size];
-			else if(series[size] > res.max)
-				res.max = series[size];
+			if(series[i] < res.min)
+				res.min = series[i];
+			else if(series[i] > res.max)
+				res.max = series[i];
 	}
 	return res;
 }
 //---------------------------------- S e n d  D a t a -----------------------
-void processData()
+void processData(const depth )
 {
+    Serial.println("hello world!");
 
 }
 
-int main()
-{
-	initHW();
 
-	while(true)
-	{
-		measureDepth();
-		processData();
-	}
+}
+
+void setup(){
+  Serial.begin(9600);  
+  sensor::initHW();
+}
+
+void loop(){
+		sensor::processData(sensor::measureDepth());
+            
+  delay(1000);
+
 }
