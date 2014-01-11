@@ -27,32 +27,96 @@ function parseGET()
     return $dataSet; 
 }
 
-function updateSensorXML($dataSet)
+function setUpDefaultXML($dataSet, $xml)
 {
-    $filename = FILE_PREFIX.$dataSet["sensorID"].".xml";
+    //Create root element
+    $sensor = $xml->createElement("sensor");
+    //Attach sensor id attribute to rooot
+    $idAttribute = $xml->createAttribute('sensorID');
+    $idAttribute->value = $dataSet["sensorID"];  
+    $sensor->appendChild($idAttribute);
+   
+    //Create configuration element
+    $configuration = $xml->createElement("configuration");
 
-    $xml = new DOMDocument();
+    $name = $xml->createElement("NameForID");  
+    $name->appendChild($xml->createTextNode($dataSet["sensorID"]));
+    $configuration->appendChild($name);
+
+    $desc = $xml->createElement("TankDescription");  
+    $desc->appendChild($xml->createTextNode("Tank with id: ".$dataSet["sensorID"]));
+    $configuration->appendChild($desc);
+    
+    $sizeOfHistory = $xml->createElement("SizeOfHistory"); 
+    $sizeOfHistory->appendChild($xml->createTextNode(DEFAULT_HISTORY_SIZE));
+    $configuration->appendChild($sizeOfHistory);
+
+    $height = $xml->createElement("TankHeight"); 
+    $height->appendChild($xml->createTextNode('0'));
+    $configuration->appendChild($height);
+
+    $width = $xml->createElement("TankWidth");
+    $width->appendChild($xml->createTextNode('0'));
+    $configuration->appendChild($width);
+
+    $depth = $xml->createElement("TankDepth");
+    $depth->appendChild($xml->createTextNode('0'));
+    $configuration->appendChild($depth);
+
+    $colorOfGraph = $xml->createElement("ColorOfGraph");
+    $colorOfGraph->appendChild($xml->createTextNode('red'));
+    $configuration->appendChild($colorOfGraph);
+
+    $measurements = $xml->createElement("measurements");
+
+    $sensor->appendChild($configuration);
+    $sensor->appendChild($measurements);      
+    $xml->appendChild($sensor); //Add root to document
+}
+
+function openOrCreateXML($xml,$dataSet,$filename)
+{
     //Create file if not exist 
     if(!is_file($filename))
-    {
-        $root = $xml->createElement("measurements");
-        $idAttribute = $xml->createAttribute('sensorID');
-        $idAttribute->value = $dataSet["sensorID"];  
-        $sizeOfHistoryAttribute = $xml->createAttribute('sizeOfHistory');
-        $sizeOfHistoryAttribute->value = DEFAULT_HISTORY_SIZE;  
-  
-  
-        $root->appendChild($idAttribute);
-        $root->appendChild($sizeOfHistoryAttribute);      
-        $xml->appendChild($root);
-
-        $xml->formatOutput = true;
-
-        $xml->save($filename) or logger("Error");
-    }
+        $xml = setUpDefaultXML($dataSet,$xml);
     else    //Load XML
-        $xml->load($filename);
+      return $xml->load($filename);            
+}
 
+function addMeasurement($xml, $dataSet)
+{
+    $historySizeList =  $xml->getElementsByTagName("SizeOfHistory");
+    if($historySizeList->length < 1)
+        return false;
+
+    $size = $historySizeList->item(0)->nodeValue;
+    if(!is_numeric($size) || $size < 0)
+        return false;
+ 
+    $measurementsList =  $xml->getElementsByTagName("measurements");
+    if($measurementsList->length < 1)
+        return false;
+    $measurmentsNode = $measurementsList->item(0);
+    
+    //Create new node and add
+    $newMeasurement = $xml->createElement("measurement");
+    $newMeasurement->appendChild($xml->createTextNode($dataSet["sensorValue"]));
+
+    $timeAttribute = $xml->createAttribute('measurmentTime');
+    $timeAttribute->value = $dataSet["time"];  
+    $newMeasurement->appendChild($timeAttribute);
+
+    $measurmentsNode->appendChild($newMeasurement);
+
+    //Delete oldes measurments if history size is reached
+    $measurementList = $xml->getElementsByTagName("measurement");
+    $index = 0;
+    echo $measurementList->length;
+    while($measurementList->length - $index > $size)
+    {
+        $measurmentsNode->removeChild($measurementList->item($index));
+        $index++;
+    }
 }
 
 function logger($level, $message)
@@ -61,13 +125,23 @@ function logger($level, $message)
     exit(date("d.m.Y H:i:s",time())." : ".$level." -> ".$message);
 }
 
-
 if(($dataSet = parseGET()) === false)
     logger("ERROR","Could not parse GET request. Parameters malformed");
 
-updateSensorXML($dataSet);
+$filename = FILE_PREFIX.$dataSet["sensorID"].".xml";
+$xml = new DOMDocument('1.0', 'utf-8');
 
+if((openOrCreateXML($xml,$dataSet,$filename)) === false)
+    logger("ERROR","Was not able to open or create XML file for sensor");
 
+if((addMeasurement($xml,$dataSet)) === false)
+    logger("ERROR","Was not able to add new measurment");
+
+$xml->formatOutput = true;
+$xml->preserveWhiteSpace = false;
+
+if($xml->save($filename) === false)
+    logger("ERROR", "Was not able to save altered xml data");
 
 /*
 $fp=fopen(FILE_PREFIX.$sensor.".txt","w") or die();
