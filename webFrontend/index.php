@@ -63,14 +63,23 @@ while (false !== ($entry = readdir($handle)))
     }
 }
 
+//Generate graph images for sensors
+$DataSet = new pData;
+$Graph = new pChart(700,230);
+
+$DataSet = graphDefineData($sensorDataSets);
+$Graph = graphInitGraph($DataSet);
+graphRender($DataSet, $Graph);
+
+
 function graphDefineData($sensorDataSets)
 {	
 	$DataSet = new pData;
-	
+	$i = 0;
 	foreach ($sensorDataSets as $sensorSet)
 	{	
-		$values[] = 0;
-		$time[] = 0;
+		$values = array();
+		$time = array();
 		foreach ($sensorSet["depthMeasurements"] as $set)
 		{
 			
@@ -81,7 +90,7 @@ function graphDefineData($sensorDataSets)
 		//print_r($time);
 		$nameOfVal = "Values".$i;
 		
-		$DataSet->AddPoint($value,$nameOfVal);
+		$DataSet->AddPoint($values,$nameOfVal);
 		$DataSet->AddPoint($time,"Timestamp");
 		$DataSet->SetSerieName("Timestamp","Time");
 		$DataSet->SetSerieName($nameOfVal,"Depth");
@@ -95,6 +104,7 @@ function graphDefineData($sensorDataSets)
 		$DataSet->setYAxisUnit(0, "cm");
 		
 		$DataSet->AddAllSeries();
+        $i++;
 	}
 	
 	return $DataSet;
@@ -105,7 +115,7 @@ function graphInitGraph($DataSet)
 	// Initialise the graph
 	 $Test = new pChart(700,230);
 	 $Test->setFixedScale(0,50);
-	 $Test->setFontProperties("Fonts/tahoma.ttf",8);
+	 $Test->setFontProperties("graph/Fonts/tahoma.ttf",8);
 	 $Test->setGraphArea(50,30,585,200);
 	 $Test->drawFilledRoundedRectangle(7,7,693,223,5,240,240,240);
 	 $Test->drawRoundedRectangle(5,5,695,225,5,230,230,230);
@@ -122,9 +132,9 @@ function graphRender($DataSet, $Test)
 	$Test->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,255,255,255); 
 	
 	// Finish the graph  
-	$Test->setFontProperties("Fonts/tahoma.ttf",8);  
+	$Test->setFontProperties("graph/Fonts/tahoma.ttf",8);  
 	$Test->drawLegend(45,35,$DataSet->GetDataDescription(),255,255,255);  
-	$Test->setFontProperties("Fonts/tahoma.ttf",10);  
+	$Test->setFontProperties("graph/Fonts/tahoma.ttf",10);  
 	$Test->drawTitle(60,22,"My pretty graph",50,50,50,585);  
 	$Test->Render("Naked.png"); 
 }
@@ -142,18 +152,7 @@ function graphRender($DataSet, $Test)
     <h1>Cister fill level monitor</h1>
     <p>There are <?php echo count($sensorDataSets)?> sensors under monitoring</p>
     
-	<!--creating the graph -->
-	<?php
-	$DataSet = new pData;
-	$Graph = new pChart(700,230);
-	
-	$DataSet = graphDefineData($sensorDataSets);
-	$Graph = graphInitGraph($DataSet);
-	graphRender($DataSet, $Test);
-	
-	
-	?>
-	
+	<img src="Naked.png" />
 	<p><?php echo htmlPrint_r($sensorDataSets);?></p>
 	<!--<?php 	phpinfo(); 	?>-->
 </body>
