@@ -32,6 +32,12 @@ function parseSensorXML($filename)
     return $dataSet;
 }
 
+function htmlPrint_r($data)
+{
+    echo '<pre>';
+    print_r($data);
+    echo '</pre>';
+}
 
 $dataFiles = array();
 $sensorDataSets = array();
@@ -51,6 +57,21 @@ while (false !== ($entry = readdir($handle)))
         else
            array_push($sensorDataSets,$sensorData);
     }
-}	
-print_r($sensorDataSets);
+}
+	
 ?>
+
+
+<?php echo'<?xml version="1.0" encoding="utf-8"?>'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
+    "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+ <title>Cister fill level monitor</title>
+</head>
+<body>
+    <h1>Cister fill level monitor</h1>
+    <p>There are <?php echo count($sensorDataSets)?> sensors under monitoring</p>
+    <p><?php echo htmlPrint_r($sensorDataSets);?></p>
+</body>
+</html>
