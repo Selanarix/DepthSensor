@@ -1,5 +1,9 @@
+#include <SPI.h>
+#include <Ethernet.h>
+
 namespace sensor 
 {
+
 #include "depthSensor.h"  
 
 int sensorPinDiff = A0;    // Input Vout of DiffSensor
@@ -26,6 +30,8 @@ typedef struct
 	depth max;
 } MinMax;
 
+
+boolean lastConnected = false;            // state of the connection last time through the main loop
 const uint32_t TEST_SERIES_RETRIES_IF_ERROR = 10;
 const uint32_t MEASUREMENT_RETRIE_DELAY_IN_MSEC = 2000;
 const uint32_t TEST_SERIES_MEASURMENT_DELAX_IN_MSEC = 10;
@@ -47,6 +53,23 @@ inline void measureDepth(depth* measurementOfSeries);
 MinMax evaluateMinMax(const depth* series, uint32_t size);
 depth testSeries[AMOUNT_OF_SPOT_TESTS] = {0};
 
+// Enter a MAC address for your controller below.
+// Newer Ethernet shields have a MAC address printed on a sticker on the shield
+const byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+// Set the static IP address to use if the DHCP fails to assign
+const IPAddress ip(95,175,153,209);
+const IPAddress myDns(77,244,128,44);
+
+// if you don't want to use DNS (and reduce your sketch size)
+// use the numeric IP instead of the name for the server:
+const IPAddress server(95,175,153,207);  // numeric IP for my Notebook (no DNS)
+//char server[] = "www.google.com";    // name address for Google (using DNS)
+
+// Initialize the Ethernet client library
+// with the IP address and port of the server 
+// that you want to connect to (port 80 is default for HTTP):
+EthernetClient client;
+
 //---------------------------------- H W - I n i t --------------------------
 /**
  * Init Hw components of the project
@@ -65,7 +88,17 @@ void initSensorsPart()
 
 void initNetworkStack()
 {
-	//TODO: //Hier fehlt noch was
+        // start the Ethernet connection:
+        if (Ethernet.begin(mac) == 0) {
+            Serial.println("Failed to configure Ethernet using DHCP");
+            //congifure using IP address instead of DHCP
+            Ethernet.begin(mac, ip, myDns);
+        }
+ 
+        // give the Ethernet shield a second to initialize:
+        delay(1000);
+        Serial.print("My IP address: ");
+        Serial.println( Ethernet.localIP() );
 }
 
 //---------------------------------- M e a s u r e --------------------------
@@ -221,32 +254,74 @@ MinMax evaluateMinMax(const depth* series, uint32_t size)
         
 	for(uint32_t i=0; i<size; i++)
 	{
-			if(series[i] < res.min)
-				res.min = series[i];
-			else if(series[i] > res.max)
-				res.max = series[i];
+	    if(series[i] < res.min)
+		res.min = series[i];
+            else if(series[i] > res.max)
+		res.max = series[i];
 	}
 	return res;
+}
+
+void handleLAN()
+{
+ 
+    // if there are incoming bytes available 
+    // from the server, read them and print them:
+    if (client.available()) {
+        char c = client.read();
+        Serial.println(c);
+    }
+  
+    // if the server's disconnected, stop the client:
+    if (!client.connected() && lastConnected) {
+        Serial.println();
+        Serial.println("disconnecting from server...");
+        client.stop();
+    }
+    
+    // store the state of the connection for next time
+    lastConnected = client.connected();
+}
+
+// this method makes a HTTP connection to the server:
+void httpRequest(const depth d) {
+  // if there's a successful connection:
+  if (client.connect(server, 80)) {
+      Serial.println("connecting...");
+      // send the HTTP PUT request:
+      client.print("PUT /latest.txt ");
+      client.println(d);
+  }
+  else {
+    // if you couldn't make a connection:
+    Serial.println("connection failed");
+    Serial.println("disconnecting.");
+    client.stop();
+  }
 }
 //---------------------------------- S e n d  D a t a -----------------------
 void processData(const depth d)
 {
     Serial.print("Mittelwert [cm]: ");
     Serial.println(d);
-
+    
+    //Send data per LAN to Web-Server...
+    httpRequest(d);
 }
-
 
 }
 
 void setup(){
-  Serial.begin(9600);  
-  sensor::initHW();
+    Serial.begin(9600);  
+    sensor::initHW();
 }
 
 void loop(){
-		sensor::processData(sensor::measureDepth());
-                Serial.println("Ende Messung...............");
+    
+    sensor::handleLAN();
+    sensor::processData(sensor::measureDepth());
+    Serial.println("Ende Messung...............");
+
             
   delay(1000);
 
