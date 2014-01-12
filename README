@@ -1,0 +1,12 @@
+DepthSensor Project
+====================
+
+Copyright (c) 2014 Jonathan Schubert and Maximilian Hempe
+
+About the repo
+--------------
+This repository contains code to realise a depth sensor by using an arduino uno and a differential pressure sensor. By transfering the pressure to water depth (1cm=1hPa) the arduino messures the water depth and gives it to a server, which produces a graph on a webpage. We do not give any garantee, but in tests it worked very well.
+
+Purpose
+--------
+The Project should give a cost efficient method to messure the amount of water in an underground cistern. Additionally it can give statistics about water usage peak times.
