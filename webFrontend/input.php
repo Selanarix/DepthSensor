@@ -55,13 +55,9 @@ function setUpDefaultXML($dataSet, $xml)
     $height->appendChild($xml->createTextNode('0'));
     $configuration->appendChild($height);
 
-    $width = $xml->createElement("TankWidth");
-    $width->appendChild($xml->createTextNode('0'));
-    $configuration->appendChild($width);
-
-    $depth = $xml->createElement("TankDepth");
-    $depth->appendChild($xml->createTextNode('0'));
-    $configuration->appendChild($depth);
+    $floorArea = $xml->createElement("floorArea");
+    $floorArea->appendChild($xml->createTextNode('0'));
+    $configuration->appendChild($floorArea);
 
     $colorOfGraph = $xml->createElement("ColorOfGraph");
     $colorOfGraph->appendChild($xml->createTextNode('red'));
@@ -96,25 +92,25 @@ function addMeasurement($xml, $dataSet)
     $measurementsList =  $xml->getElementsByTagName("measurements");
     if($measurementsList->length < 1)
         return false;
-    $measurmentsNode = $measurementsList->item(0);
+    $measurementsNode = $measurementsList->item(0);
     
     //Create new node and add
     $newMeasurement = $xml->createElement("measurement");
     $newMeasurement->appendChild($xml->createTextNode($dataSet["sensorValue"]));
 
-    $timeAttribute = $xml->createAttribute('measurmentTime');
+    $timeAttribute = $xml->createAttribute('measurementTime');
     $timeAttribute->value = $dataSet["time"];  
     $newMeasurement->appendChild($timeAttribute);
 
-    $measurmentsNode->appendChild($newMeasurement);
+    $measurementsNode->appendChild($newMeasurement);
 
-    //Delete oldes measurments if history size is reached
+    //Delete oldes measurements if history size is reached
     $measurementList = $xml->getElementsByTagName("measurement");
     $index = 0;
     echo $measurementList->length;
     while($measurementList->length - $index > $size)
     {
-        $measurmentsNode->removeChild($measurementList->item($index));
+        $measurementsNode->removeChild($measurementList->item($index));
         $index++;
     }
 }
@@ -135,7 +131,7 @@ if((openOrCreateXML($xml,$dataSet,$filename)) === false)
     logger("ERROR","Was not able to open or create XML file for sensor");
 
 if((addMeasurement($xml,$dataSet)) === false)
-    logger("ERROR","Was not able to add new measurment");
+    logger("ERROR","Was not able to add new measurement");
 
 $xml->formatOutput = true;
 $xml->preserveWhiteSpace = false;
