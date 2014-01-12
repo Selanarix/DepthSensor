@@ -133,9 +133,9 @@ function graphRender($DataSet, $Test)
 	
 	// Finish the graph  
 	$Test->setFontProperties("graph/Fonts/tahoma.ttf",8);  
-	$Test->drawLegend(45,35,$DataSet->GetDataDescription(),255,255,255);  
+	//$Test->drawLegend(45,35,$DataSet->GetDataDescription(),255,255,255);  
 	$Test->setFontProperties("graph/Fonts/tahoma.ttf",10);  
-	$Test->drawTitle(60,22,"My pretty graph",50,50,50,585);  
+	$Test->drawTitle(60,22,"Amount of water during time",50,50,50,585);  
 	$Test->Render("Naked.png"); 
 }
 ?>
