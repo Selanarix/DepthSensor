@@ -1,15 +1,5 @@
 <?php
-//Report any errors
-ini_set ("display_errors", "1");
-error_reporting(E_ALL);
- 
-$tonW = 200;
-$tonE = 50;
-$tonH = 200;
-$prim = 10;
-$percent = 10;
-
-generateTankImage(200, 50, 200, 10, 95, "testTankImg1.png");
+generateTankImage(200, 50, 200, 10, 15, "testTankImg1.png");
 
 function generateTankImage($tonW, $tonE, $tonH, $prim, $percent, $filename)
 {
