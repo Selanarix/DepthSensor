@@ -124,19 +124,26 @@ inline void measureDepth(depth* measurementOfSeries)
 	//TODO: //Hier fehlt noch was
 	//read value from sensor and assign it to measurementOfSeries
         double pressure = 0.0;
+        double adcvalue = 0.0;
+        double sensorVoltageADC = 0.0;
+        const double offset = 0.27;
+
+        adcvalue = (double)analogRead(sensor::sensorPinDiff);
+
+//Formel aus Datenblatt (in kPa): Vout = Vs*(0,0018*p+0,04)        
+//Umgestellt nach p (in hPa!!): p=(Vout-0,2)/(9*10^-4)
+
+        sensorVoltageADC = (adcvalue)*(5.0/1023.0);
+        Serial.print("Rohwert [V]: ");
+        Serial.println(sensorVoltageADC);
         
-//        pressure = (analogRead(sensor::sensorPinDiff)/5.0 - 0.04)/0.0018; //pressure in kPa
-   //     pressure = (analogRead(sensor::sensorPinDiff);
-        pressure = ((double)analogRead(sensor::sensorPinDiff))*(5000.0/1024.0);
-        
-        pressure = pressure - 260.0;
-        Serial.print("Rohwert: ");
+//        pressure = (sensorVoltageADC*10.0-(offset*10))*1000/9;
+        pressure = (sensorVoltageADC-offset)*1111;
+        Serial.print("Druck [hPa]: ");
         Serial.println(pressure);
-        pressure = (pressure/5000.0)/0.0018;
-        Serial.print("Druck: ");
-        Serial.println(pressure);
-         if (pressure<0)
+         if (pressure <= 0.0001)
            pressure = 1.0;
+    
 	*measurementOfSeries = (depth)pressure;
 }
 
@@ -224,7 +231,7 @@ MinMax evaluateMinMax(const depth* series, uint32_t size)
 //---------------------------------- S e n d  D a t a -----------------------
 void processData(const depth d)
 {
-    //Serial.println("hello world!");
+    Serial.print("Mittelwert [cm]: ");
     Serial.println(d);
 
 }
@@ -239,7 +246,8 @@ void setup(){
 
 void loop(){
 		sensor::processData(sensor::measureDepth());
+                Serial.println("Ende Messung...............");
             
-  delay(100);
+  delay(1000);
 
 }
