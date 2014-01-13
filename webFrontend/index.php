@@ -78,21 +78,24 @@ function graphDefineData($sensorDataSets)
 	$i = 0;
 	foreach ($sensorDataSets as $sensorSet)
 	{	
-		$values = array();
-		$time = array();
-		foreach ($sensorSet["depthMeasurements"] as $set)
-		{
-			
-			array_push($values, $set["value"]);
-			array_push($time, $set["time"]);
-		}
-		//print_r($values);
-		//print_r($time);
+		$timestamps = array();
 		$nameOfVal = "Serie".$i;
 		$nameOfX = "XLabel".$i;
 		
-		$DataSet->AddPoint($values,$nameOfVal);
-		$DataSet->AddPoint($time,$nameOfX);
+		foreach ($sensorSet["depthMeasurements"] as $set)
+		{
+			$DataSet->AddPoint($set["value"],$nameOfVal);
+			array_push($timestamps, $set["time"]);
+		}
+		
+		
+		$j=0;
+		for ($j=0; $j<sizeof($timestamps); $j++)
+		{
+			$timestamps[$j]=$timestamps[$j]-end($timestamps);			
+		}
+		
+		$DataSet->AddPoint($timestamps,$nameOfX);
 		$DataSet->SetAbsciseLabelSerie($nameOfX);
 		$DataSet->AddAllSeries();
 		$DataSet->RemoveSerie($nameOfX);   
@@ -103,7 +106,7 @@ function graphDefineData($sensorDataSets)
 		
 		//Set Timestemp as X-Axis and Value to Y-Axis
 		$DataSet->setXAxisName("Time");
-		$DataSet->setXAxisFormat("time");
+		//$DataSet->setXAxisFormat("time");
 		
 		$DataSet->setYAxisName("Depth");
 		$DataSet->setYAxisUnit("cm");
@@ -117,12 +120,12 @@ function graphDefineData($sensorDataSets)
 function graphInitGraph($DataSet)
 {
 	// Initialise the graph
-	 $Graph = new pChart(700,230);
+	 $Graph = new pChart(700,250);
 	 $Graph->setFixedScale(0,50);
 	 $Graph->setFontProperties("graph/Fonts/tahoma.ttf",8);
-	 $Graph->setGraphArea(50,30,585,200);
-	 $Graph->drawFilledRoundedRectangle(7,7,693,223,5,240,240,240);
-	 $Graph->drawRoundedRectangle(5,5,695,225,5,230,230,230);
+	 $Graph->setGraphArea(70,30,600,200);
+	 $Graph->drawFilledRoundedRectangle(7,7,693,233,5,240,240,240);
+	 $Graph->drawRoundedRectangle(5,5,695,235,5,230,230,230);
 	 $Graph->drawGraphArea(255,255,255,TRUE);
 	 $Graph->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(),SCALE_NORMAL,150,150,150,TRUE,0,2);
 	 $Graph->drawGrid(4,TRUE,230,230,230,50);
@@ -139,7 +142,7 @@ function graphRender($DataSet, $Graph)
 	$Graph->drawFilledLineGraph($DataSet->GetData(),$DataSet->GetDataDescription(),50,TRUE);
 	// Finish the graph  
 	$Graph->setFontProperties("graph/Fonts/tahoma.ttf",8);  
-	//$Graph->drawLegend(45,35,$DataSet->GetDataDescription(),255,255,255);  
+	//$Graph->drawLegend(55,45,$DataSet->GetDataDescription(),255,255,255);  
 	$Graph->setFontProperties("graph/Fonts/tahoma.ttf",10);  
 	$Graph->drawTitle(60,22,"Amount of water during time",50,50,50,585);  
 	$Graph->Render("Naked.png"); 

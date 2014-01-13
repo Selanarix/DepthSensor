@@ -107,7 +107,7 @@ function addMeasurement($xml, $dataSet)
     //Delete oldes measurements if history size is reached
     $measurementList = $xml->getElementsByTagName("measurement");
     $index = 0;
-    echo $measurementList->length;
+    //echo $measurementList->length;
     while($measurementList->length - $index > $size)
     {
         $measurementsNode->removeChild($measurementList->item($index));
@@ -120,6 +120,7 @@ function logger($level, $message)
     $fp = fopen(LOG_FILE_NAME,"a") or die();
     fwrite($fp,date("d.m.Y H:i:s",time())." : ".$level." -> ".$message."\n\r");
     fclose($fp);
+	exit();
    // exit(date("d.m.Y H:i:s",time())." : ".$level." -> ".$message); //For debug
 }
 
