@@ -11,7 +11,7 @@ function parseGET()
 {
     $dataSet = array();
     if(!(isset($_GET["sensor"]) && isset($_GET["value"])))
-	    exit("No val");
+	    logger("ERROR", "Could not find any value in URL");
 
     $dataSet["sensorID"] = $_GET["sensor"];
     $dataSet["sensorValue"] = $_GET["value"]; 
@@ -117,8 +117,10 @@ function addMeasurement($xml, $dataSet)
 
 function logger($level, $message)
 {
-    //TODO: loggn
-    exit(date("d.m.Y H:i:s",time())." : ".$level." -> ".$message);
+    $fp = fopen(LOG_FILE_NAME,"a") or die();
+    fwrite($fp,date("d.m.Y H:i:s",time())." : ".$level." -> ".$message."\n\r");
+    fclose($fp);
+   // exit(date("d.m.Y H:i:s",time())." : ".$level." -> ".$message); //For debug
 }
 
 if(($dataSet = parseGET()) === false)
@@ -139,14 +141,5 @@ $xml->preserveWhiteSpace = false;
 if($xml->save($filename) === false)
     logger("ERROR", "Was not able to save altered xml data");
 
-/*
-$fp=fopen(FILE_PREFIX.$sensor.".txt","w") or die();
-$sizeOfArray=count($lines);
-for($i = 0; $i < $sizeOfArray; $i++)
-{
-	if(($sizeOfArray - $i) > 10)
-		continue;
-	fwrite($fp,$lines[$i]);
-}
-fclose($fp);*/
+exit(); //Do not send response
 ?>
