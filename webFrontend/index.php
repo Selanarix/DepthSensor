@@ -15,7 +15,7 @@ echo'<?xml version="1.0" encoding="utf-8"?>'?>
     <p>There are <?php echo count($_SESSION['data'])?> sensors under monitoring</p>
     <?php
         foreach($_SESSION['data'] as $sensorData)
-            echo '<img class="autoreloadImg" id="sensor'.$sensorData["id"].'" src="dynPicProcessing/renderGraph.php?sensor='.$sensorData["id"].'" />'."\r\n";
+            echo '<img class="autoreloadImg" id="'.$sensorData["id"].'" src="dynPicProcessing/renderGraph.php?sensor='.$sensorData["id"].'" />'."\r\n";
     ?>
 </body>
 </html>
