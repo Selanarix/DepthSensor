@@ -35,6 +35,8 @@ typedef struct
 
 void initSensorsPart();
 void initNetworkStack();
+boolean httpConnect();
+boolean httpDisconnect();
 
 void takeTestSeries();
 TestSeriesTestResult testTestSeries();
@@ -177,6 +179,26 @@ void initNetworkStack()
         Serial.println( Ethernet.localIP() );
 }
 
+boolean httpConnect()
+{
+  // if there's a successful connection:
+  if (client.connect(server, 80)) 
+  {
+      Serial.println("http connecting...");
+      return true;
+  }
+  Serial.println("connection failed");
+  client.stop();
+  return false;
+}
+
+boolean httpDisconnect()
+{
+  client.stop();
+  Serial.println("http disconneting..");
+  return true;
+}
+
 void takeTestSeries()
 {
 	uint32_t measurement;
@@ -202,13 +224,13 @@ void readDepthSensor(depth* measurementOfSeries)
 //Umgestellt nach p (in hPa!!): p=(Vout-0,2)/(9*10^-4)
 
         sensorVoltageADC = (adcvalue)*(5.0/1023.0);
-        Serial.print("Rohwert [V]: ");
-        Serial.println(sensorVoltageADC);
+  //      Serial.print("Rohwert [V]: ");
+  //      Serial.println(sensorVoltageADC);
         
 //        pressure = (sensorVoltageADC*10.0-(offset*10))*1000/9;
         pressure = (sensorVoltageADC-offset)*1111;
-        Serial.print("Druck [hPa]: ");
-        Serial.println(pressure);
+  //      Serial.print("Druck [hPa]: ");
+  //      Serial.println(pressure);
          if (pressure <= 0.0001)
            pressure = 1.0;
     
@@ -312,7 +334,7 @@ void handleLAN()
     if (!client.connected() && lastConnected) 
     {
         Serial.println();
-        Serial.println("disconnecting from server...");
+        Serial.println("handle disconnect...");
         client.stop();
     }
     
@@ -322,23 +344,17 @@ void handleLAN()
 
 // this method makes a HTTP connection to the server:
 void httpRequest(const depth d) 
-{
-  // if there's a successful connection:
-  if (client.connect(server, 80)) 
+{  
+  if (httpConnect())
   {
-      Serial.println("connecting...");
       // send the HTTP PUT request:
+      Serial.println("send http request...");
       client.print("PUT /input.php?sensor=0&value=");
-      client.println(d);
+      client.println(d);  
   }
-  else 
-  {
-    // if you couldn't make a connection:
-    Serial.println("connection failed");
-    Serial.println("disconnecting.");
-    client.stop();
-  }
+  httpDisconnect();
 }
+
 }
 
 void setup()
