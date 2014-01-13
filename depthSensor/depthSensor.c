@@ -1,32 +1,5 @@
 #include "depthSensor.h"  
 
-int sensorPinDiff = A0;    // Input Vout of DiffSensor
-boolean lastConnected = false;            // state of the connection last time through the main loop
-const uint32_t TEST_SERIES_RETRIES_IF_ERROR = 10;
-const uint32_t MEASUREMENT_RETRIE_DELAY_IN_MSEC = 2000;
-const uint32_t TEST_SERIES_MEASURMENT_DELAX_IN_MSEC = 10;
-void callback1(TestSeriesTestResult);
-void callback2(AverageMeasuementTestResult);
-void (*testSeriesErrorCallback)(TestSeriesTestResult) = callback1;
-void (*SensorValuesOutOfCourseCallback)(AverageMeasuementTestResult) = callback2;
-
-// Enter a MAC address for your controller below.
-// Newer Ethernet shields have a MAC address printed on a sticker on the shield
-const byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-// Set the static IP address to use if the DHCP fails to assign
-const IPAddress ip(95,175,153,209);
-const IPAddress myDns(77,244,128,44);
-
-// if you don't want to use DNS (and reduce your sketch size)
-// use the numeric IP instead of the name for the server:
-const IPAddress server(95,175,153,207);  // numeric IP for my Notebook (no DNS)
-//char server[] = "www.google.com";    // name address for Google (using DNS)
-
-// Initialize the Ethernet client library
-// with the IP address and port of the server 
-// that you want to connect to (port 80 is default for HTTP):
-EthernetClient client;
-
 //-------------------------- Private Types -------------------------------------
   
 typedef enum
@@ -60,50 +33,68 @@ void takeTestSeries();
 TestSeriesTestResult testTestSeries();
 depth evaluateTestSeries();
 AverageMeasuementTestResult testEvaluatedValue(const depth depth);
-inline void measureDepth(depth* measurementOfSeries);
+void readDepthSensor(depth* measurementOfSeries);
+
+void callback1(TestSeriesTestResult);
+void callback2(AverageMeasuementTestResult);
 
 MinMax evaluateMinMax(const depth* series, uint32_t size);
-depth testSeries[AMOUNT_OF_SPOT_TESTS] = {0};
+void handleLAN();
+void httpRequest(const depth d);
 
 //------------------------- Private Data ---------------------------------------
 
+static void (*testSeriesErrorCallback)(TestSeriesTestResult) = callback1;
+static void (*SensorValuesOutOfCourseCallback)(AverageMeasuementTestResult) = callback2;
+
+static EthernetClient client;
+
+static depth testSeries[AMOUNT_OF_SPOT_TESTS] = {0};
+
+//------------------------ Read only ------------------------------------------
+
+const uint32_t TEST_SERIES_RETRIES_IF_ERROR = 10;
+const uint32_t MEASUREMENT_RETRIE_DELAY_IN_MSEC = 2000;
+const uint32_t TEST_SERIES_MEASURMENT_DELAX_IN_MSEC = 10;
+
+/*
+* Input Vout of DiffSensor
+*/
+const int sensorPinDiff = A0;
+
+/* 
+* Enter a MAC address for your controller below.
+*/
+const byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+
+/*
+* Set the static IP address to use if the DHCP fails to assign
+*/
+const IPAddress ip(95,175,153,209);
+const IPAddress myDns(77,244,128,44);
+
+/* if you don't want to use DNS (and reduce your sketch size)
+* use the numeric IP instead of the name for the server:
+*/
+const IPAddress server(95,175,153,207);  // numeric IP for my Notebook (no DNS)
+//char server[] = "www.google.com";    // name address for Google (using DNS)
 
 //------------------------------- Public Functions -----------------------------
-
-//------------------------------ Private Functions -----------------------------
-
-//---------------------------------- H W - I n i t --------------------------
 /**
  * Init Hw components of the project
  */
 void initHW()
 {
-        pinMode(sensorPinDiff, INPUT_PULLUP); 
+    pinMode(sensorPinDiff, INPUT_PULLUP); 
 	initSensorsPart();
 	initNetworkStack();
 }
 
-void initSensorsPart()
-{
-	//TODO: //Hier fehlt noch was
-}
+/**
+* Measures the depth by taking several measurments and calculates a
+* average one. 
+*/
 
-void initNetworkStack()
-{
-        // start the Ethernet connection:
-        if (Ethernet.begin(mac) == 0) {
-            Serial.println("Failed to configure Ethernet using DHCP");
-            //congifure using IP address instead of DHCP
-            Ethernet.begin(mac, ip, myDns);
-        }
- 
-        // give the Ethernet shield a second to initialize:
-        delay(1000);
-        Serial.print("My IP address: ");
-        Serial.println( Ethernet.localIP() );
-}
-
-//---------------------------------- M e a s u r e --------------------------
 depth measureDepth()
 {
 	uint32_t seriesRetries;
@@ -143,20 +134,55 @@ depth measureDepth()
 	return avgDepthOfSeries;
 }
 
+
+/**
+/* Process measured data
+*/
+void processData(const depth d)
+{
+    Serial.print("Mittelwert [cm]: ");
+    Serial.println(d);
+    
+    //Send data per LAN to Web-Server...
+    httpRequest(d);
+}
+
+
+//------------------------------ Private Functions -----------------------------
+
+void initSensorsPart()
+{
+	//TODO: //Hier fehlt noch was
+}
+
+void initNetworkStack()
+{
+        // start the Ethernet connection:
+        if (Ethernet.begin(mac) == 0) {
+            Serial.println("Failed to configure Ethernet using DHCP");
+            //congifure using IP address instead of DHCP
+            Ethernet.begin(mac, ip, myDns);
+        }
+ 
+        // give the Ethernet shield a second to initialize:
+        delay(1000);
+        Serial.print("My IP address: ");
+        Serial.println( Ethernet.localIP() );
+}
+
 void takeTestSeries()
 {
 	uint32_t measurement;
 	for(measurement = 0; measurement < AMOUNT_OF_SPOT_TESTS; measurement ++)
 	{
-		measureDepth(&(testSeries[measurement]));
+		readDepthSensor(&(testSeries[measurement]));
 //                Serial.println(testSeries[measurement]);
 		delay(TEST_SERIES_MEASURMENT_DELAX_IN_MSEC);	
 	}		
 }
 
-inline void measureDepth(depth* measurementOfSeries)
+void readDepthSensor(depth* measurementOfSeries)
 {
-	//TODO: //Hier fehlt noch was
 	//read value from sensor and assign it to measurementOfSeries
         double pressure = 0.0;
         double adcvalue = 0.0;
@@ -266,7 +292,7 @@ MinMax evaluateMinMax(const depth* series, uint32_t size)
 
 void handleLAN()
 {
- 
+    static boolean lastConnected = false;            // state of the connection last time through the main loop
     // if there are incoming bytes available 
     // from the server, read them and print them:
     if (client.available()) 
@@ -305,13 +331,4 @@ void httpRequest(const depth d)
     Serial.println("disconnecting.");
     client.stop();
   }
-}
-//---------------------------------- S e n d  D a t a -----------------------
-void processData(const depth d)
-{
-    Serial.print("Mittelwert [cm]: ");
-    Serial.println(d);
-    
-    //Send data per LAN to Web-Server...
-    httpRequest(d);
 }
