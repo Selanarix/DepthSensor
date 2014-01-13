@@ -4,7 +4,7 @@
 
 #define AMOUNT_OF_SPOT_TESTS 10
 
-typedef unsigned int uint32_t;
+//typedef unsigned int uint32_t;
 typedef uint32_t depth;
 
 const depth MINIMAL_EXPECTED_SENSOR_VALUE 	 	= 0;

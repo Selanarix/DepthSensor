@@ -1,4 +1,9 @@
+#ifdef a
+
+
 #include "depthSensor.h"  
+#include <SPI.h>
+#include <Ethernet.h>
 
 //-------------------------- Private Types -------------------------------------
   
@@ -332,3 +337,5 @@ void httpRequest(const depth d)
     client.stop();
   }
 }
+
+#endif
