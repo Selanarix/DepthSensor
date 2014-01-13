@@ -46,8 +46,15 @@ function generateTankImage($tonW, $tonE, $tonH, $prim, $percent, $filename)
 <html>
 <head>
     <title>Test img generation</title>
+    <script src="jqueryjs" />
+    <script>
+        setInterval(function(){
+    alert("hallo");
+    $("#myimg").attr("src", "testTankImg1.png?"+new Date().getTime());
+},2000);
+    </script>
 </head>
 <body>
-    <img src="testTankImg1.png" />
+    <img id="myimg" src="testTankImg1.png" />
 </body>
 </html>
