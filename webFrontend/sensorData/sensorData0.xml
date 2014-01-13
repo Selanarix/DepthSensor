@@ -4,11 +4,11 @@
     <NameForID>0</NameForID>
     <TankDescription>Tank with id: 0</TankDescription>
     <SizeOfHistory>10</SizeOfHistory>
-    <TankHeight>0</TankHeight>
+    <TankHeight>100</TankHeight>
     <floorArea>0</floorArea>
     <ColorOfGraph>red</ColorOfGraph>
   </configuration>
   <measurements>
     
-  <measurement measurementTime="1389642198">3</measurement><measurement measurementTime="1389642199">5</measurement><measurement measurementTime="1389642201">4</measurement><measurement measurementTime="1389642202">4</measurement><measurement measurementTime="1389642203">3</measurement><measurement measurementTime="1389642204">4</measurement><measurement measurementTime="1389642205">4</measurement><measurement measurementTime="1389642206">4</measurement><measurement measurementTime="1389642207">4</measurement><measurement measurementTime="1389642209">4</measurement></measurements>
+  <measurement measurementTime="1389642445">4</measurement><measurement measurementTime="1389642446">4</measurement><measurement measurementTime="1389642447">3</measurement><measurement measurementTime="1389642449">4</measurement><measurement measurementTime="1389642450">4</measurement><measurement measurementTime="1389642451">4</measurement><measurement measurementTime="1389642452">4</measurement><measurement measurementTime="1389642453">4</measurement><measurement measurementTime="1389642454">4</measurement><measurement measurementTime="1389642830">10</measurement></measurements>
 </sensor>

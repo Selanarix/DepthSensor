@@ -17,7 +17,7 @@ include("helper/parseSensorData.php");
     <title>Depth Sensor Project Page</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="pageData/style/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="pageData/style/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="pageData/style/custom.css" rel="stylesheet">
@@ -44,11 +44,11 @@ include("helper/parseSensorData.php");
                 <li><a href="/">Home</a></li>
                 <li class="active"><a href="statistics.php">Statistics</a></li>
                 <li class="dropdown">
-                  <a href="" class="dropdown-toggle" data-toggle="dropdown">Sensor Data<b class="caret"></b></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sensor Data<b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="sensor.php?sensor=0">Sensor0</a></li>
-                    <li><a href="#">Sensor1</a></li>
-                    <li><a href="#">Sensor2</a></li>
+					<li><a href="sensor.php?sensor=1">Sensor1</a></li>
+					<li><a href="sensor.php?sensor=2">Sensor2</a></li>
                   </ul>
                 </li>
 				<li><a href="input.php?sensor=0&value=10">Input</a></li>
@@ -116,7 +116,7 @@ include("helper/parseSensorData.php");
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <script src="../../docs-assets/js/holder.js"></script>
+    <script src="pageData/style/dist/js/bootstrap.min.js"></script>
+    <script src="pageData/style/docs-assets/js/holder.js"></script>
   </body>
 </html>
