@@ -1,13 +1,14 @@
 <?php
 session_start();
 
+// Standard inclusions   
+include("pChart/pData.class");
+include("pChart/pChart.class");
+
 if ( !isset($_SESSION['data']) )
 	exit();
-$sensorDataSets = $_SESSION['data'];
 
-// Standard inclusions   
-include("graph/pChart/pData.class");
-include("graph/pChart/pChart.class");
+$sensorDataSets = $_SESSION['data'];
 
 //Generate graph images for sensors
 $DataSet = new pData;
@@ -68,7 +69,7 @@ function graphInitGraph($DataSet)
 	// Initialise the graph
 	 $Graph = new pChart(700,250);
 	 $Graph->setFixedScale(0,50);
-	 $Graph->setFontProperties("graph/Fonts/tahoma.ttf",8);
+	 $Graph->setFontProperties("tahoma.ttf",8);
 	 $Graph->setGraphArea(70,30,600,200);
 	 $Graph->drawFilledRoundedRectangle(7,7,693,233,5,240,240,240);
 	 $Graph->drawRoundedRectangle(5,5,695,235,5,230,230,230);
@@ -77,7 +78,7 @@ function graphInitGraph($DataSet)
 	 $Graph->drawGrid(4,TRUE,230,230,230,50);
 	
 	// Draw the 0 line   
-	$Graph->setFontProperties("Fonts/tahoma.ttf",6);   
+	$Graph->setFontProperties("tahoma.ttf",6);   
 	$Graph->drawTreshold(0,143,55,72,TRUE,TRUE);   
 	return $Graph;
 }
@@ -89,9 +90,9 @@ function graphRender($DataSet, $Graph)
 	//$Graph->drawLineGraph($DataSet->GetData(),$DataSet->GetDataDescription());
 	$Graph->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,255,255,255);
 	// Finish the graph  
-	$Graph->setFontProperties("graph/Fonts/tahoma.ttf",8);  
+	$Graph->setFontProperties("tahoma.ttf",8);  
 	//$Graph->drawLegend(55,45,$DataSet->GetDataDescription(),255,255,255);  
-	$Graph->setFontProperties("graph/Fonts/tahoma.ttf",10);  
+	$Graph->setFontProperties("tahoma.ttf",10);  
 	$Graph->drawTitle(60,22,"Amount of water during time",50,50,50,585);  
 	//$Graph->Render("Naked.png");
 	$Graph->Stroke();

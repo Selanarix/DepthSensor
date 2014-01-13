@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+define("FOLDER_OF_XML_DATA","sensorData/");
+
 function parseSensorXML($filename)
 {
     $dataSet = array();
@@ -33,26 +35,21 @@ function parseSensorXML($filename)
     return $dataSet;
 }
 
-function htmlPrint_r($data)
-{
-    echo '<pre>';
-    print_r($data);
-    echo '</pre>';
-}
-
-$dataFiles = array();
 $sensorDataSets = array();
 
-$handle = opendir('.');
+//Try to open dir with xml data
+$handle = opendir(FOLDER_OF_XML_DATA);
 if ($handle === false) 
     exit();
-/* This is the correct way to loop over the directory. */
+
+
+// parse all files out of this folder 
 while (false !== ($entry = readdir($handle))) 
 {
     if(strpos($entry,'sensorData') !== false)
 	{
         $sensorData = array();
-        $sensorData = parseSensorXML($entry);
+        $sensorData = parseSensorXML(FOLDER_OF_XML_DATA.$entry);
         if($sensorData === false)
            echo "could not read xml file";
         else
@@ -60,5 +57,6 @@ while (false !== ($entry = readdir($handle)))
     }
 }
 
+//Store data in the session
 $_SESSION['data'] = $sensorDataSets;
 ?>
