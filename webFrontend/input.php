@@ -1,7 +1,7 @@
 <?php
-define("FILE_PREFIX","sensorData");
+define("FILE_PREFIX","sensorData/sensorData");
 define("DEFAULT_HISTORY_SIZE",10);
-define("LOG_FILE_NAME","sensorInput.log");
+define("LOG_FILE_NAME","log/sensorInput.log");
 
 /**
 * Extracts GET parameter for new sensor value and tests if 
