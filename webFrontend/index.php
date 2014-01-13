@@ -22,40 +22,7 @@ include("helper/parseSensorData.php");
 <!-- NAVBAR
 ================================================== -->
   <body>
-    <div class="navbar-wrapper">
-      <div class="container">
-
-        <div class="navbar navbar-inverse navbar-static-top" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="#">Depth Sensor</a>
-            </div>
-            <div class="navbar-collapse collapse">
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="">Home</a></li>
-                <li><a href="statistics.php">Statistics</a></li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sensor Data<b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="sensor.php?sensor=0">Sensor0</a></li>
-                    <li><a href="#">Sensor1</a></li>
-                    <li><a href="#">Sensor2</a></li>
-                  </ul>
-                </li>
-				<li><a href="input.php?sensor=0&value=10">Input</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
+	<?php include "pageData/include/naviBar.incl"; ?>
 
 
     <!-- Carousel
@@ -116,11 +83,7 @@ include("helper/parseSensorData.php");
         </div><!-- /.col-lg-4 -->
       </div><!-- /.row -->
 
-      <footer>
-		<br>
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2014 Jonathan Schubert & Maximilian Hempe &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-      </footer>
+      <?php include "pageData/include/footer.incl"; ?>
 
     </div><!-- /.container -->
 

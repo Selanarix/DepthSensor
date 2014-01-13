@@ -1,5 +1,6 @@
 <?php
 include("helper/parseSensorData.php");
+
 ?>
 
 <!DOCTYPE html>
@@ -10,14 +11,11 @@ include("helper/parseSensorData.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Depth Seonsor Project">
     <meta name="author" content="Maximilian Hempe und Jonathan Schubert">
-	
-	<script src="javascript/jquery.js"></script>
-	<script src="javascript/imgAutoReload.js" type="text/javascript"></script>
-	
+
     <title>Depth Sensor Project Page</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="pageData/style/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="pageData/style/dist/css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="pageData/style/custom.css" rel="stylesheet">
@@ -26,6 +24,7 @@ include("helper/parseSensorData.php");
 ================================================== -->
   <body>
 	<?php include "pageData/include/naviBar.incl"; ?>
+
 
     <!-- Carousel
     ================================================== -->
@@ -41,8 +40,14 @@ include("helper/parseSensorData.php");
           <img data-src="holder.js/900x500/auto/#777:#7a7a7a/text:First slide">
           <div class="container">
             <div class="carousel-caption">
-			  <h1>Level Statistics</h1>
-              <p>This Project gets data of <?php echo count($_SESSION['data'])?> sensor(s) in your watertanks. On this page you find statistics about chronological sequence of water level.</p>
+				<h1>Debug Page</h1>
+              
+				<?php
+				foreach($_SESSION['data'] as $sensorData)
+				{
+					echo '<img height="100px" id="sensor'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
+				}
+				?>
             </div>
           </div>
         </div>
@@ -57,19 +62,16 @@ include("helper/parseSensorData.php");
 
     <div class="container marketing">
 
-      <!-- two columns of text below the carousel -->
-      
-			<?php
-				foreach($_SESSION['data'] as $sensorData)
-				{
-					echo '<div class="row">';
-					echo '<img id="sensor'.$sensorData["id"].'" src="dynPicProcessing/renderGraph.php?sensor='.$sensorData["id"].'" />'."\r\n";
-					echo '</div> <!--close row -->';
-
-				}
+      <!-- Three columns of text below the carousel -->
+      <div class="row">
+            <?php
+			echo "<pre>";
+				print_r($sensorDataSets);
+			echo "</pre>";
 			?>
-	
-		<?php include "pageData/include/footer.incl"; ?>
+      </div><!-- /.row -->
+
+      <?php include "pageData/include/footer.incl"; ?>
 
     </div><!-- /.container -->
 
