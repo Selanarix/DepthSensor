@@ -94,8 +94,9 @@ function graphDefineData($sensorDataSets)
 		$DataSet->AddPoint($values,$nameOfVal);
 		$DataSet->AddPoint($time,$nameOfX);
 		$DataSet->SetAbsciseLabelSerie($nameOfX);
-		$DataSet->RemoveSerie($nameOfX);   
 		$DataSet->AddAllSeries();
+		$DataSet->RemoveSerie($nameOfX);   
+		
 		
 		$DataSet->SetSerieName("Time".$i,$nameOfX);
 		$DataSet->SetSerieName("Depth".$i,$nameOfVal);
@@ -135,7 +136,7 @@ function graphInitGraph($DataSet)
 function graphRender($DataSet, $Graph)
 {
 	// Draw the cubic curve graph  
-	$Graph->drawCubicCurve($DataSet->GetData(),$DataSet->GetDataDescription());
+	$Graph->drawFilledLineGraph($DataSet->GetData(),$DataSet->GetDataDescription(),50,TRUE);
 	// Finish the graph  
 	$Graph->setFontProperties("graph/Fonts/tahoma.ttf",8);  
 	//$Graph->drawLegend(45,35,$DataSet->GetDataDescription(),255,255,255);  
