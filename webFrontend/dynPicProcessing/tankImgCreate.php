@@ -1,10 +1,39 @@
 <?php
-generateTankImage(200, 50, 200, 10, 15, "testTankImg1.png");
+session_start();
 
-function generateTankImage($tonW, $tonE, $tonH, $prim, $percent, $filename)
+if ( !isset($_SESSION['data']) )
+	exit();
+$sensorDataSets = $_SESSION['data'];
+
+if ( !isset($_GET["sensor"]))
+    exit();
+$sensorId = $_GET["sensor"];
+
+if ( !isset($sensorDataSets[$sensorId]))
+    exit();
+
+generateTankImage(200, 50, 200, 10, $sensorDataSets[$sensorId]);
+
+
+//Finish programm completely
+exit();
+
+function generateTankImage($tonW, $tonE, $tonH, $prim, $sensorDataSet)
 {
+    $percent = 0;
+    //Test if sensor has an height. Otherwise can not calculate percentage
+    if($sensorDataSet["tankHeight"] < 1)
+        return false;
+    else
+    {
+        $newestSensorValue = $sensorDataSet["depthMeasurements"][count($sensorDataSet["depthMeasurements"])-1];
+        $percent = $newestSensorValue['value']*100.0/$sensorDataSet["tankHeight"] ;
+    }    
+    //Solve overflow error
+    if ($percent > 100)
+        $percent = 100;
+    
     //Create our basic image stream 
-    //125px width, 125px height
     $image = imagecreate($tonW+2*$prim, $tonE+$tonH+2*$prim);
      
     // Transparent Background
@@ -35,28 +64,11 @@ function generateTankImage($tonW, $tonE, $tonH, $prim, $percent, $filename)
     imageline   ($image, $prim+$tonW, $prim+$tonH+$tonE/2, $prim+$tonW, $prim+$tonE/2, $black);
     imagettftext($image, 30, 0, $prim + $tonW/2 - 35, $prim + $tonH/2+30, $red, $font, (100-$percent)."%");
 
+    header('Content-Type: image/png');
     //save the image as a png and output 
-    imagepng($image, $filename);
+    imagepng($image);
      
     //Clear up memory used
     imagedestroy($image);
 }
 ?>
-
-<html>
-    <head>
-        <title>Test img generation</title>
-        <meta charset="UTF-8">
-        <script src="jquery.js" ></script>
-        <script>
-            setInterval(
-                function()
-                {
-                    $("#myimg").attr("src", "testTankImg1.png?"+new Date().getTime());
-                },2000);
-        </script>
-    </head>
-    <body>
-        <img id="myimg" src="testTankImg1.png" />
-    </body>
-</html>

@@ -53,7 +53,7 @@ while (false !== ($entry = readdir($handle)))
         if($sensorData === false)
            echo "could not read xml file";
         else
-           array_push($sensorDataSets,$sensorData);
+           $sensorDataSets[$sensorData["id"]] = $sensorData;
     }
 }
 
