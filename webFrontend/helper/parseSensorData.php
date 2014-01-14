@@ -3,6 +3,10 @@ session_start();
 
 define("FOLDER_OF_XML_DATA","sensorData/");
 
+$path = FOLDER_OF_XML_DATA;
+if(isset($_GET["pathToFolder"]))
+	$path = $_GET["pathToFolder"];
+
 function parseSensorXML($filename)
 {
     $dataSet = array();
@@ -38,10 +42,15 @@ function parseSensorXML($filename)
 $sensorDataSets = array();
 
 //Try to open dir with xml data
-$handle = opendir(FOLDER_OF_XML_DATA);
+$handle = opendir($path);
 if ($handle === false) 
+{
+/*	$fp = fopen("test.txt","a");
+	fwrite($fp,"ERROR Could not open folder for reading\r\n");
+	fclose($fp);
+*/
     exit();
-
+}
 
 // parse all files out of this folder 
 while (false !== ($entry = readdir($handle))) 
@@ -49,14 +58,18 @@ while (false !== ($entry = readdir($handle)))
     if(strpos($entry,'sensorData') !== false)
 	{
         $sensorData = array();
-        $sensorData = parseSensorXML(FOLDER_OF_XML_DATA.$entry);
+        $sensorData = parseSensorXML($path.$entry);
         if($sensorData === false)
            echo "could not read xml file";
         else
            $sensorDataSets[$sensorData["id"]] = $sensorData;
     }
 }
-
+/*
+$fp = fopen("test.txt","a");
+fwrite($fp,"INFO Update session context\r\n");
+fclose($fp);
+*/
 //Store data in the session
 $_SESSION['data'] = $sensorDataSets;
 ?>

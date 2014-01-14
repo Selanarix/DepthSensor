@@ -13,6 +13,7 @@ include("helper/parseSensorData.php");
 	
 	<script src="javascript/jquery.js"></script>
 	<script src="javascript/imgAutoReload.js" type="text/javascript"></script>
+
 	
     <title>Depth Sensor Project Page</title>
 
@@ -63,7 +64,7 @@ include("helper/parseSensorData.php");
 				foreach($_SESSION['data'] as $sensorData)
 				{
 					echo '<div class="row">';
-					echo '<img id="sensor'.$sensorData["id"].'" src="dynPicProcessing/renderGraph.php?sensor='.$sensorData["id"].'" />'."\r\n";
+					echo '<img class="autoreloadImg" id="'.$sensorData["id"].'" src="dynPicProcessing/renderGraph.php?sensor='.$sensorData["id"].'" />'."\r\n";
 					echo '</div> <!--close row -->';
 
 				}
@@ -79,6 +80,5 @@ include("helper/parseSensorData.php");
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="pageData/style/dist/js/bootstrap.min.js"></script>
-    <script src="pageData/style/docs-assets/js/holder.js"></script>
   </body>
 </html>

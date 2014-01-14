@@ -44,7 +44,7 @@ include("helper/parseSensorData.php");
 				<?php
 				foreach($_SESSION['data'] as $sensorData)
 				{
-					echo '<img height="100px" id="sensor'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
+					echo '<img height="120px" id="sensor'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
 				}
 				?>
             </div>
@@ -61,26 +61,19 @@ include("helper/parseSensorData.php");
 
     <div class="container marketing">
 
-      <!-- Three columns of text below the carousel -->
+      <!-- columns of text for each Sensor -->
       <div class="row">
-        <div class="col-lg-3">
-          <img class="img-circle" data-src="holder.js/140x140" alt="Tank0">
-          <h2>Heading</h2>
-          <p>This graphic shows the actual level of the first Tank.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-3">
-          <img class="img-circle" data-src="holder.js/140x140" alt="Tank1">
-          <h2>Heading</h2>
-          <p>This graphic shows the actual level of the second Tank.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-3">
-          <img class="img-circle" data-src="holder.js/140x140" alt="Tank2">
-          <h2>Heading</h2>
-          <p>This graphic shows the actual level of the third Tank.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
+		<?php
+				foreach($_SESSION['data'] as $sensorData)
+				{
+					echo '<div class="col-lg-3">';
+					echo '<h2>Tank'.$sensorData["id"].'</h2>';
+					echo '<p>This graphic shows the actual level of the first Tank.</p>';
+					echo '<p><a class="btn btn-default" href="debug.php" role="button">View details &raquo;</a></p>';
+					
+					echo '</div>';
+				}
+		?>
       </div><!-- /.row -->
 
       <?php include "pageData/include/footer.incl"; ?>
@@ -93,6 +86,5 @@ include("helper/parseSensorData.php");
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="pageData/style/dist/js/bootstrap.min.js"></script>
-    <script src="pageData/style/docs-assets/js/holder.js"></script>
   </body>
 </html>
