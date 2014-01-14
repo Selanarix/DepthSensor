@@ -11,6 +11,9 @@ include("helper/parseSensorData.php");
     <meta name="description" content="Depth Seonsor Project">
     <meta name="author" content="Maximilian Hempe und Jonathan Schubert">
 
+	<script src="javascript/jquery.js"></script>
+	<script src="javascript/imgAutoReload.js" type="text/javascript"></script>
+
     <title>Depth Sensor Project Page</title>
 
     <!-- Bootstrap core CSS -->
@@ -44,7 +47,7 @@ include("helper/parseSensorData.php");
 				<?php
 				foreach($_SESSION['data'] as $sensorData)
 				{
-					echo '<img height="120px" id="sensor'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
+					echo '<img class="autoreloadTank" height="120px" id="'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
 				}
 				?>
             </div>
