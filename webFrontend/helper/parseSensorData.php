@@ -21,6 +21,8 @@ function parseSensorXML($filename)
     $dataSet["floorArea"] = (int)$configTag->floorArea;
     $dataSet["tankHeight"] = (int)$configTag->TankHeight;
     $dataSet["colorGraph"] = (string)$configTag->ColorOfGraph;
+    $dataSet["sensorUnit"] = (string)$configTag->SensorUnit;
+    $dataSet["sensorType"] = (string)$configTag->SensorType;
     $dataSet["name"] = (string)$configTag->NameForID;
     $dataSet["description"] = (string)$configTag->TankDescription;
     $dataSet["sizeOfHistory"] = (int)$configTag->SizeOfHistory;

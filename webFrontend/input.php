@@ -55,6 +55,14 @@ function setUpDefaultXML($dataSet, $xml)
     $height->appendChild($xml->createTextNode('0'));
     $configuration->appendChild($height);
 
+    $sensorUnit = $xml->createElement("SensorUnit"); 
+    $sensorUnit->appendChild($xml->createTextNode('undefined'));
+    $configuration->appendChild($sensorUnit);
+
+    $sensorType = $xml->createElement("SensorType"); 
+    $sensorType->appendChild($xml->createTextNode('undefined'));
+    $configuration->appendChild($sensorType);
+
     $floorArea = $xml->createElement("floorArea");
     $floorArea->appendChild($xml->createTextNode('0'));
     $configuration->appendChild($floorArea);

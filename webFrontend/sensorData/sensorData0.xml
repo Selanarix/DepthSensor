@@ -5,6 +5,8 @@
     <TankDescription>Tank with id: 0</TankDescription>
     <SizeOfHistory>10</SizeOfHistory>
     <TankHeight>100</TankHeight>
+    <SensorUnit>cm<SensorUnit>
+    <SensorType>Pressure<SensorUnit>
     <floorArea>0</floorArea>
     <ColorOfGraph>red</ColorOfGraph>
   </configuration>
