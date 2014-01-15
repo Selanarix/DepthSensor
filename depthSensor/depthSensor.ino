@@ -26,8 +26,8 @@ typedef enum
 
 typedef struct
 {
-	depth min;
-	depth max;
+	double min;
+	double max;
 } MinMax;
 
 
@@ -42,12 +42,12 @@ void takeTestSeries();
 TestSeriesTestResult testTestSeries();
 depth evaluateTestSeries();
 AverageMeasuementTestResult testEvaluatedValue(const depth depth);
-void readDepthSensor(depth* measurementOfSeries);
+void readDepthSensor(double* measurementOfSeries);
 
 void callback1(TestSeriesTestResult);
 void callback2(AverageMeasuementTestResult);
 
-MinMax evaluateMinMax(const depth* series, uint32_t size);
+MinMax evaluateMinMax(const double* series, uint32_t size);
 void handleLAN();
 void httpRequest(const depth d);
 
@@ -58,7 +58,7 @@ static void (*SensorValuesOutOfCourseCallback)(AverageMeasuementTestResult) = ca
 
 static EthernetClient client;
 
-static depth testSeries[AMOUNT_OF_SPOT_TESTS] = {0};
+static double testSeries[AMOUNT_OF_SPOT_TESTS] = {0};
 
 //------------------------ Read only ------------------------------------------
 
@@ -210,7 +210,7 @@ void takeTestSeries()
 	}		
 }
 
-void readDepthSensor(depth* measurementOfSeries)
+void readDepthSensor(double* measurementOfSeries)
 {
 	//read value from sensor and assign it to measurementOfSeries
         double pressure = 0.0;
@@ -231,10 +231,8 @@ void readDepthSensor(depth* measurementOfSeries)
         pressure = (sensorVoltageADC-offset)*1111;
   //      Serial.print("Druck [hPa]: ");
   //      Serial.println(pressure);
-         if (pressure <= 0.0001)
-           pressure = 1.0;
-    
-	*measurementOfSeries = (depth)pressure;
+  
+	*measurementOfSeries = pressure;
 }
 
 TestSeriesTestResult testTestSeries()
@@ -244,7 +242,7 @@ TestSeriesTestResult testTestSeries()
 	depth meanVariation = res.max - res.min;
  // Serial.println(res.max);
  // Serial.println(res.min);
-	if(res.min == 0)
+	if(res.min < 0.0001 && res.max < 0.0001)
 		return SensorOutOfFunction;
 	if(res.min < MINIMAL_EXPECTED_SENSOR_VALUE)
 		return TestSeriesUnderMinRange;
@@ -264,7 +262,7 @@ depth evaluateTestSeries()
 
 	for(measurement = 0; measurement < AMOUNT_OF_SPOT_TESTS; measurement ++)
 	{
-		double x = (double)testSeries[measurement];
+		double x = testSeries[measurement];
 		avg += (x - avg) / t;
 		t++;
 	}
@@ -303,10 +301,10 @@ void callback2(AverageMeasuementTestResult){
 
 //-------------------------------------- U t i l l s ------------------------
 
-MinMax evaluateMinMax(const depth* series, uint32_t size)
+MinMax evaluateMinMax(const double* series, uint32_t size)
 {
 	MinMax res;
-	res.min = 0xffffffff;
+	res.min = 1000000.0;
         res.max = 0;
         
 	for(uint32_t i=0; i<size; i++)
