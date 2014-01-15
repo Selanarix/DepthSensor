@@ -22,9 +22,7 @@ void flashLED_1s()
 }
 
 void loop()
-{
-    double tempvalue;  
-    
+{    
     ProjectLED::LED_On(ProjectLED::LED0);
     DepthSensor::depth dep = DepthSensor::measureDepth();
     TemperaturSensor::temperatur temp = TemperaturSensor::measureTemperatur();   
