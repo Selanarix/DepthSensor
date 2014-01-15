@@ -6,8 +6,8 @@
     <SizeOfHistory>10</SizeOfHistory>
     <TankHeight>100</TankHeight>
     <floorArea>0</floorArea>
-    <SensorUnit>cm<SensorUnit>
-    <SensorType>Pressure<SensorUnit>
+    <SensorUnit>cm</SensorUnit>
+    <SensorType>Pressure</SensorType>
     <ColorOfGraph>red</ColorOfGraph>
   </configuration>
   <measurements>

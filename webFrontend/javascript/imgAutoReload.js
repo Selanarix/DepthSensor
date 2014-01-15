@@ -1,9 +1,5 @@
 var frquencyDevider = 0;
 
-$.fn.exists = function () {
-    return this.length !== 0;
-}
-
 setInterval(
     function()
     {

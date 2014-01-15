@@ -64,7 +64,7 @@ include("helper/parseSensorData.php");
 				foreach($_SESSION['data'] as $sensorData)
 				{
 					echo '<div class="row">';
-					echo '<img class="autoreloadImg" id="'.$sensorData["id"].'" src="dynPicProcessing/renderGraph.php?sensor='.$sensorData["id"].'" />'."\r\n";
+					echo '<img class="autoreloadGraph" id="'.$sensorData["id"].'" src="dynPicProcessing/renderGraph.php?sensor='.$sensorData["id"].'" />'."\r\n";
 					echo '</div> <!--close row -->';
 
 				}

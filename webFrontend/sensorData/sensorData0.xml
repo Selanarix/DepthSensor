@@ -5,12 +5,12 @@
     <TankDescription>Tank with id: 0</TankDescription>
     <SizeOfHistory>10</SizeOfHistory>
     <TankHeight>100</TankHeight>
-    <SensorUnit>cm<SensorUnit>
-    <SensorType>Pressure<SensorUnit>
+    <SensorUnit>cm</SensorUnit>
+    <SensorType>Pressure</SensorType>
     <floorArea>0</floorArea>
     <ColorOfGraph>red</ColorOfGraph>
   </configuration>
   <measurements>
     
-  <measurement measurementTime="1389704059">20</measurement><measurement measurementTime="1389704061">19</measurement><measurement measurementTime="1389704062">19</measurement><measurement measurementTime="1389704063">20</measurement><measurement measurementTime="1389704064">19</measurement><measurement measurementTime="1389704065">18</measurement><measurement measurementTime="1389704066">19</measurement><measurement measurementTime="1389704068">19</measurement><measurement measurementTime="1389704069">20</measurement><measurement measurementTime="1389704070">20</measurement></measurements>
+  <measurement measurementTime="1389795934">4</measurement><measurement measurementTime="1389795938">4</measurement><measurement measurementTime="1389795939">4</measurement><measurement measurementTime="1389795940">4</measurement><measurement measurementTime="1389795941">4</measurement><measurement measurementTime="1389795943">4</measurement><measurement measurementTime="1389795946">4</measurement><measurement measurementTime="1389795947">4</measurement><measurement measurementTime="1389795950">4</measurement><measurement measurementTime="1389795952">4</measurement></measurements>
 </sensor>

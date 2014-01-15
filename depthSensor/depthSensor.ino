@@ -35,6 +35,7 @@ typedef struct
 
 void initSensorsPart();
 void initNetworkStack();
+void initPinIO();
 boolean httpConnect();
 boolean httpDisconnect();
 
@@ -69,7 +70,9 @@ const uint32_t TEST_SERIES_MEASURMENT_DELAX_IN_MSEC = 10;
 /*
 * Input Vout of DiffSensor
 */
-const int sensorPinDiff = A0;
+const int sensorPinDiff = 0;
+const int sensorPinTemp = 1;
+
 
 /* 
 * Enter a MAC address for your controller below.
@@ -85,7 +88,7 @@ const IPAddress ip(95,175,153,209);
 /* if you don't want to use DNS (and reduce your sketch size)
 * use the numeric IP instead of the name for the server:
 */
-const IPAddress server(5,151,229,141);  // numeric IP for my Notebook (no DNS)
+const IPAddress server(5,151,228,191);  // numeric IP for my Notebook (no DNS)
 //char server[] = "www.google.com";    // name address for Google (using DNS)
 
 //------------------------------- Public Functions -----------------------------
@@ -94,9 +97,9 @@ const IPAddress server(5,151,229,141);  // numeric IP for my Notebook (no DNS)
  */
 void initHW()
 {
-    pinMode(sensorPinDiff, INPUT_PULLUP); 
+        initPinIO();
 	initSensorsPart();
-	initNetworkStack();
+	//initNetworkStack();
 }
 
 /**
@@ -158,6 +161,12 @@ void processData(const depth d)
 
 
 //------------------------------ Private Functions -----------------------------
+void initPinIO()
+{
+    pinMode(sensorPinDiff, INPUT_PULLUP);
+    pinMode(sensorPinTemp, INPUT);
+ 
+}
 
 void initSensorsPart()
 {
@@ -355,18 +364,32 @@ void httpRequest(const depth d)
 
 }
 
+int ledPin = 3;
+
 void setup()
 {
     Serial.begin(9600); 
     sensor::initHW();
+    pinMode(ledPin, OUTPUT);
+    
 }
+
+
 
 void loop()
 {
-    sensor::handleLAN();
+    double tempvalue;  
+/*  
+    digitalWrite(ledPin, HIGH);
+    //sensor::handleLAN();
     sensor::processData(sensor::measureDepth());
     Serial.println("Ende Messung...............");
+    digitalWrite(ledPin, LOW);
+ */   
+   tempvalue = (double)analogRead(sensor::sensorPinTemp);
+   Serial.print("Temp Value [C]: ");
+   Serial.println( 5000.0 /1024.0 * tempvalue / 10.0);
 
-            
+    
   delay(1000);
 }
