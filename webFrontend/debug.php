@@ -26,37 +26,7 @@ include("helper/parseSensorData.php");
 	<?php include "pageData/include/naviBar.incl"; ?>
 
 
-    <!-- Carousel
-    ================================================== -->
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <!-- Indicators -->
-      <!--<ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-      </ol>-->
-      <div class="carousel-inner">
-        <div class="item active">
-          <img data-src="holder.js/900x500/auto/#777:#7a7a7a/text:First slide">
-          <div class="container">
-            <div class="carousel-caption">
-				<h1>Debug Page</h1>
-              
-				<?php
-				foreach($_SESSION['data'] as $sensorData)
-				{
-					echo '<img height="100px" id="sensor'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
-				}
-				?>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- /.carousel -->
-
-
-
-    <!-- Marketing messaging and featurettes
+     <!-- Marketing messaging and featurettes
     ================================================== -->
     <!-- Wrap the rest of the page in another container to center all the content. -->
 

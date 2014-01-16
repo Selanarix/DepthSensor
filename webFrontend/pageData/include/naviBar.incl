@@ -41,3 +41,31 @@ elseif (false !== strpos($url,'debug'))
 
       </div>
     </div>
+	
+	<!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <!--<ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>-->
+      <div class="carousel-inner">
+        <div class="item active">
+          <div class="container">
+            <div class="carousel-caption">
+				<h1>Depth Sensor Project</h1>
+				<p>
+				<?php
+				foreach($_SESSION['data'] as $sensorData)
+				{
+					echo '<img class="autoreloadTank" height="120px" id="'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
+				}
+				?>
+				</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.carousel -->

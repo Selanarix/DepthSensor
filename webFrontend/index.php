@@ -28,33 +28,7 @@ include("helper/parseSensorData.php");
 	<?php include "pageData/include/naviBar.incl"; ?>
 
 
-    <!-- Carousel
-    ================================================== -->
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <!-- Indicators -->
-      <!--<ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-      </ol>-->
-      <div class="carousel-inner">
-        <div class="item active">
-          <img data-src="holder.js/900x500/auto/#777:#7a7a7a/text:First slide">
-          <div class="container">
-            <div class="carousel-caption">
-				<h1>Depth Sensor Project</h1>
-              
-				<?php
-				foreach($_SESSION['data'] as $sensorData)
-				{
-					echo '<img class="autoreloadTank" height="120px" id="'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
-				}
-				?>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- /.carousel -->
+    
 
 
 
@@ -70,8 +44,25 @@ include("helper/parseSensorData.php");
 				foreach($_SESSION['data'] as $sensorData)
 				{
 					echo '<div class="col-lg-3">';
-					echo '<h2>Tank'.$sensorData["id"].'</h2>';
-					echo '<p>This graphic shows the actual level of the first Tank.</p>';
+					echo '<h2>'.$sensorData["description"].'</h2>';
+					echo '<p>hier sieht man die aktuelle Konfiguration des Sensors</p>';
+					echo '<ul class="list-group">';
+					
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.$sensorData["sensorType"].'</span>';
+					echo 'Sensortyp</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.$sensorData["sensorUnit"].'</span>';
+					echo 'Masseinheit</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.$sensorData["tankHeight"].'</span>';
+					echo 'Tankhöhe</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.(time()-end($sensorData["depthMeasurements"])["time"]).'s</span>';
+					echo 'Alter der Messung</li>';
+					
+					
+					echo '</ul>';
 					echo '<p><a class="btn btn-default" href="debug.php" role="button">View details &raquo;</a></p>';
 					
 					echo '</div>';
