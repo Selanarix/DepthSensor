@@ -1,40 +1,42 @@
 
 #ifndef HARDWARE_ABSTRACTION_LAYER_H_
-#ifndef HARDWARE_ABSTRACTION_LAYER_H_
+#define HARDWARE_ABSTRACTION_LAYER_H_
 
 namespace HAL
 { 
     typedef unsigned int PinID;
-    
-    typedef struct
-    {
-        PinID pin;
-        PinType pType;
-        PinPullup pPull;
-    } Pin;
 
     typedef enum
     {
-        OUTPUT,
-        INPUT,
+        PIN_OUTPUT,
+        PIN_INPUT
     } PinType;
 
     typedef enum
     {
-        HEIGH,
-        LOW,
+        PIN_HEIGH,
+        PIN_LOW
     } PinState;
 
     typedef enum
     {
         NOPULL,
         PULLUP,
-        PULLDOWN,
-    } Pullup;
+        PULLDOWN
+    } PinPullup;
+    
+       typedef struct
+    {
+        PinID pin;
+        PinType pType;
+        PinPullup pPull;
+    } Pin;
 
     void initPin(const Pin* p);
     unsigned int analogReadPin(const Pin* p);
     void digitalSetPin(const Pin* p, const PinState s);
     PinState digitalReadPin(const Pin* p);
+    
+    
 }
 #endif

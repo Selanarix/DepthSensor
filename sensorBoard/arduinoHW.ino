@@ -13,7 +13,7 @@ namespace HAL
     //------------------------------- Public Functions -----------------------------
     void initPin(const Pin* p)  
     {
-        pinMode(p->pin, p->PinType);
+        pinMode(p->pin, p->pType);
     }
 
     unsigned int analogReadPin(const Pin* p)
@@ -28,7 +28,7 @@ namespace HAL
     
     PinState digitalReadPin(const Pin* p)
     {
-        return digitalRead(p->ping);
+        return (PinState)digitalRead(p->pin);
     }
     //------------------------------ Private Functions -----------------------------
 
