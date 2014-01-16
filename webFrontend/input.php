@@ -67,10 +67,6 @@ function setUpDefaultXML($dataSet, $xml)
     $floorArea->appendChild($xml->createTextNode('0'));
     $configuration->appendChild($floorArea);
 
-    $colorOfGraph = $xml->createElement("ColorOfGraph");
-    $colorOfGraph->appendChild($xml->createTextNode('red'));
-    $configuration->appendChild($colorOfGraph);
-
     $measurements = $xml->createElement("measurements");
 
     $sensor->appendChild($configuration);

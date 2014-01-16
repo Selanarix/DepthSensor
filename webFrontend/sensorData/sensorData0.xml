@@ -8,7 +8,6 @@
     <SensorUnit>cm</SensorUnit>
     <SensorType>Pressure</SensorType>
     <floorArea>0</floorArea>
-    <ColorOfGraph>red</ColorOfGraph>
   </configuration>
   <measurements>
     
