@@ -23,7 +23,7 @@
 	
 	$DataSet = graphDefineData($sensorDataSets[$sensorId]);
 	$Graph = graphInitGraph($DataSet);
-	graphRender($DataSet, $Graph, $sensorDataSets[$sensorId]["description"]);
+	graphRender($DataSet, $Graph, $sensorDataSets[$sensorId]);
 	exit();
 	
 	function graphDefineData($sensorSet)
@@ -59,8 +59,8 @@
 			$DataSet->setXAxisName("Time");
 			$DataSet->setXAxisUnit("s");
 			
-			$DataSet->setYAxisName("Depth");
-			$DataSet->setYAxisUnit("cm");
+			$DataSet->setYAxisName($sensorSet["sensorType"]);
+			$DataSet->setYAxisUnit($sensorSet["sensorUnit"]);
 			
 		return $DataSet;
 	}
@@ -69,7 +69,7 @@
 	{
 		// Initialise the graph
 		 $Graph = new pChart(700,250);
-		 $Graph->setFixedScale(0,50);
+		// $Graph->setFixedScale(0,50);
 		 $Graph->setFontProperties("tahoma.ttf",8);
 		 $Graph->setGraphArea(70,30,600,200);
 		 $Graph->drawFilledRoundedRectangle(7,7,693,233,5,240,240,240);
@@ -84,7 +84,7 @@
 		return $Graph;
 	}
 
-	function graphRender($DataSet, $Graph, $statName)
+	function graphRender($DataSet, $Graph, $sensorSet)
 	{
 		// Draw the cubic curve graph  
 		$Graph->drawFilledLineGraph($DataSet->GetData(),$DataSet->GetDataDescription(),50,TRUE);
@@ -94,7 +94,7 @@
 		$Graph->setFontProperties("tahoma.ttf",8);  
 		//$Graph->drawLegend(55,45,$DataSet->GetDataDescription(),255,255,255);  
 		$Graph->setFontProperties("tahoma.ttf",10);  
-		$Graph->drawTitle(60,22,$statName,50,50,50,585);  
+		$Graph->drawTitle(60,22,$sensorSet["description"],50,50,50,585);  
 		$Graph->Stroke();
 	}
 ?>

@@ -35,7 +35,7 @@ namespace Network
     /* if you don't want to use DNS (and reduce your sketch size)
     * use the numeric IP instead of the name for the server:
     */
-    const IPAddress server(130,43,188,8);  // numeric IP for my Notebook (no DNS)
+    const IPAddress server(109,175,148,72);  // numeric IP for my Notebook (no DNS)
     //char server[] = "www.google.com";    // name address for Google (using DNS)
 
     //------------------------------- Public Functions -----------------------------
