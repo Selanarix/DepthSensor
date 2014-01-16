@@ -16,7 +16,7 @@ namespace TemperaturSensor
 
     //------------------------ Read only ------------------------------------------
 
-    const int tempSensorPin = 3;
+    const int tempSensorPin = 1;
 
     //------------------------------- Public Functions -----------------------------
  
@@ -28,6 +28,8 @@ namespace TemperaturSensor
     temperatur measureTemperatur()
     {
         double tempvalue = (double)analogRead(tempSensorPin);
+        Serial.print("Temp [C]: ");
+        Serial.println(5000.0 /1024.0 * tempvalue / 10.0);
         return  (temperatur)(5000.0 /1024.0 * tempvalue / 10.0);
     }
     

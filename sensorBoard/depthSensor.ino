@@ -55,7 +55,7 @@ namespace DepthSensor
      */
     void initDepthSensorHW()
     {
-        pinMode(depthSensorPin, INPUT_PULLUP);
+        pinMode(depthSensorPin, INPUT);
     }
 
     /**
@@ -99,6 +99,9 @@ namespace DepthSensor
 		    if(SensorValuesOutOfCourseCallback != 0)
 			    SensorValuesOutOfCourseCallback(averageSensorTestResult);
 	    }
+
+            Serial.print("Tiefe [cm]: ");
+            Serial.println(avgDepthOfSeries);
 	    return avgDepthOfSeries;
     }
 
@@ -120,14 +123,16 @@ namespace DepthSensor
         double pressure = 0.0;
         double adcvalue = 0.0;
         double sensorVoltageADC = 0.0;
-        const double offset = 0.27;
+        const double offset = 0.19;
 
         adcvalue = (double)analogRead(depthSensorPin);
-
+        //      Serial.print("Rohwert [ADC]: ");
+        //      Serial.println(adcvalue);
+        
         //Formel aus Datenblatt (in kPa): Vout = Vs*(0,0018*p+0,04)        
         //Umgestellt nach p (in hPa!!): p=(Vout-0,2)/(9*10^-4)
 
-        sensorVoltageADC = (adcvalue)*(5.0/1023.0);
+        sensorVoltageADC = (adcvalue)*(5.0/1024.0);
         //      Serial.print("Rohwert [V]: ");
         //      Serial.println(sensorVoltageADC);
 
