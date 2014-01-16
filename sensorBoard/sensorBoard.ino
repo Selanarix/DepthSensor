@@ -6,10 +6,11 @@
 void setup()
 {
     Serial.begin(9600); 
-    ProjectLED::initLedPins();
+  /*  ProjectLED::initLedPins();
     Network::initNetworkStack();
     DepthSensor::initDepthSensorHW();
     TemperaturSensor::initTemperaturSensorHW();
+    */
 }
 
 void flashLED_1s()
@@ -23,7 +24,7 @@ void flashLED_1s()
 
 void loop()
 {    
-    ProjectLED::LED_On(ProjectLED::LED0);
+  /*  ProjectLED::LED_On(ProjectLED::LED0);
     DepthSensor::depth dep = DepthSensor::measureDepth();
     TemperaturSensor::temperatur temp = TemperaturSensor::measureTemperatur();   
     ProjectLED::LED_Off(ProjectLED::LED0);
@@ -39,4 +40,16 @@ void loop()
     
     flashLED_1s();
     flashLED_1s();
+    */
+    pinMode(2, INPUT);
+    
+    int pressure = 0;
+    pressure = analogRead(2);
+    Serial.print("ADC: ");
+    Serial.println(pressure);
+    Serial.print("Sensor [mV]: ");
+    Serial.println(5000.0/1024.0 * pressure / 125);
+
+
+    delay(500);
 }
