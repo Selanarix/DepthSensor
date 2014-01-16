@@ -1,5 +1,48 @@
 <?php
 include("helper/parseSensorData.php");
+include("helper/dateHelper.php");
+
+function printPressureSensorInfo($sensorData)
+{
+					echo '<li class="list-group-item">';
+                    echo '<span class="badge">'.$sensorData["floorArea"] * end($sensorData["measurements"])["value"]." ".$sensorData["sensorUnit"].'&#179;</span>';
+					echo 'Füllstand</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.getFormatedTimeDiff(end($sensorData["measurements"])["time"],time()).'</span>';
+					echo 'Alter der Messung</li>';
+					echo '<li class="list-group-item">';                    
+                    echo '<span class="badge">'.$sensorData["floorArea"] * $sensorData["tankHeight"]." ".$sensorData["sensorUnit"].'&#179;</span>';
+					echo 'Kapazität</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.$sensorData["tankHeight"]." ".$sensorData["sensorUnit"].'</span>';
+					echo 'Tankhöhe</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.$sensorData["floorArea"]." ".$sensorData["sensorUnit"].'&#178;</span>';				
+					echo 'Grundfläche</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.$sensorData["sensorType"].'</span>';
+					echo 'Sensortyp</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.$sensorData["sensorUnit"].'</span>';
+					echo 'Masseinheit</li>';
+}
+
+function printTemperaturSensorInfo($sensorData)
+{
+				echo '<li class="list-group-item">';
+                    echo '<span class="badge">'.end($sensorData["measurements"])["value"]." ".$sensorData["sensorUnit"].'</span>';
+					echo 'Temperatur</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.getFormatedTimeDiff(end($sensorData["measurements"])["time"],time()).'</span>';
+					echo 'Alter der Messung</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.$sensorData["sensorType"].'</span>';
+					echo 'Sensortyp</li>';
+					echo '<li class="list-group-item">';
+					echo '<span class="badge">'.$sensorData["sensorUnit"].'</span>';
+					echo 'Masseinheit</li>';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -43,25 +86,22 @@ include("helper/parseSensorData.php");
 		<?php
 				foreach($_SESSION['data'] as $sensorData)
 				{
+                    
 					echo '<div class="col-lg-3">';
-					echo '<h2>'.$sensorData["description"].'</h2>';
-					echo '<p>hier sieht man die aktuelle Konfiguration des Sensors</p>';
+					echo '<h2>'.$sensorData["name"].'</h2>';
+					echo '<p>'.$sensorData["description"].'</p>';
 					echo '<ul class="list-group">';
 					
-					echo '<li class="list-group-item">';
-					echo '<span class="badge">'.$sensorData["sensorType"].'</span>';
-					echo 'Sensortyp</li>';
-					echo '<li class="list-group-item">';
-					echo '<span class="badge">'.$sensorData["sensorUnit"].'</span>';
-					echo 'Masseinheit</li>';
-					echo '<li class="list-group-item">';
-					echo '<span class="badge">'.$sensorData["tankHeight"].'</span>';
-					echo 'Tankhöhe</li>';
-					echo '<li class="list-group-item">';
-					echo '<span class="badge">'.(time()-end($sensorData["depthMeasurements"])["time"]).'s</span>';
-					echo 'Alter der Messung</li>';
-					
-					
+                    if($sensorData["sensorType"] == "Pressure")
+				        printPressureSensorInfo($sensorData);
+					else if($sensorData["sensorType"] == "Temperature")
+                        printTemperaturSensorInfo($sensorData);
+                    else
+                    {
+    				    echo '<li class="list-group-item">';
+					    echo '<span class="badge">'.$sensorData["sensorType"].'</span>';
+					    echo 'Sensortyp</li>';
+                    }
 					echo '</ul>';
 					echo '<p><a class="btn btn-default" href="debug.php" role="button">View details &raquo;</a></p>';
 					

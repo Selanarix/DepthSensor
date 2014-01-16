@@ -26,7 +26,7 @@ function generateTankImage($tonW, $tonE, $tonH, $prim, $sensorDataSet)
         return false;
     else
     {
-        $newestSensorValue = $sensorDataSet["depthMeasurements"][count($sensorDataSet["depthMeasurements"])-1];
+        $newestSensorValue = $sensorDataSet["measurements"][count($sensorDataSet["measurements"])-1];
         $percent = $newestSensorValue['value']*100.0/$sensorDataSet["tankHeight"] ;
     }    
     //Solve overflow error

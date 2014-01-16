@@ -26,7 +26,7 @@ function parseSensorXML($filename)
     $dataSet["description"] = (string)$configTag->TankDescription;
     $dataSet["sizeOfHistory"] = (int)$configTag->SizeOfHistory;
     $dataSet["id"] = (int)$sensor["sensorID"];
-    $dataSet["depthMeasurements"] = array();
+    $dataSet["measurements"] = array();
 
         /* For each <character> node, we echo a separate <name>. */
     foreach ($sensor->measurements->measurement as $measure) 
@@ -34,7 +34,7 @@ function parseSensorXML($filename)
        $measureSet = array();
        $measureSet["value"] = (int)$measure;
        $measureSet["time"] = (int)$measure["measurementTime"];
-       array_push($dataSet["depthMeasurements"],$measureSet);
+       array_push($dataSet["measurements"],$measureSet);
     }
 
     return $dataSet;

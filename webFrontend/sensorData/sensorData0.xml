@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sensor sensorID="0">
   <configuration>
-    <NameForID>0</NameForID>
-    <TankDescription>Tank with id: 0</TankDescription>
+    <NameForID>Frischwassertank</NameForID>
+    <TankDescription>Dieser Tank wird für die Versorgung des Hauses verwendet.</TankDescription>
     <SizeOfHistory>10</SizeOfHistory>
     <TankHeight>100</TankHeight>
     <SensorUnit>cm</SensorUnit>
     <SensorType>Pressure</SensorType>
-    <floorArea>0</floorArea>
+    <floorArea>70</floorArea>
   </configuration>
   <measurements>
     

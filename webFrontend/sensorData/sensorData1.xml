@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sensor sensorID="1">
   <configuration>
-    <NameForID>1</NameForID>
-    <TankDescription>Tank with id: 1</TankDescription>
+    <NameForID>Außentemperatur</NameForID>
+    <TankDescription>Außentemperatur an der Zisterne</TankDescription>
     <SizeOfHistory>10</SizeOfHistory>
-    <TankHeight>100</TankHeight>
+    <TankHeight>0</TankHeight>
     <floorArea>0</floorArea>
-    <SensorUnit>cm</SensorUnit>
-    <SensorType>Pressure</SensorType>
+    <SensorUnit>°C</SensorUnit>
+    <SensorType>Temperature</SensorType>
   </configuration>
   <measurements>
     

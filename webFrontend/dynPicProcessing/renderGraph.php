@@ -34,7 +34,7 @@
 			$nameOfVal = "Serie";
 			$nameOfX = "XLabel";
 			
-			foreach ($sensorSet["depthMeasurements"] as $set)
+			foreach ($sensorSet["measurements"] as $set)
 			{
 				$DataSet->AddPoint($set["value"],$nameOfVal);
 				array_push($timestamps, $set["time"]);
@@ -94,7 +94,7 @@
 		$Graph->setFontProperties("tahoma.ttf",8);  
 		//$Graph->drawLegend(55,45,$DataSet->GetDataDescription(),255,255,255);  
 		$Graph->setFontProperties("tahoma.ttf",10);  
-		$Graph->drawTitle(60,22,$sensorSet["description"],50,50,50,585);  
+		$Graph->drawTitle(60,22,$sensorSet["name"],50,50,50,585);  
 		$Graph->Stroke();
 	}
 ?>
