@@ -7,7 +7,7 @@ function diff_time($differenz)
    $min  = floor($differenz / 60 % 60);
    $sek  = floor($differenz % 60);
 
-   return array("sek"=>$sek,"min"=>$min,"hour"=>$std,"day"=>$tag,"week"=>$woche);
+   return array("sec"=>$sek,"min"=>$min,"hour"=>$std,"day"=>$tag,"week"=>$woche);
 }
 
 function getFormatedTimeDiff($old,$new)

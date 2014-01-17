@@ -60,10 +60,18 @@ elseif (false !== strpos($url,'debug'))
 				<?php
 				foreach($_SESSION['data'] as $sensorData)
 				{
+                    //Skip non pressure sensors for tank image
+                    if($sensorData["sensorType"] != "Pressure")
+                        continue;
+
 					echo '<img class="autoreloadTank" height="120px" id="'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
+                    echo "<div>$sensorData["floorArea"] * end($sensorData["measurements"])["value"]." ".$sensorData["sensorUnit"].'&#179</div>'; 
 				}
 				?>
 				</p>
+                <p>
+                    
+                </p>
             </div>
           </div>
         </div>
