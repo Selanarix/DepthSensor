@@ -1,5 +1,6 @@
 #include "depthSensor.h"  
 #include "myUtil.h"
+#include "logger.h"
 
 namespace DepthSensor 
 {
@@ -56,6 +57,7 @@ namespace DepthSensor
     void initDepthSensorHW()
     {
         pinMode(depthSensorPin, INPUT);
+        Logger::log(Logger::INFO, "depth sensor initialized");
     }
 
     /**

@@ -1,5 +1,6 @@
 #include "tempSensor.h"
 #include "myUtil.h"
+#include "logger.h"
 
 namespace TemperaturSensor 
 {
@@ -23,6 +24,7 @@ namespace TemperaturSensor
     void initTemperaturSensorHW()
     {
         pinMode(tempSensorPin, INPUT);
+        Logger::log(Logger::INFO, "temperatur sensor initialized");
     }
 
     temperatur measureTemperatur()

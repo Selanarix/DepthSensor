@@ -1,4 +1,5 @@
 #include "network.h"  
+#include "logger.h"
 #include <SPI.h>
 #include <Ethernet.h>
 
@@ -10,10 +11,7 @@ namespace Network
 
     //-------------------- Private Function Prototypes -----------------------------
     boolean httpConnect();
-    boolean httpDisconnect();
-
-    void handleLAN();
-   
+    boolean httpDisconnect();   
     //------------------------- Private Data ---------------------------------------
 
     static EthernetClient client;
@@ -45,15 +43,16 @@ namespace Network
         // start the Ethernet connection:
         if (Ethernet.begin(mac) == 0) 
         {
-            Serial.println("Failed to configure Ethernet using DHCP");
-        //congifure using IP address instead of DHCP
-        Ethernet.begin(mac, ip);
+            Logger::log(Logger::WARNING,"Failed to configure Ethernet using DHCP");
+            //congifure using IP address instead of DHCP
+            Ethernet.begin(mac, ip);
         }
 
      // give the Ethernet shield a second to initialize:
         delay(500);
-        Serial.print("My IP address: ");
-        Serial.println( Ethernet.localIP() );
+        String logStr = "My IP address: " + Ethernet.localIP();
+        Logger::logString(Logger::INFO, logStr);
+        Logger::log(Logger::INFO, "network initialized");
     }
 
     // this method makes a HTTP connection to the server:
@@ -62,7 +61,7 @@ namespace Network
       if (httpConnect())
       {
           // send the HTTP PUT request:
-          Serial.println("send http request...");
+          Logger::log(Logger::INFO, "send http GET request");
           client.print("PUT /input.php?sensor=");
           client.print(id);
           client.print("&value=");
@@ -78,10 +77,10 @@ namespace Network
         // if there's a successful connection:
         if (client.connect(server, 80)) 
         {
-            Serial.println("http connecting...");
+            Logger::log(Logger::INFO, "tcp connection established");
             return true;
         }
-        Serial.println("connection failed");
+        Logger::log(Logger::ERROR, "tcp connection failed");
         client.stop();
         return false;
     }
@@ -89,33 +88,7 @@ namespace Network
     boolean httpDisconnect()
     {
         client.stop();
-        Serial.println("http disconneting..");
+        Logger::log(Logger::INFO, "close tcp connection");
         return true;
     }
-
-    void handleLAN()
-    {
-        // state of the connection last time
-        static boolean lastConnected = false;            
-        // if there are incoming bytes available 
-        // from the server, read them and print them:
-        if (client.available()) 
-        {
-            char c = client.read();
-            Serial.println(c);
-        }
-      
-        // if the server's disconnected, stop the client:
-        if (!client.connected() && lastConnected) 
-        {
-            Serial.println();
-            Serial.println("handle disconnect...");
-            client.stop();
-        }
-        
-        // store the state of the connection for next time
-        lastConnected = client.connected();
-    }
-
-
 }

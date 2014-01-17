@@ -2,45 +2,44 @@
 #include "depthSensor.h"
 #include "tempSensor.h"
 #include "network.h"
+#include "logger.h"
 
 void setup()
 {
-    Serial.begin(9600); 
+    Logger::initLogger();
   /*  ProjectLED::initLedPins();
     Network::initNetworkStack();
     DepthSensor::initDepthSensorHW();
     TemperaturSensor::initTemperaturSensorHW();
     */
+    Logger::log(Logger::INFO,"System initialized");
 }
 
 void flashLED_1s()
 {
-    delay(300);
     ProjectLED::LED_On(ProjectLED::LED0);
-    delay(400);
+    delay(500);
     ProjectLED::LED_Off(ProjectLED::LED0);
-    delay(300);
+    delay(500);
 }
 
 void loop()
-{    
-  /*  ProjectLED::LED_On(ProjectLED::LED0);
+{
+    /*
     DepthSensor::depth dep = DepthSensor::measureDepth();
     TemperaturSensor::temperatur temp = TemperaturSensor::measureTemperatur();   
-    ProjectLED::LED_Off(ProjectLED::LED0);
     
     flashLED_1s();
  
-    ProjectLED::LED_On(ProjectLED::LED0);
     //Send depth sensor
     Network::http_GET_Request(0, dep);
     //Send temperatur sensor
     Network::http_GET_Request(5,temp);
-    ProjectLED::LED_Off(ProjectLED::LED0);
     
     flashLED_1s();
     flashLED_1s();
     */
+ 
     pinMode(2, INPUT);
     
     int pressure = 0;
