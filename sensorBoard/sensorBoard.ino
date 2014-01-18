@@ -1,8 +1,9 @@
 #include "led.h"
-#include "depthSensor.h"
-#include "tempSensor.h"
-#include "network.h"
+//#include "depthSensor.h"
+//#include "tempSensor.h"
+//#include "network.h"
 #include "logger.h"
+#include <SPI.h>
 
 void setup()
 {
@@ -12,7 +13,18 @@ void setup()
     DepthSensor::initDepthSensorHW();
     TemperaturSensor::initTemperaturSensorHW();
     */
+    pinMode(9,OUTPUT);
+    
+    SPI.begin();
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setClockDivider(SPI_CLOCK_DIV64);
+    digitalWrite(9,LOW);
+    SPI.transfer(0x02);
+    digitalWrite(9,HIGH);
+    
     Logger::log(Logger::INFO,"System initialized");
+    
+    
 }
 
 void flashLED_1s()
@@ -25,7 +37,7 @@ void flashLED_1s()
 
 void loop()
 {
-    /*
+/*    
     DepthSensor::depth dep = DepthSensor::measureDepth();
     TemperaturSensor::temperatur temp = TemperaturSensor::measureTemperatur();   
     
@@ -38,8 +50,8 @@ void loop()
     
     flashLED_1s();
     flashLED_1s();
-    */
- 
+ */   
+ /*
     pinMode(2, INPUT);
     
     int pressure = 0;
@@ -48,7 +60,13 @@ void loop()
     Serial.println(pressure);
     Serial.print("Sensor [mV]: ");
     Serial.println(5000.0/1024.0 * pressure / 125);
+*/
 
-
-    delay(500);
+  uint32_t result=0;
+  
+  digitalWrite(9,LOW);
+  result=SPI.transfer(0xD4);
+  digitalWrite(9,HIGH);
+  Serial.println(result);
+    delay(10);
 }
