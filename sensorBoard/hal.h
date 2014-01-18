@@ -4,38 +4,26 @@
 
 namespace HAL
 { 
-    typedef unsigned int PinID;
+    typedef unsigned char PinID;
 
     typedef enum
     {
-        PIN_OUTPUT,
-        PIN_INPUT
+        PIN_OUTPUT = 0,
+        PIN_INPUT_PULLUP = 1,
+        PIN_INPUT_PULLDOWN = 2,
+        PIN_INPUT = 3
     } PinType;
 
     typedef enum
     {
-        PIN_HEIGH,
-        PIN_LOW
+        PIN_LOW = 0,
+        PIN_HEIGH = 1  
     } PinState;
 
-    typedef enum
-    {
-        NOPULL,
-        PULLUP,
-        PULLDOWN
-    } PinPullup;
-    
-       typedef struct
-    {
-        PinID pin;
-        PinType pType;
-        PinPullup pPull;
-    } Pin;
-
-    void initPin(const Pin* p);
-    unsigned int analogReadPin(const Pin* p);
-    void digitalSetPin(const Pin* p, const PinState s);
-    PinState digitalReadPin(const Pin* p);
+    void initPin(PinID, PinType);
+    int analogReadPin(PinID p);
+    void digitalSetPin(PinID p, PinState s);
+    PinState digitalReadPin( PinID p);
     
     
 }
