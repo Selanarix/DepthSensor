@@ -2,6 +2,8 @@
 #ifndef TEMPSENSOR_H_
 #define TEMPSENSOR_H_
 
+#define a 10
+
 namespace TemperaturSensor 
 {
   

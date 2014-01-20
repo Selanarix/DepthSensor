@@ -9,6 +9,7 @@ namespace TemperaturSensor
 
     //-------------------- Private Function Prototypes -----------------------------
 
+  
 
     //------------------------- Private Data ---------------------------------------
 
@@ -30,8 +31,7 @@ namespace TemperaturSensor
     temperatur measureTemperatur()
     {
         double tempvalue = (double)analogRead(tempSensorPin);
-        Serial.print("Temp [C]: ");
-        Serial.println(5000.0 /1024.0 * tempvalue / 10.0);
+        Logger::logDouble(Logger::INFO, "Temp [C]: ",(5000.0 /1024.0 * tempvalue / 10.0));
         return  (temperatur)(5000.0 /1024.0 * tempvalue / 10.0);
     }
     
