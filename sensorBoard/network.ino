@@ -1,6 +1,6 @@
 #include "network.h"  
 #include "logger.h"
-#include <SPI.h>
+//#include <SPI.h>
 #include <Ethernet.h>
 
 
@@ -52,7 +52,9 @@ namespace Network
         delay(500);
         String logStr = "My IP address: " + Ethernet.localIP();
         Logger::logString(Logger::INFO, logStr);
+        delay(10);
         Logger::log(Logger::INFO, "network initialized");
+        delay(10);
     }
 
     // this method makes a HTTP connection to the server:

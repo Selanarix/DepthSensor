@@ -1,30 +1,40 @@
 #include "led.h"
 //#include "depthSensor.h"
 //#include "tempSensor.h"
-//#include "network.h"
+#include "network.h"
 #include "logger.h"
 #include <SPI.h>
 
 void setup()
 {
     Logger::initLogger();
-  /*  ProjectLED::initLedPins();
-    Network::initNetworkStack();
-    DepthSensor::initDepthSensorHW();
-    TemperaturSensor::initTemperaturSensorHW();
-    */
-    pinMode(9,OUTPUT);
-    
-    SPI.begin();
-    SPI.setBitOrder(MSBFIRST);
-    SPI.setClockDivider(SPI_CLOCK_DIV64);
-    digitalWrite(9,LOW);
-    SPI.transfer(0x02);
-    digitalWrite(9,HIGH);
+    initADC();
+  //  ProjectLED::initLedPins();
+ //   Network::initNetworkStack();
+  //  DepthSensor::initDepthSensorHW();
+  //  TemperaturSensor::initTemperaturSensorHW();
+ 
     
     Logger::log(Logger::INFO,"System initialized");
     
     
+}
+
+void initADC()
+{
+/* Init Pin an SPI Bus*/
+    pinMode(9,OUTPUT);
+    
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setDataMode(SPI_MODE0);
+    SPI.setClockDivider(SPI_CLOCK_DIV64);
+    SPI.begin();
+
+/*Make first Conversion to kick first malformed value*/
+    digitalWrite(9,LOW);
+    SPI.transfer(0x0C);
+    SPI.transfer(0x00);
+    digitalWrite(9,HIGH);
 }
 
 void flashLED_1s()
@@ -62,11 +72,21 @@ void loop()
     Serial.println(5000.0/1024.0 * pressure / 125);
 */
 
+  uint32_t resultMsb=0, resultLsb=0;
   uint32_t result=0;
   
+  
+  SPI.setBitOrder(MSBFIRST);
+  SPI.setDataMode(SPI_MODE0);
+  SPI.setClockDivider(SPI_CLOCK_DIV64);
   digitalWrite(9,LOW);
-  result=SPI.transfer(0xD4);
+
+  resultMsb=SPI.transfer(0x0C);
+  resultLsb=SPI.transfer(0x00);
   digitalWrite(9,HIGH);
+  result=( resultMsb<<8 | resultLsb );
+  result=result>>4;
   Serial.println(result);
+  Serial.println(5000.0 /4096.0 * result / 10.0);
     delay(10);
 }

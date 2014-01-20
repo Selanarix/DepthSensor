@@ -1,0 +1,32 @@
+Temperature Sensor
+-------------------------
+-buy amplifier for TempSensor or more sensitive TempSensor
+-TempSensor must be able to measure negative temperature [°C]
+
+
+ADC
+-------------------------
+-run 12bit ADC over SPI (check)
+
+
+Depth Sensor
+-------------------------
+-get more sensitive pressure sensor
+
+Software
+-------------------------
+-troubleshoot LAN conectivity (not very stable)
+- use HAL
+- write efficient HAL functions 
+- write wrapper for ADC
+- LAN sending repetition in case of error
+- exclude measurement out of sensors to own functionality
+
+
+Software
+-------------------------
+- show info next to graph
+- time unit of graph
+- split view for temperatur and pressure
+- show temperature in header
+- 
