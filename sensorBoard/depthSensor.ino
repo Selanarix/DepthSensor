@@ -1,6 +1,6 @@
 #include "depthSensor.h"  
-#include "myUtil.h"
 #include "logger.h"
+#include "testSeries.h"
 
 namespace DepthSensor 
 {
@@ -8,42 +8,40 @@ namespace DepthSensor
       
     typedef enum
     {
-	    TestSeriesOK,
-	    SensorOutOfFunction,
-	    TestSeriesUnderMinRange,
-	    TestSeriesAboveMaxRange,
-	    TestSeriesMeanVariationToBig
-    } TestSeriesTestResult;
-
-    typedef enum
-    {
 	    AverageMeasurmentOK,
 	    AverageMeasurmentNotInRange
     } AverageMeasuementTestResult;
 
+   typedef enum
+    {
+         TestSeriesOK,
+         SensorOutOfFunction,
+         TestSeriesUnderMinRange,
+         TestSeriesAboveMaxRange,
+         TestSeriesMeanVariationToBig
+    } TestSeriesTestResult;
+
     //-------------------- Private Function Prototypes -----------------------------
 
-    void takeTestSeries();
-    TestSeriesTestResult testTestSeries();
-    depth evaluateTestSeries();
-    AverageMeasuementTestResult testEvaluatedValue(const depth depth);
+    TestSeries::TestSeriesCheckResult testTestSeries();
+    Depth evaluateTestSeries();
+    AverageMeasuementTestResult testEvaluatedValue(const Depth depth);
     void readDepthSensor(double* measurementOfSeries);
 
-    void callback1(TestSeriesTestResult);
-    void callback2(AverageMeasuementTestResult);
+    void errorHandlingTestSeriesError(TestSeriesTestResult);
+    void errorNewAverageDepth(AverageMeasuementTestResult);
 
     //------------------------- Private Data ---------------------------------------
 
-    static void (*testSeriesErrorCallback)(TestSeriesTestResult) = callback1;
-    static void (*SensorValuesOutOfCourseCallback)(AverageMeasuementTestResult) = callback2;
-
-    static double testSeries[AMOUNT_OF_DEPTH_SPOT_TESTS] = {0};
-
     //------------------------ Read only ------------------------------------------
 
-    const uint32_t TEST_SERIES_RETRIES_IF_ERROR = 10;
-    const uint32_t MEASUREMENT_RETRIE_DELAY_IN_MSEC = 2000;
-    const uint32_t TEST_SERIES_MEASURMENT_DELAX_IN_MSEC = 10;
+    const TestSeries::TestSeriesControll depthMeasurementControll
+    {
+        10,     // maximalMeasurementRetries;
+        2000,   // delayForRetry_ms;
+        10,      // delayBetweenMeasurements_ms;
+        10      // usedMeasurmentsPerTestSeries <= TEST_SERIES_SIZE 
+    };
 
     /*
     * Input Vout of DiffSensor
@@ -64,58 +62,21 @@ namespace DepthSensor
     * Measures the depth by taking several measurments and calculates a
     * average one. 
     */
-
-    depth measureDepth()
+    Depth measureDepth()
     {
-	    uint32_t seriesRetries;
-	    depth avgDepthOfSeries = 0;
-
-
-	    TestSeriesTestResult seriesTestResult = SensorOutOfFunction;
-
-	    //Try to get a valid test serie of depth measurments
-	    for(seriesRetries = 0; seriesTestResult != TestSeriesOK &&
-			           seriesRetries < TEST_SERIES_RETRIES_IF_ERROR;
-	    seriesRetries++)
-	    {
-		    takeTestSeries();
-		    seriesTestResult = testTestSeries();
-            //Serial.println(seriesTestResult);
-		    if(seriesTestResult != TestSeriesOK)
-			    delay(MEASUREMENT_RETRIE_DELAY_IN_MSEC);
-	    }
-	    //Could not build a valid test series
-	    if(seriesTestResult != TestSeriesOK)
-	    {
-		    if(testSeriesErrorCallback != 0)
-			    testSeriesErrorCallback(seriesTestResult);
-		    return 0;
-	    }
+	    TestSeries::measure(&depthMeasurementControll, testTestSeries, readDepthSensor);
 
 	    //Process data out of test series
-	    avgDepthOfSeries = evaluateTestSeries();
+	    Depth avgDepthOfSeries = (Depth)TestSeries::getAverageMeanOfSeries(&depthMeasurementControll);
 	    AverageMeasuementTestResult averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
 	    //Keep sensor value but generate callback if not as acpected. 
 	    if(averageSensorTestResult != AverageMeasurmentOK)
-	    {
-		    if(SensorValuesOutOfCourseCallback != 0)
-			    SensorValuesOutOfCourseCallback(averageSensorTestResult);
-	    }
-            Logger::logInt(Logger::INFO, "Tiefe [cm]: ", avgDepthOfSeries);
+			    errorNewAverageDepth(averageSensorTestResult);
+        Logger::logInt(Logger::INFO, "Tiefe [cm]: ", avgDepthOfSeries);
 	    return avgDepthOfSeries;
     }
 
     //------------------------------ Private Functions -----------------------------
-
-    void takeTestSeries()
-    {
-	    uint32_t measurement;
-	    for(measurement = 0; measurement < AMOUNT_OF_DEPTH_SPOT_TESTS; measurement ++)
-	    {
-		    readDepthSensor(&(testSeries[measurement]));
-		    delay(TEST_SERIES_MEASURMENT_DELAX_IN_MSEC);	
-	    }		
-    }
 
     void readDepthSensor(double* measurementOfSeries)
     {
@@ -144,46 +105,39 @@ namespace DepthSensor
 	    *measurementOfSeries = pressure;
     }
 
-    TestSeriesTestResult testTestSeries()
+    TestSeries::TestSeriesCheckResult testTestSeries()
     {
-	    Utils::MinMax res = Utils::evaluateMinMax(testSeries,AMOUNT_OF_DEPTH_SPOT_TESTS);
+        TestSeriesTestResult errorTypes = TestSeriesOK;
+	TestSeries::MinMax res = TestSeries::evaluateMinMaxOfTestSeries(&depthMeasurementControll);
 
-	    depth meanVariation = res.max - res.min;
-	    if(res.min < 0.0001 && res.max < 0.0001)
-		    return SensorOutOfFunction;
-	    if(res.min < MINIMAL_EXPECTED_DEPTH_SENSOR_VALUE)
-		    return TestSeriesUnderMinRange;
-	    if(res.max > MAXIMAL_EXPECTED_DEPTH_SENSOR_VALUE)
-		    return TestSeriesAboveMaxRange;
-	    if(meanVariation > ALLOWED_DEPTH_TEST_SERIES_VARIATION)
-		    return TestSeriesMeanVariationToBig;
+	Depth meanVariation = res.max - res.min;
+	if(res.min < 0.0001 && res.max < 0.0001)
+	    errorTypes = SensorOutOfFunction;
+	else if(res.min < MINIMAL_EXPECTED_DEPTH_SENSOR_VALUE)
+	    errorTypes = TestSeriesUnderMinRange;
+	else if(res.max > MAXIMAL_EXPECTED_DEPTH_SENSOR_VALUE)
+	    errorTypes = TestSeriesAboveMaxRange;
+	else if(meanVariation > ALLOWED_DEPTH_TEST_SERIES_VARIATION)
+	    errorTypes = TestSeriesMeanVariationToBig;
 
-	    return TestSeriesOK;
+        errorHandlingTestSeriesError(errorTypes);
+ 
+        if(errorTypes == SensorOutOfFunction)
+            return TestSeries::TestSeriesCancelMeasurement; //Cancel further       
+        if(errorTypes != TestSeriesOK)
+            return TestSeries::TestSeriesInvalid;
+        
+	    return TestSeries::TestSeriesOK;
     }
 
-    depth evaluateTestSeries()
+    AverageMeasuementTestResult testEvaluatedValue(const Depth dep)
     {
-	    double avg = 0;
-	    int t = 1;
-	    uint32_t measurement;
-
-	    for(measurement = 0; measurement < AMOUNT_OF_DEPTH_SPOT_TESTS; measurement ++)
-	    {
-		    double x = testSeries[measurement];
-		    avg += (x - avg) / t;
-		    t++;
-	    }
-	    return (depth)avg;
-    }
-
-    AverageMeasuementTestResult testEvaluatedValue(const depth dep)
-    {
-	    static depth depthHistory = 0;
+	    static Depth depthHistory = 0;
 	
 	    AverageMeasuementTestResult res = AverageMeasurmentOK;
-	    depth depthDiff;
+	    Depth depthDiff;
 
-	    //Calc diff between new and last depth
+	    //Calc diff between new and last Depth
 	    if(dep > depthHistory)
 		    depthDiff = dep - depthHistory;
 	    else	
@@ -198,7 +152,7 @@ namespace DepthSensor
 
     //-------------------------------------- E r r o r s ------------------------
 
-    void callback1(TestSeriesTestResult a)
+    void errorHandlingTestSeriesError(TestSeriesTestResult a)
     {
       switch(a)
       {
@@ -219,7 +173,7 @@ namespace DepthSensor
       }
     }
 
-    void callback2(AverageMeasuementTestResult b)
+    void errorNewAverageDepth(AverageMeasuementTestResult b)
     {
         switch(b)
         {

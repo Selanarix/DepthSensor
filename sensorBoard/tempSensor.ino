@@ -1,5 +1,4 @@
 #include "tempSensor.h"
-#include "myUtil.h"
 #include "logger.h"
 
 namespace TemperaturSensor 
