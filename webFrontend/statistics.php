@@ -1,5 +1,9 @@
 <?php
 include("helper/parseSensorData.php");
+
+$type = "";
+if(isset($_GET["type"]) )
+	$type = $_GET["type"];
 ?>
 
 <!DOCTYPE html>
@@ -29,23 +33,18 @@ include("helper/parseSensorData.php");
 	<?php include "pageData/include/naviBar.incl"; ?>
 
 
+    <div class="container">
 
-
-    <!-- Marketing messaging and featurettes
-    ================================================== -->
-    <!-- Wrap the rest of the page in another container to center all the content. -->
-
-    <div class="container marketing">
-
-      <!-- two columns of text below the carousel -->
       
 			<?php
 				foreach($_SESSION['data'] as $sensorData)
 				{
-					echo '<div class="row">';
-					echo '<img class="autoreloadGraph" id="'.$sensorData["id"].'" src="dynPicProcessing/renderGraph.php?sensor='.$sensorData["id"].'" />'."\r\n";
-					echo '</div> <!--close row -->';
-
+					if($sensorData["sensorType"] == $type || empty($type) )
+					{
+						echo '<div class="statistic">';
+						echo '<img class="img-responsive autoreloadGraph" id="'.$sensorData["id"].'" src="dynPicProcessing/renderGraph.php?sensor='.$sensorData["id"].'" />'."\r\n";
+						echo '</div> <!--close statistic -->';
+					}
 				}
 			?>
 	
@@ -57,7 +56,7 @@ include("helper/parseSensorData.php");
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="javascript/jquery.js"></script>
     <script src="pageData/style/dist/js/bootstrap.min.js"></script>
   </body>
 </html>

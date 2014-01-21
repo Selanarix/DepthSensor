@@ -12,7 +12,7 @@ $sensorId = $_GET["sensor"];
 if ( !isset($sensorDataSets[$sensorId]))
     exit();
 
-generateTankImage(200, 50, 200, 10, $sensorDataSets[$sensorId]);
+generateTankImage(120, 40, 120, 10, $sensorDataSets[$sensorId]);
 
 
 //Finish programm completely
@@ -62,7 +62,7 @@ function generateTankImage($tonW, $tonE, $tonH, $prim, $sensorDataSet)
     imageellipse($image, $prim+$tonW/2, $prim+$tonE/2 , $tonW, $tonE, $black);
     imageline   ($image, $prim , $prim+$tonH+$tonE/2, $prim, $prim+$tonE/2, $black);
     imageline   ($image, $prim+$tonW, $prim+$tonH+$tonE/2, $prim+$tonW, $prim+$tonE/2, $black);
-    imagettftext($image, 30, 0, $prim + $tonW/2 - 35, $prim + $tonH/2+30, $red, $font, (100-$percent)."%");
+    imagettftext($image, 25, 0, $prim + $tonW/2 - 20, $prim + $tonH/2+30, $red, $font, (100-$percent)."%");
 
     header('Content-Type: image/png');
     //save the image as a png and output 

@@ -61,9 +61,9 @@ function printTemperaturSensorInfo($sensorData)
 
     <!-- Bootstrap core CSS -->
     <link href="pageData/style/dist/css/bootstrap.css" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="pageData/style/custom.css" rel="stylesheet">
+	
   </head>
 <!-- NAVBAR
 ================================================== -->
@@ -118,7 +118,7 @@ function printTemperaturSensorInfo($sensorData)
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="javascript/jquery.js"></script>
     <script src="pageData/style/dist/js/bootstrap.min.js"></script>
   </body>
 </html>
