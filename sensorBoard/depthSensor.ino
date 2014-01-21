@@ -35,7 +35,7 @@ namespace DepthSensor
 
     //------------------------ Read only ------------------------------------------
 
-    const TestSeries::TestSeriesControll depthMeasurementControll
+    const TestSeries::TestSeriesControll depthMeasurementControll =
     {
         10,     // maximalMeasurementRetries;
         2000,   // delayForRetry_ms;
