@@ -14,16 +14,32 @@ function getFormatedTimeDiff($old,$new)
 {
     $res =  diff_time($new-$old);
     if($res["week"] > 0)
-        return $res["week"]." week/s";
+        return $res["week"]." week(s)";
     else if($res["day"] > 0)
-        return $res["day"]." day/s";    
+        return $res["day"]." day(s)";    
     else if($res["hour"] > 0)
-        return $res["hour"]." hour/s";    
+        return $res["hour"]." hour(s)";    
     else if($res["min"] > 0)
-        return $res["min"]." min/s";
+        return $res["min"]." min(s)";
     else
-        return $res["sec"]." sec/s";
+        return $res["sec"]." sec(s)";
     
 }
  
+ 
+ function formatToBase($value,$format)
+{
+	$resFormat =  diff_time($format);
+    if($resFormat["week"] > 0)
+        return floor($value / (7*3600*24))." week(s)";
+    else if($resFormat["day"] > 0)
+        return floor($value / (3600*24))." day(s)";
+    else if($resFormat["hour"] > 0)
+        return floor($value / 3600)." hour(s)";
+    else if($resFormat["min"] > 0)
+        return floor($value / 60). " min(s)";
+    else
+        return $value." sec(s)";
+    
+}
 ?>

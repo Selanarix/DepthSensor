@@ -1,6 +1,8 @@
 <?php
-	session_start();
 
+	session_start();
+	include("../helper/dateHelper.php");
+	
 	// pChart inclusions   
 	include("pChart/pData.class");
 	include("pChart/pChart.class");
@@ -40,12 +42,23 @@
 				array_push($timestamps, $set["time"]);
 			}
 			
+			
+			$timeDiffMin=time();
 			for ($counter=0; $counter<sizeof($timestamps); $counter++)
 			{
-				//$timestamps[$counter] = $timestamps[$counter] - end($timestamps);
-				$timestamps[$counter] = $timestamps[$counter] - time();
+				$timestamps[$counter] = end($timestamps) - $timestamps[$counter];
+				//$timestamps[$counter] = $timestamps[$counter] - time();
+				
+				if ($timestamps[$counter] < $timeDiffMin && 
+					$timestamps[$counter]!=end($timestamps) )
+					$timeDiffMin=$timestamps[$counter];
 			}
-			
+			for ($counter=0; $counter<sizeof($timestamps); $counter++)
+			{
+				$timestamps[$counter] = formatToBase($timestamps[$counter],$timeDiffMin);
+				//echo $timestamps[$counter];
+			}
+		
 			$DataSet->AddPoint($timestamps,$nameOfX);
 			$DataSet->SetAbsciseLabelSerie($nameOfX);
 			$DataSet->AddAllSeries();
@@ -57,7 +70,7 @@
 			
 			//Set Timestemp as X-Axis and Value to Y-Axis
 			$DataSet->setXAxisName("Time");
-			$DataSet->setXAxisUnit("s");
+		//	$DataSet->setXAxisUnit("s");
 			
 			$DataSet->setYAxisName($sensorSet["sensorType"]);
 			$DataSet->setYAxisUnit($sensorSet["sensorUnit"]);
@@ -71,7 +84,7 @@
 		 $Graph = new pChart(700,250);
 		// $Graph->setFixedScale(0,50);
 		 $Graph->setFontProperties("tahoma.ttf",8);
-		 $Graph->setGraphArea(70,30,600,200);
+		 $Graph->setGraphArea(65,30,650,200);
 		 $Graph->drawFilledRoundedRectangle(7,7,693,233,5,240,240,240);
 		 $Graph->drawRoundedRectangle(5,5,695,235,5,230,230,230);
 		 $Graph->drawGraphArea(255,255,255,TRUE);
@@ -97,4 +110,5 @@
 		$Graph->drawTitle(60,22,$sensorSet["name"],50,50,50,585);  
 		$Graph->Stroke();
 	}
+
 ?>

@@ -52,7 +52,7 @@ if ($handle === false)
 */
     exit();
 }
-
+ $_SESSION['sensorTypes'] = array();
 // parse all files out of this folder 
 while (false !== ($entry = readdir($handle))) 
 {
@@ -63,7 +63,10 @@ while (false !== ($entry = readdir($handle)))
         if($sensorData === false)
            echo "could not read xml file";
         else
+		{
            $sensorDataSets[$sensorData["id"]] = $sensorData;
+		   $_SESSION['sensorTypes'] [$sensorData["sensorType"]]=true;
+		}
     }
 }
 /*

@@ -1,4 +1,5 @@
 <?php
+
 $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 
 if (false !== strpos($url,'statistics'))
@@ -7,6 +8,10 @@ elseif (false !== strpos($url,'debug'))
 	$actpage='sensor';
  else 
 	$actpage='home';
+	
+	$type = "";
+	if(isset($_GET["type"]) )
+		$type = $_GET["type"];
 ?>
 
     <div class="navbar-wrapper">
@@ -26,9 +31,23 @@ elseif (false !== strpos($url,'debug'))
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
                 <li <?php if($actpage=="home"){echo 'class="active"';} ?>><a href="/">Home</a></li>
-                <li <?php if($actpage=="statistics"){echo 'class="active"';} ?>><a href="statistics.php">Statistics</a></li>
                 <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sensor Data<b class="caret"></b></a>
+					<a href="statistics.php" class="dropdown-toggle" data-toggle="dropdown">Statistics<b class="caret"></b></a>
+					<ul class="dropdown-menu">
+					<?php
+						//Make Link to every Statistic Type (SensorType)
+						foreach($_SESSION["sensorTypes"] as $key=>$sensorType)
+						{
+						echo '<li ';
+						if($type==$key) echo 'class="active"';
+						echo '><a href="statistics.php?type='.$key.'">'.$key.'</a> </li>';
+						}
+					?>
+					</ul>
+
+				</li>
+                <li class="dropdown">
+                  <a href="debug.php" class="dropdown-toggle" data-toggle="dropdown">Sensor Data<b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li <?php if($actpage=="sensor"){echo 'class="active"';} ?>><a href="debug.php">Debug</a></li>
                   </ul>
@@ -44,36 +63,23 @@ elseif (false !== strpos($url,'debug'))
 	
 	<!-- Carousel
     ================================================== -->
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <!-- Indicators -->
-      <!--<ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-      </ol>-->
-      <div class="carousel-inner">
-        <div class="item active">
-          <div class="container">
-            <div class="carousel-caption">
-				<h1>Depth Sensor Project</h1>
-				<p>
-				<?php
-				foreach($_SESSION['data'] as $sensorData)
-				{
-                    //Skip non pressure sensors for tank image
-                    if($sensorData["sensorType"] != "Pressure")
-                        continue;
-
+    <div id="banner" class="banner">
+        <div class="container">
+			<h1>Depth Sensor Project</h1>
+			
+			<div class="items"><?php
+			foreach($_SESSION['data'] as $sensorData)
+			{
+				//Skip non pressure sensors for tank image
+				if($sensorData["sensorType"] != "Pressure")
+					continue;
+					
+					echo '<div class="barrel">';
 					echo '<img class="autoreloadTank" height="120px" id="'.$sensorData["id"].'" src="dynPicProcessing/tankImgCreate.php?sensor='.$sensorData["id"].'" />'."\r\n";
-                    echo "<div>$sensorData["floorArea"] * end($sensorData["measurements"])["value"]." ".$sensorData["sensorUnit"].'&#179</div>'; 
-				}
-				?>
-				</p>
-                <p>
-                    
-                </p>
-            </div>
-          </div>
+					echo "<br />".$sensorData["floorArea"] * end($sensorData["measurements"])["value"]." ".$sensorData["sensorUnit"].'&#179 <br />'; 
+					echo '</div>';
+			}
+			?>
+			</div>
         </div>
-      </div>
     </div><!-- /.carousel -->
