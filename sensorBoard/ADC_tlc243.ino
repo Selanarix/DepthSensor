@@ -43,7 +43,6 @@ namespace ADC_TLC_243
         }
         //Set up ADC command byte
         actualCommand = buildConfigPartOfCommand(format, pol, len);
-       
         //send command and throw away first adc result        
         readFunction(channel);
 
@@ -66,7 +65,7 @@ namespace ADC_TLC_243
     */
     TestResult testTLC243(TestChannel testChannel)
     {
-        if(testChannel > V_Minus)
+        if(testChannel > V_Plus)
             return ADCOutOfFunction;
         
         initPeripheral();
@@ -74,8 +73,9 @@ namespace ADC_TLC_243
         
         actualCommand = buildConfigPartOfCommand(ADC_MSB, Unipolar, Bit16);
         readFunction((InputChannel)testChannel); //Configure test channel and discard result
-        uint16_t res = readFunction((InputChannel)testChannel);
-
+        delay(10);
+        uint16_t res = readFunction(Channel0);
+        Logger::logInt(Logger::INFO,"res of test: ", res);
         const uint32_t delta = 100;
         switch(testChannel)
         {
@@ -228,6 +228,6 @@ namespace ADC_TLC_243
     */
     inline bool testParameters(InputChannel channel, OutputDataFormat format, OutputPolarity pol, OutputDataLength len)
     {
-        return (channel <= Channel10 && format <= ADC_LSB && pol <= Bipoloar && len <= Bit16);
+        return (channel <= Channel10 && format <= ADC_LSB && pol <= Bipolar && len <= Bit16);
     }
 }

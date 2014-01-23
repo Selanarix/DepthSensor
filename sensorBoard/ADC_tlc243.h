@@ -24,8 +24,8 @@ namespace ADC_TLC_243
     typedef enum
     {
         V_Diff = 0xB,
-        V_Plus = 0xC,
-        V_Minus = 0xD
+        V_Plus = 0xD,
+        V_Minus = 0xC
     } TestChannel;
 
     typedef enum
@@ -44,14 +44,14 @@ namespace ADC_TLC_243
     typedef enum
     {
         Unipolar = 0x0,
-        Bipoloar = 0x1
+        Bipolar = 0x1
     } OutputPolarity;
 
     typedef enum
     {
         Bit8 = 0x1,
         Bit12 = 0x0,
-        Bit16 = 0x2
+        Bit16 = 0x3
     } OutputDataLength;
 
     typedef enum

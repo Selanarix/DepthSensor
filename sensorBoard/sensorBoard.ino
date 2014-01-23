@@ -1,14 +1,16 @@
 #include "led.h"
 //#include "depthSensor.h"
 //#include "tempSensor.h"
-#include "network.h"
+//#include "network.h"
 #include "logger.h"
+#include "ADC_tlc243.h"
 #include <SPI.h>
 
 void setup()
 {
-    Logger::initLogger();
-    initADC();
+    
+  Logger::initLogger();
+  //Serial.println(ADC_TLC_243::initAndPreorderConversion(ADC_TLC_243::Channel0, ADC_TLC_243::ADC_MSB, ADC_TLC_243::Unipolar, ADC_TLC_243::Bit16));
   //  ProjectLED::initLedPins();
  //   Network::initNetworkStack();
   //  DepthSensor::initDepthSensorHW();
@@ -16,26 +18,10 @@ void setup()
  
     
     Logger::log(Logger::INFO,"System initialized");
-    
+delay(10);
     
 }
 
-void initADC()
-{
-/* Init Pin an SPI Bus*/
-    pinMode(9,OUTPUT);
-    
-    SPI.setBitOrder(MSBFIRST);
-    SPI.setDataMode(SPI_MODE0);
-    SPI.setClockDivider(SPI_CLOCK_DIV64);
-    SPI.begin();
-
-/*Make first Conversion to kick first malformed value*/
-    digitalWrite(9,LOW);
-    SPI.transfer(0x0C);
-    SPI.transfer(0x00);
-    digitalWrite(9,HIGH);
-}
 
 void flashLED_1s()
 {
@@ -72,21 +58,15 @@ void loop()
     Serial.println(5000.0/1024.0 * pressure / 125);
 */
 
-  uint32_t resultMsb=0, resultLsb=0;
   uint32_t result=0;
-  
-  
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setDataMode(SPI_MODE0);
-  SPI.setClockDivider(SPI_CLOCK_DIV64);
-  digitalWrite(9,LOW);
 
-  resultMsb=SPI.transfer(0x0C);
-  resultLsb=SPI.transfer(0x00);
-  digitalWrite(9,HIGH);
-  result=( resultMsb<<8 | resultLsb );
-  result=result>>4;
-  Serial.println(result);
-  Serial.println(5000.0 /4096.0 * result / 10.0);
+  if(ADC_TLC_243::testTLC243(ADC_TLC_243::V_Plus) == ADC_TLC_243::ADCOutOfFunction)
+    Logger::log(Logger::ERROR,"adc not working");
+  else
+    Logger::log(Logger::INFO,"workds :-)");
+  
+
+//  result = ADC_TLC_243::analogReadPrepareNext(ADC_TLC_243::Channel1);
+  //MSerial.println(result);
     delay(10);
 }
