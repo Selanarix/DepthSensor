@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sensor sensorID="5">
+  <configuration>
+    <NameForID>5</NameForID>
+    <TankDescription>Tank with id: 5</TankDescription>
+    <SizeOfHistory>10</SizeOfHistory>
+    <TankHeight>0</TankHeight>
+    <SensorUnit>undefined</SensorUnit>
+    <SensorType>undefined</SensorType>
+    <floorArea>0</floorArea>
+    <ColorOfGraph>red</ColorOfGraph>
+  </configuration>
+  <measurements>
+    
+  <measurement measurementTime="1389000000">22</measurement>
+  <measurement measurementTime="1389010000">22</measurement>
+  <measurement measurementTime="1389020000">22</measurement>
+  <measurement measurementTime="1389030000">22</measurement>
+  <measurement measurementTime="1389040000">22</measurement>
+  <measurement measurementTime="1389050000">22</measurement>
+  <measurement measurementTime="1389060000">22</measurement>
+  <measurement measurementTime="1389070000">22</measurement>
+  <measurement measurementTime="1389080000">22</measurement>
+  <measurement measurementTime="1389090000">22</measurement>
+  
+  </measurements>
+</sensor>
