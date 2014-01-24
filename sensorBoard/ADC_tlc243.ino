@@ -68,12 +68,13 @@ namespace ADC_TLC_243
         if(testChannel > V_Plus)
             return ADCOutOfFunction;
         
-        initPeripheral();
-        readFunction = read16BitAndPreorder;
+        initPeripheral();    
+        delay(10); //Give some warm up time
         
+        readFunction = read16BitAndPreorder;
         actualCommand = buildConfigPartOfCommand(ADC_MSB, Unipolar, Bit16);
         readFunction((InputChannel)testChannel); //Configure test channel and discard result
-        delay(10);
+        delay(10); //Give conversion time
         uint16_t res = readFunction(Channel0);
         Logger::logInt(Logger::INFO,"res of test: ", res);
         const uint32_t delta = 100;

@@ -86,7 +86,7 @@ namespace DepthSensor
         double sensorVoltageADC = 0.0;
         const double offset = 0.19;
        
-        return 0; 
+        *measurementOfSeries = 0; 
        /*
         adcvalue = (double)analogRead(depthSensorPin);
         //      Serial.print("Rohwert [ADC]: ");
@@ -104,7 +104,7 @@ namespace DepthSensor
         //      Serial.print("Druck [hPa]: ");
         //      Serial.println(pressure);
       */
-	    *measurementOfSeries = pressure;
+	//    *measurementOfSeries = pressure;
     }
 
     TestSeries::TestSeriesCheckResult testTestSeries()
