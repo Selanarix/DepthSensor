@@ -2,15 +2,21 @@
 #ifndef TEMPSENSOR_H_
 #define TEMPSENSOR_H_
 
-#define a 10
+#include "sensor.h"
 
-namespace TemperaturSensor 
+namespace TemperatureSensor 
 {
   
-  typedef unsigned int temperatur;
+  typedef unsigned int Temperature;
   
-  void initTemperaturSensorHW();
-  temperatur measureTemperatur();
+  const Temperature MINIMAL_EXPECTED_TEMPERATURE_SENSOR_VALUE 	 	= 0;
+  const Temperature MAXIMAL_EXPECTED_TEMPERATURE_SENSOR_VALUE	 	= 0xffffffff;
+  const Temperature MAX_ALLOWED_AVERAGED_TEMPERATURE_VALUE_CHANGE	        = 0xffffffff;
+  const Temperature ALLOWED_TEMPERATURE_TEST_SERIES_VARIATION 	 	= 0xffffffff;
+  
+  void initTemperatureSensorHW();
+  Sensor::SensorMeasurmentResult measureTemperature();
+  Temperature getLastMeasurement();
 }
 
 #endif /* DEPTHSENSOR_H_ */

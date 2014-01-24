@@ -11,33 +11,31 @@ namespace TestSeries
     //------------------------ Read only ------------------------------------------
 
     //------------------------------- Public Functions -----------------------------
-    void measure(const TestSeriesControll* con, CheckTestSeriesCallback testTestSeries, ReadValueCallback readSensor)
+    TestSeriesCheckResult measure(const TestSeriesControll* con, CheckTestSeriesCallback testTestSeries, ReadValueCallback readSensor)
     {
         if(con == NULL || testSeries == NULL || readSensor == NULL)
-            return; //TODO
+            return TestSeriesCancelMeasurement;
 
-	    TestSeriesCheckResult seriesTestResult = TestSeriesInvalid;
+        TestSeriesCheckResult seriesTestResult = TestSeriesInvalid;
 
-	    for(uint32_t seriesRetries = 0; seriesTestResult != TestSeriesOK &&
-			           seriesRetries < con->maximalMeasurementRetries;
-	    seriesRetries++)
-	    {
-		    takeTestSeries(con, readSensor);
-		    seriesTestResult = testTestSeries();
-		    if(seriesTestResult != TestSeriesOK)
-                    {
-                        Logger::log(Logger::INFO,"Error in series wait and try again");   
-                        delay(con->delayForRetry_ms);
-                    }
-                    else if(seriesTestResult == TestSeriesCancelMeasurement)
-                    {
-                          Logger::log(Logger::WARNING,"Taking test series where canceled by sensor");
-                          break;
-                    }
-	    }
-	    //Could not build a valid test series
-	    if(seriesTestResult != TestSeriesOK)
-	        return; //TODO Could not sucessfully measure values
+        for(uint32_t seriesRetries = 0; seriesTestResult != TestSeriesOK &&
+                                   seriesRetries < con->maximalMeasurementRetries;
+	seriesRetries++)
+        {
+            takeTestSeries(con, readSensor);
+            seriesTestResult = testTestSeries();
+            if(seriesTestResult == TestSeriesCancelMeasurement)
+            {
+                  Logger::log(Logger::WARNING,"Taking test series where canceled by sensor");
+                  break;
+            }
+            else if(seriesTestResult != TestSeriesOK)
+            {
+                Logger::log(Logger::WARNING,"Error in series wait and try again"); 
+                delay(con->delayForRetry_ms);
+            }
+        }
+        return seriesTestResult;
     }
 
 

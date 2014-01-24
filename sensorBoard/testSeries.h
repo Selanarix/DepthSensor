@@ -30,7 +30,7 @@ namespace TestSeries
     typedef void (*ReadValueCallback)(double*);
     typedef TestSeriesCheckResult(*CheckTestSeriesCallback)(void);
 
-    void measure(const TestSeriesControll* con, CheckTestSeriesCallback testSeries, ReadValueCallback readSensor);
+    TestSeriesCheckResult measure(const TestSeriesControll* con, CheckTestSeriesCallback testSeries, ReadValueCallback readSensor);
     double getAverageMeanOfSeries(const TestSeriesControll* con);
     MinMax evaluateMinMaxOfTestSeries(const TestSeriesControll* con);
 }
