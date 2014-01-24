@@ -71,8 +71,8 @@ namespace DepthSensor
 	    AverageMeasuementTestResult averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
 	    //Keep sensor value but generate callback if not as acpected. 
 	    if(averageSensorTestResult != AverageMeasurmentOK)
-			    errorNewAverageDepth(averageSensorTestResult);
-        Logger::logInt(Logger::INFO, "Tiefe [cm]: ", avgDepthOfSeries);
+                 errorNewAverageDepth(averageSensorTestResult);
+            Logger::logInt(Logger::INFO, "Tiefe [cm]: ", avgDepthOfSeries);
 	    return avgDepthOfSeries;
     }
 
@@ -85,7 +85,9 @@ namespace DepthSensor
         double adcvalue = 0.0;
         double sensorVoltageADC = 0.0;
         const double offset = 0.19;
-
+       
+        return 0; 
+       /*
         adcvalue = (double)analogRead(depthSensorPin);
         //      Serial.print("Rohwert [ADC]: ");
         //      Serial.println(adcvalue);
@@ -101,7 +103,7 @@ namespace DepthSensor
         pressure = (sensorVoltageADC-offset)*1111;
         //      Serial.print("Druck [hPa]: ");
         //      Serial.println(pressure);
-      
+      */
 	    *measurementOfSeries = pressure;
     }
 

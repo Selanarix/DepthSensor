@@ -25,12 +25,15 @@ namespace TestSeries
 		    takeTestSeries(con, readSensor);
 		    seriesTestResult = testTestSeries();
 		    if(seriesTestResult != TestSeriesOK)
-			    delay(con->delayForRetry_ms);
-            else if(seriesTestResult == TestSeriesCancelMeasurement)
-            {
-                Logger::log(Logger::WARNING,"Taking test series where canceled by sensor");
-                break;
-            }
+                    {
+                        Logger::log(Logger::INFO,"Error in series wait and try again");   
+                        delay(con->delayForRetry_ms);
+                    }
+                    else if(seriesTestResult == TestSeriesCancelMeasurement)
+                    {
+                          Logger::log(Logger::WARNING,"Taking test series where canceled by sensor");
+                          break;
+                    }
 	    }
 	    //Could not build a valid test series
 	    if(seriesTestResult != TestSeriesOK)

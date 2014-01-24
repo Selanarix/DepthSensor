@@ -8,21 +8,18 @@
 void setup()
 {
     Logger::initLogger();
-    initADC();
-  //  ProjectLED::initLedPins();
- //   Network::initNetworkStack();
-  //  DepthSensor::initDepthSensorHW();
-  //  TemperaturSensor::initTemperaturSensorHW();
- 
-    
+    ProjectLED::initLedPins();
+   // Network::initNetworkStack();
+    DepthSensor::initDepthSensorHW();
+    TemperaturSensor::initTemperaturSensorHW();
+   
     Logger::log(Logger::INFO,"System initialized");
     
     
 }
-
+/*
 void initADC()
 {
-/* Init Pin an SPI Bus*/
     pinMode(9,OUTPUT);
     
     SPI.setBitOrder(MSBFIRST);
@@ -30,12 +27,11 @@ void initADC()
     SPI.setClockDivider(SPI_CLOCK_DIV64);
     SPI.begin();
 
-/*Make first Conversion to kick first malformed value*/
     digitalWrite(9,LOW);
     SPI.transfer(0x0C);
     SPI.transfer(0x00);
     digitalWrite(9,HIGH);
-}
+}*/
 
 void flashLED_1s()
 {
@@ -46,10 +42,9 @@ void flashLED_1s()
 }
 
 void loop()
-{
-/*    
+{    
     DepthSensor::depth dep = DepthSensor::measureDepth();
-    TemperaturSensor::temperatur temp = TemperaturSensor::measureTemperatur();   
+ /*   TemperaturSensor::temperatur temp = TemperaturSensor::measureTemperatur();   
     
     flashLED_1s();
  
@@ -60,7 +55,7 @@ void loop()
     
     flashLED_1s();
     flashLED_1s();
- */   
+    
  /*
     pinMode(2, INPUT);
     
@@ -70,8 +65,8 @@ void loop()
     Serial.println(pressure);
     Serial.print("Sensor [mV]: ");
     Serial.println(5000.0/1024.0 * pressure / 125);
-*/
 
+/*
   uint32_t resultMsb=0, resultLsb=0;
   uint32_t result=0;
   
@@ -88,5 +83,5 @@ void loop()
   result=result>>4;
   Serial.println(result);
   Serial.println(5000.0 /4096.0 * result / 10.0);
-    delay(10);
+    delay(10); */
 }
