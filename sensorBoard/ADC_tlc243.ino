@@ -77,7 +77,7 @@ namespace ADC_TLC_243
         delay(10); //Give conversion time
         uint16_t res = readFunction(Channel0);
         Logger::logInt(Logger::INFO,"res of test: ", res);
-        const uint32_t delta = 100;
+        const uint32_t delta = 10;
         switch(testChannel)
         {
             case V_Diff:

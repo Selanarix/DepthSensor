@@ -5,34 +5,19 @@
 namespace DepthSensor 
 {
     //-------------------------- Private Types -------------------------------------
-      
-    typedef enum
-    {
-	    AverageMeasurmentOK,
-	    AverageMeasurmentNotInRange
-    } AverageMeasuementTestResult;
-
-   typedef enum
-    {
-         TestSeriesOK,
-         SensorOutOfFunction,
-         TestSeriesUnderMinRange,
-         TestSeriesAboveMaxRange,
-         TestSeriesMeanVariationToBig
-    } TestSeriesTestResult;
 
     //-------------------- Private Function Prototypes -----------------------------
 
     TestSeries::TestSeriesCheckResult testTestSeries();
     Depth evaluateTestSeries();
-    AverageMeasuementTestResult testEvaluatedValue(const Depth depth);
+    Sensor::AverageMeasurementTestResult testEvaluatedValue(const Depth depth);
     void readDepthSensor(double* measurementOfSeries);
 
-    void errorHandlingTestSeriesError(TestSeriesTestResult);
-    void errorNewAverageDepth(AverageMeasuementTestResult);
+    void errorHandlingTestSeriesError(Sensor::TestSeriesTestResult);
+    void errorNewAverageDepth(Sensor::AverageMeasurementTestResult);
 
     //------------------------- Private Data ---------------------------------------
-
+    static Depth lastMeasurement = 0;
     //------------------------ Read only ------------------------------------------
 
     const TestSeries::TestSeriesControll depthMeasurementControll =
@@ -49,6 +34,12 @@ namespace DepthSensor
     const int depthSensorPin = 0;
 
     //------------------------------- Public Functions -----------------------------
+    
+    Depth getLastMeasurement()
+    {
+          return lastMeasurement;
+    }
+    
     /**
      * Init Hw components of the project
      */
@@ -62,18 +53,33 @@ namespace DepthSensor
     * Measures the depth by taking several measurments and calculates a
     * average one. 
     */
-    Depth measureDepth()
+    Sensor::SensorMeasurmentResult measureDepth()
     {
-	    TestSeries::measure(&depthMeasurementControll, testTestSeries, readDepthSensor);
-
+            Logger::log(Logger::INFO, "---------------------------------------");
+            Logger::log(Logger::INFO, "Start with test series for depth sensor");
+            TestSeries::TestSeriesCheckResult res = TestSeries::measure(&depthMeasurementControll, testTestSeries, readDepthSensor);
+            if(res != TestSeries::TestSeriesOK)
+            {
+                Logger::log(Logger::ERROR,"Could not measure depth"); 
+                Logger::log(Logger::INFO, "---------------------------------------");
+                lastMeasurement = 0;
+                return Sensor::TestSeriesError;
+            }
 	    //Process data out of test series
+            Sensor::SensorMeasurmentResult result = Sensor::SensorValueOK;
 	    Depth avgDepthOfSeries = (Depth)TestSeries::getAverageMeanOfSeries(&depthMeasurementControll);
-	    AverageMeasuementTestResult averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
+	    Sensor::AverageMeasurementTestResult averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
 	    //Keep sensor value but generate callback if not as acpected. 
-	    if(averageSensorTestResult != AverageMeasurmentOK)
+	    if(averageSensorTestResult != Sensor::AverageMeasurmentOK)
+            {
                  errorNewAverageDepth(averageSensorTestResult);
+                 result = Sensor::SensorValueUnexpected;
+            }
             Logger::logInt(Logger::INFO, "Tiefe [cm]: ", avgDepthOfSeries);
-	    return avgDepthOfSeries;
+	  
+            Logger::log(Logger::INFO, "---------------------------------------");  
+            lastMeasurement = avgDepthOfSeries;
+            return result;
     }
 
     //------------------------------ Private Functions -----------------------------
@@ -85,8 +91,10 @@ namespace DepthSensor
         double adcvalue = 0.0;
         double sensorVoltageADC = 0.0;
         const double offset = 0.19;
+        
+         static int ax = 0;
        
-        *measurementOfSeries = 0; 
+        *measurementOfSeries = ax++; 
        /*
         adcvalue = (double)analogRead(depthSensorPin);
         //      Serial.print("Rohwert [ADC]: ");
@@ -108,37 +116,36 @@ namespace DepthSensor
     }
 
     TestSeries::TestSeriesCheckResult testTestSeries()
-    {
-        TestSeriesTestResult errorTypes = TestSeriesOK;
+    { 
+        Sensor::TestSeriesTestResult errorTypes = Sensor::TestSeriesOK;
 	TestSeries::MinMax res = TestSeries::evaluateMinMaxOfTestSeries(&depthMeasurementControll);
 
-	Depth meanVariation = res.max - res.min;
+	double meanVariation = res.max - res.min;
 	if(res.min < 0.0001 && res.max < 0.0001)
-	    errorTypes = SensorOutOfFunction;
+	    errorTypes = Sensor::SensorOutOfFunction;
 	else if(res.min < MINIMAL_EXPECTED_DEPTH_SENSOR_VALUE)
-	    errorTypes = TestSeriesUnderMinRange;
+	    errorTypes = Sensor::TestSeriesUnderMinRange;
 	else if(res.max > MAXIMAL_EXPECTED_DEPTH_SENSOR_VALUE)
-	    errorTypes = TestSeriesAboveMaxRange;
+	    errorTypes = Sensor::TestSeriesAboveMaxRange;
 	else if(meanVariation > ALLOWED_DEPTH_TEST_SERIES_VARIATION)
-	    errorTypes = TestSeriesMeanVariationToBig;
+	    errorTypes = Sensor::TestSeriesMeanVariationToBig;
 
         errorHandlingTestSeriesError(errorTypes);
  
-        if(errorTypes == SensorOutOfFunction)
+        if(errorTypes == Sensor::SensorOutOfFunction)
             return TestSeries::TestSeriesCancelMeasurement; //Cancel further       
-        if(errorTypes != TestSeriesOK)
+        if(errorTypes != Sensor::TestSeriesOK)
             return TestSeries::TestSeriesInvalid;
         
-	    return TestSeries::TestSeriesOK;
+	return TestSeries::TestSeriesOK;
     }
 
-    AverageMeasuementTestResult testEvaluatedValue(const Depth dep)
+    Sensor::AverageMeasurementTestResult testEvaluatedValue(const Depth dep)
     {
 	    static Depth depthHistory = 0;
 	
-	    AverageMeasuementTestResult res = AverageMeasurmentOK;
+	    Sensor::AverageMeasurementTestResult res = Sensor::AverageMeasurmentOK;
 	    Depth depthDiff;
-
 	    //Calc diff between new and last Depth
 	    if(dep > depthHistory)
 		    depthDiff = dep - depthHistory;
@@ -146,7 +153,7 @@ namespace DepthSensor
 		    depthDiff = depthHistory - dep; 
 
 	    if(depthHistory != 0 && depthDiff > MAX_ALLOWED_AVERAGED_DEPTH_VALUE_CHANGE)
-		    res = AverageMeasurmentNotInRange;
+		    res = Sensor::AverageMeasurmentNotInRange;
 
 	    depthHistory = dep;	
 	    return res;
@@ -154,34 +161,36 @@ namespace DepthSensor
 
     //-------------------------------------- E r r o r s ------------------------
 
-    void errorHandlingTestSeriesError(TestSeriesTestResult a)
+    void errorHandlingTestSeriesError(Sensor::TestSeriesTestResult an)
     {
-      switch(a)
+      switch(an)
       {
-          case SensorOutOfFunction:
+          case Sensor::SensorOutOfFunction:
               Logger::log(Logger::ERROR, "Sensor seams to be out of function. Only 0 measures");
           break;
-          case TestSeriesUnderMinRange:
+          case Sensor::TestSeriesUnderMinRange:
               Logger::log(Logger::ERROR, "On of the sensor's values is out of minimal range");
           break;
-          case TestSeriesAboveMaxRange:
+          case Sensor::TestSeriesAboveMaxRange:
               Logger::log(Logger::ERROR, "On of the sensor's values is out of maximal range");
           break;
-          case TestSeriesMeanVariationToBig:
+          case Sensor::TestSeriesMeanVariationToBig:
               Logger::log(Logger::ERROR, "Mean variaion of sensor's values is out of range");
+          break;
+          case Sensor::TestSeriesOK:
           break;
           default:
               Logger::log(Logger::ERROR, "General error in test series of depth sensor");
       }
     }
 
-    void errorNewAverageDepth(AverageMeasuementTestResult b)
+    void errorNewAverageDepth(Sensor::AverageMeasurementTestResult b)
     {
         switch(b)
         {
-            case AverageMeasurmentNotInRange:
-            break;
+            case Sensor::AverageMeasurmentNotInRange:
                 Logger::log(Logger::ERROR, "Average measurement was out of defined range");
+            break;
             default:
                 Logger::log(Logger::ERROR, "General error when testing average depth measurement.");
         }
