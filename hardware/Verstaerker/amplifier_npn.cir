@@ -1,0 +1,24 @@
+* D:\Git\DepthSensor\hardware\Simulation\amplifier_npn.sch
+
+* Schematics Version 9.1 - Web Update 1
+* Mon Jan 27 14:14:20 2014
+
+
+
+** Analysis setup **
+.DC LIN V_Vb 0.9V 2.0V 0.05V 
+.STMLIB "amplifier_npn.stl"
+.OP
+
+
+* From [PSPICE NETLIST] section of pspiceev.ini:
+.lib "nom.lib"
+
+.INC "amplifier_npn.net"
+.INC "amplifier_npn.als"
+
+
+.probe
+
+
+.END

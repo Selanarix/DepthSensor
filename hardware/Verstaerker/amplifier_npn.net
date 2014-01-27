@@ -1,0 +1,11 @@
+* Schematics Netlist *
+
+
+
+V_Vb         basis 0 0V
+Q_Q1         Va basis emitter Q2N3904
+V_Vin         source 0 5V
+R_Re         0 emitter  100  
+R_Rc         Va source  220  
+R_R2         0 basis  1.8k  
+R_R1         basis source  6.8k  

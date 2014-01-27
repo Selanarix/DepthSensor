@@ -1,0 +1,185 @@
+
+**** 01/27/14 14:14:27 *********** Evaluation PSpice (Nov 1999) **************
+
+ * D:\Git\DepthSensor\hardware\Simulation\amplifier_npn.sch
+
+
+ ****     CIRCUIT DESCRIPTION
+
+
+******************************************************************************
+
+
+
+
+* Schematics Version 9.1 - Web Update 1
+* Mon Jan 27 14:14:20 2014
+
+
+
+** Analysis setup **
+.DC LIN V_Vb 0.9V 2.0V 0.05V 
+.STMLIB "amplifier_npn.stl"
+.OP
+
+
+* From [PSPICE NETLIST] section of pspiceev.ini:
+.lib "nom.lib"
+
+.INC "amplifier_npn.net"
+
+**** INCLUDING amplifier_npn.net ****
+* Schematics Netlist *
+
+
+
+V_Vb         basis 0 0V
+Q_Q1         Va basis emitter Q2N3904
+V_Vin         source 0 5V
+R_Re         0 emitter  100  
+R_Rc         Va source  220  
+R_R2         0 basis  1.8k  
+R_R1         basis source  6.8k  
+
+**** RESUMING amplifier_npn.cir ****
+.INC "amplifier_npn.als"
+
+
+
+**** INCLUDING amplifier_npn.als ****
+* Schematics Aliases *
+
+.ALIASES
+V_Vb            Vb(+=basis -=0 )
+Q_Q1            Q1(c=Va b=basis e=emitter )
+V_Vin           Vin(+=source -=0 )
+R_Re            Re(1=0 2=emitter )
+R_Rc            Rc(1=Va 2=source )
+R_R2            R2(1=0 2=basis )
+R_R1            R1(1=basis 2=source )
+_    _(basis=basis)
+_    _(ground=0)
+_    _(Va=Va)
+_    _(emitter=emitter)
+_    _(source=source)
+.ENDALIASES
+
+
+**** RESUMING amplifier_npn.cir ****
+.probe
+
+
+.END
+
+**** 01/27/14 14:14:27 *********** Evaluation PSpice (Nov 1999) **************
+
+ * D:\Git\DepthSensor\hardware\Simulation\amplifier_npn.sch
+
+
+ ****     BJT MODEL PARAMETERS
+
+
+******************************************************************************
+
+
+
+
+               Q2N3904         
+               NPN             
+          IS    6.734000E-15 
+          BF  416.4          
+          NF    1            
+         VAF   74.03         
+         IKF     .06678      
+         ISE    6.734000E-15 
+          NE    1.259        
+          BR     .7371       
+          NR    1            
+          RB   10            
+          RC    1            
+         CJE    4.493000E-12 
+         MJE     .2593       
+         CJC    3.638000E-12 
+         MJC     .3085       
+          TF  301.200000E-12 
+         XTF    2            
+         VTF    4            
+         ITF     .4          
+          TR  239.500000E-09 
+         XTB    1.5          
+          CN    2.42         
+           D     .87         
+
+
+**** 01/27/14 14:14:27 *********** Evaluation PSpice (Nov 1999) **************
+
+ * D:\Git\DepthSensor\hardware\Simulation\amplifier_npn.sch
+
+
+ ****     SMALL SIGNAL BIAS SOLUTION       TEMPERATURE =   27.000 DEG C
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(   Va)    5.0000  (basis)    0.0000  (source)    5.0000 (emitter) 534.5E-12    
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_Vb         7.353E-04
+    V_Vin       -7.353E-04
+
+    TOTAL POWER DISSIPATION   3.68E-03  WATTS
+
+
+**** 01/27/14 14:14:27 *********** Evaluation PSpice (Nov 1999) **************
+
+ * D:\Git\DepthSensor\hardware\Simulation\amplifier_npn.sch
+
+
+ ****     OPERATING POINT INFORMATION      TEMPERATURE =   27.000 DEG C
+
+
+******************************************************************************
+
+
+
+
+
+
+**** BIPOLAR JUNCTION TRANSISTORS
+
+
+NAME         Q_Q1      
+MODEL        Q2N3904   
+IB          -6.79E-12 
+IC           1.21E-11 
+VBE         -5.34E-10 
+VBC         -5.00E+00 
+VCE          5.00E+00 
+BETADC      -1.79E+00 
+GM           2.10E-13 
+RPI          4.77E+12 
+RX           1.00E+01 
+RO           8.81E+11 
+CBE          4.49E-12 
+CBC          1.94E-12 
+CJS          0.00E+00 
+BETAAC       1.00E+00 
+CBX/CBX2     0.00E+00 
+FT/FT2       5.20E-03 
+
+
+
+          JOB CONCLUDED
+
+          TOTAL JOB TIME             .02
+
