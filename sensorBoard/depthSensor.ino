@@ -45,7 +45,7 @@ namespace DepthSensor
      */
     void initDepthSensorHW()
     {
-        pinMode(depthSensorPin, INPUT);
+        pinMode(depthSensorPin, INPUT); //TODO
         Logger::log(Logger::INFO, "depth sensor initialized");
     }
 

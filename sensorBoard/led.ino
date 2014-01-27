@@ -1,4 +1,5 @@
 #include "led.h"  
+#include "hal.h"
 
 namespace ProjectLED
 {
@@ -13,19 +14,19 @@ namespace ProjectLED
     //------------------------------- Public Functions -----------------------------
     void initLedPins()
     {
-        pinMode(LED0, OUTPUT);
+        HAL::initPin(LED0, HAL::PIN_OUTPUT);
     }
     void LED_On(LED led)
     {
-        digitalWrite(led, HIGH);
+        HAL::digitalSetPinHeigh(led);
     }
     void LED_Off(LED led)
     {
-        digitalWrite(led, LOW);
+        HAL::digitalSetPinLow(led);
     }
     void LED_Toggle(LED led)
     {
-       digitalWrite(led, !digitalRead(led)); 
+        HAL::digitalTogglePin(led);
     }
 
     //------------------------------ Private Functions -----------------------------

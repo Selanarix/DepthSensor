@@ -4,7 +4,7 @@
 
 namespace HAL
 { 
-    typedef unsigned char PinID;
+    typedef unsigned int PinID;
 
     typedef enum
     {
@@ -17,14 +17,15 @@ namespace HAL
     typedef enum
     {
         PIN_LOW = 0,
-        PIN_HEIGH = 1  
+        PIN_HIGH = 1  
     } PinState;
 
+    bool initBaseHW();
     void initPin(PinID, PinType);
     int analogReadPin(PinID p);
-    void digitalSetPin(PinID p, PinState s);
+    void digitalSetPinHeigh(PinID p);
+    void digitalSetPinLow(PinID p);
+    void digitalTogglePin(PinID p);
     PinState digitalReadPin( PinID p);
-    
-    
 }
 #endif
