@@ -11,7 +11,7 @@ namespace DepthSensor
     TestSeries::TestSeriesCheckResult testTestSeries();
     Depth evaluateTestSeries();
     Sensor::AverageMeasurementTestResult testEvaluatedValue(const Depth depth);
-    void readDepthSensor(double* measurementOfSeries);
+    void readMPX5500(double* measurementOfSeries);
 
     void errorHandlingTestSeriesError(Sensor::TestSeriesTestResult);
     void errorNewAverageDepth(Sensor::AverageMeasurementTestResult);
@@ -26,6 +26,11 @@ namespace DepthSensor
         2000,   // delayForRetry_ms;
         10,      // delayBetweenMeasurements_ms;
         10      // usedMeasurmentsPerTestSeries <= TEST_SERIES_SIZE 
+    };
+
+    void (* const sensorReadFunctions[])(double*) = 
+    {
+       readMPX5500, // 0 
     };
 
     /*
@@ -45,7 +50,7 @@ namespace DepthSensor
      */
     void initDepthSensorHW()
     {
-        pinMode(depthSensorPin, INPUT);
+        pinMode(depthSensorPin, INPUT); //TODO
         Logger::log(Logger::INFO, "depth sensor initialized");
     }
 
@@ -53,38 +58,40 @@ namespace DepthSensor
     * Measures the depth by taking several measurments and calculates a
     * average one. 
     */
-    Sensor::SensorMeasurmentResult measureDepth()
+    Sensor::SensorMeasurmentResult measureDepth(DepthSensor sensor)
     {
+        if(sensor > MPX5500DP)
+            return Sensor::TestSeriesError;
+        Logger::log(Logger::INFO, "---------------------------------------");
+        Logger::log(Logger::INFO, "Start with test series for depth sensor");
+        TestSeries::TestSeriesCheckResult res = TestSeries::measure(&depthMeasurementControll, testTestSeries, sensorReadFunctions[sensor]);
+        if(res != TestSeries::TestSeriesOK)
+        {
+            Logger::log(Logger::ERROR,"Could not measure depth"); 
             Logger::log(Logger::INFO, "---------------------------------------");
-            Logger::log(Logger::INFO, "Start with test series for depth sensor");
-            TestSeries::TestSeriesCheckResult res = TestSeries::measure(&depthMeasurementControll, testTestSeries, readDepthSensor);
-            if(res != TestSeries::TestSeriesOK)
-            {
-                Logger::log(Logger::ERROR,"Could not measure depth"); 
-                Logger::log(Logger::INFO, "---------------------------------------");
-                lastMeasurement = 0;
-                return Sensor::TestSeriesError;
-            }
+            lastMeasurement = 0;
+            return Sensor::TestSeriesError;
+        }
 	    //Process data out of test series
-            Sensor::SensorMeasurmentResult result = Sensor::SensorValueOK;
-	    Depth avgDepthOfSeries = (Depth)TestSeries::getAverageMeanOfSeries(&depthMeasurementControll);
-	    Sensor::AverageMeasurementTestResult averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
-	    //Keep sensor value but generate callback if not as acpected. 
-	    if(averageSensorTestResult != Sensor::AverageMeasurmentOK)
-            {
-                 errorNewAverageDepth(averageSensorTestResult);
-                 result = Sensor::SensorValueUnexpected;
-            }
-            Logger::logInt(Logger::INFO, "Tiefe [cm]: ", avgDepthOfSeries);
+        Sensor::SensorMeasurmentResult result = Sensor::SensorValueOK;
+        Depth avgDepthOfSeries = (Depth)TestSeries::getAverageMeanOfSeries(&depthMeasurementControll);
+        Sensor::AverageMeasurementTestResult averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
+       //Keep sensor value but generate callback if not as acpected. 
+        if(averageSensorTestResult != Sensor::AverageMeasurmentOK)
+        {
+             errorNewAverageDepth(averageSensorTestResult);
+             result = Sensor::SensorValueUnexpected;
+        }
+        Logger::logInt(Logger::INFO, "Tiefe [cm]: ", avgDepthOfSeries);
 	  
-            Logger::log(Logger::INFO, "---------------------------------------");  
-            lastMeasurement = avgDepthOfSeries;
-            return result;
+        Logger::log(Logger::INFO, "---------------------------------------");  
+        lastMeasurement = avgDepthOfSeries;
+        return result;
     }
 
     //------------------------------ Private Functions -----------------------------
 
-    void readDepthSensor(double* measurementOfSeries)
+    void readMPX5500(double* measurementOfSeries)
     {
         //read value from sensor and assign it to measurementOfSeries
         double pressure = 0.0;

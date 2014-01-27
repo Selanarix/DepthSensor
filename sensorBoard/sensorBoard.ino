@@ -3,19 +3,16 @@
 #include "tempSensor.h"
 //#include "network.h"
 #include "logger.h"
-//#include "ADC_tlc243.h"
-
+#include "hal.h"
 void setup()
 {    
    Logger::initLogger();
+   HAL::initBaseHW();
    ProjectLED::initLedPins();
  //   Network::initNetworkStack();
    DepthSensor::initDepthSensorHW();
    TemperatureSensor::initTemperatureSensorHW();
- 
-    Logger::log(Logger::INFO,"System initialized");
-  delay(10);
-    
+   Logger::log(Logger::INFO,"System initialized");
 }
 
 void flashLED_1s()
@@ -28,10 +25,13 @@ void flashLED_1s()
 
 void loop()
 {    
-    DepthSensor::Depth dep = DepthSensor::measureDepth();
-   TemperatureSensor::Temperature temp = TemperatureSensor::measureTemperature();   
+   
+   // DepthSensor::Depth dep = DepthSensor::measureDepth();
+//   TemperatureSensor::Temperature temp = TemperatureSensor::measureTemperature();   
     
-     flashLED_1s();
+  //   flashLED_1s();
+  
+    
   /*
     //Send depth sensor
     Network::http_GET_Request(0, dep);
