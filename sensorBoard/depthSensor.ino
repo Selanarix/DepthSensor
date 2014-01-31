@@ -1,91 +1,89 @@
 #include "depthSensor.h"  
 #include "logger.h"
-#include "testSeries.h"
+#include "sensorErrorTypes.h"
+
 
 namespace DepthSensor 
 {
     //-------------------------- Private Types -------------------------------------
-
     //-------------------- Private Function Prototypes -----------------------------
 
-    TestSeries::TestSeriesCheckResult testTestSeries();
-    Depth evaluateTestSeries();
-    Sensor::AverageMeasurementTestResult testEvaluatedValue(const Depth depth);
-    void readMPX5500(double* measurementOfSeries);
+    static Sensor::TestSeriesCheckResult testDepthSeriesF(const Sensor::Sensor* con);
+    static void readMPX5500SensorF(double* measurementOfSeries);
+    static void initDepthSensorHW_F(const Sensor::Sensor* con); 
+    static Sensor::MeasurmentResult measureDepthF(DepthSensor* con);   
+    static Depth getLastDepthF(const DepthSensor* con);
 
-    void errorHandlingTestSeriesError(Sensor::TestSeriesTestResult);
-    void errorNewAverageDepth(Sensor::AverageMeasurementTestResult);
+    static SensorError::AverageMeasurementError testEvaluatedValue(const DepthSensor* con, const Depth dep);
+    static void logDepthTestSeriesError(SensorError::TestSeriesError an);
+    static void logAverageDepthErrors(SensorError::AverageMeasurementError b);
 
-    //------------------------- Private Data ---------------------------------------
-    static Depth lastMeasurement = 0;
-    //------------------------ Read only ------------------------------------------
-
-    const TestSeries::TestSeriesControll depthMeasurementControll =
+    //------------------------ Private Data ----------------------------------------
+    //------------------------ Read only -------------------------------------------
+    //------------------------ Public Functions ------------------------------------
+    bool construct(DepthSensor* con, const Sensor::SensorConstData* constDa, const Sensor::SensorConstraints* constraint, unsigned int s, DepthSensorType t)
     {
-        10,     // maximalMeasurementRetries;
-        2000,   // delayForRetry_ms;
-        10,      // delayBetweenMeasurements_ms;
-        10      // usedMeasurmentsPerTestSeries <= TEST_SERIES_SIZE 
-    };
+        if(!Sensor::construct((Sensor::Sensor*) con, constDa, constraint,s))
+            return false;
+        //specify abstract object       
+        switch(t)
+        {
+            case MPX5500:
+                con->readSensorValue = readMPX5500SensorF;
+                break;
+            default:
+                return false;
+        }
+        con->checkTestSeries = testDepthSeriesF;
+        con->initSensorHW = initDepthSensorHW_F;
+        
+        //extend object
+        con->lastDepth = 0.0;
+        con->getDepth = getLastDepthF;
+        con->measureDepth = measureDepthF;
+        return true;
+    }    
 
-    void (* const sensorReadFunctions[])(double*) = 
+    static Depth getLastDepthF(const DepthSensor* con)
     {
-       readMPX5500, // 0 
-    };
-
-    /*
-    * Input Vout of DiffSensor
-    */
-    const int depthSensorPin = 0;
-
-    //------------------------------- Public Functions -----------------------------
-    
-    Depth getLastMeasurement()
-    {
-          return lastMeasurement;
+          if(con == NULL)
+              return 0;
+          return con->lastDepth;
     }
     
-    /**
-     * Init Hw components of the project
-     */
-    void initDepthSensorHW()
+    static void initDepthSensorHW_F(const Sensor::Sensor* con)
     {
-        pinMode(depthSensorPin, INPUT); //TODO
+        pinMode(con->getPin((Sensor::Sensor*)con),INPUT);
         Logger::log(Logger::INFO, "depth sensor initialized");
     }
 
-    /**
-    * Measures the depth by taking several measurments and calculates a
-    * average one. 
-    */
-    Sensor::SensorMeasurmentResult measureDepth(DepthSensor sensor)
+    static Sensor::MeasurmentResult measureDepthF(DepthSensor* con)
     {
-        if(sensor > MPX5500DP)
-            return Sensor::TestSeriesError;
+        Sensor::Sensor* baseCon = (Sensor::Sensor*)con;
         Logger::log(Logger::INFO, "---------------------------------------");
-        Logger::log(Logger::INFO, "Start with test series for depth sensor");
-        TestSeries::TestSeriesCheckResult res = TestSeries::measure(&depthMeasurementControll, testTestSeries, sensorReadFunctions[sensor]);
-        if(res != TestSeries::TestSeriesOK)
+        Logger::logInt(Logger::INFO, "Start with test series for depth sensor with id: ",con->getID(baseCon));
+        Sensor::TestSeriesCheckResult res = con->takeTestSeries(baseCon);
+
+        if(res != Sensor::TestSeriesOK)
         {
             Logger::log(Logger::ERROR,"Could not measure depth"); 
             Logger::log(Logger::INFO, "---------------------------------------");
-            lastMeasurement = 0;
-            return Sensor::TestSeriesError;
+            con->lastDepth = 0;
+            return Sensor::MeasurmentError;
         }
 	    //Process data out of test series
-        Sensor::SensorMeasurmentResult result = Sensor::SensorValueOK;
-        Depth avgDepthOfSeries = (Depth)TestSeries::getAverageMeanOfSeries(&depthMeasurementControll);
-        Sensor::AverageMeasurementTestResult averageSensorTestResult = testEvaluatedValue(avgDepthOfSeries);
+        Sensor::MeasurmentResult result = Sensor::MeasurmentOK;
+        Depth avgDepthOfSeries = con->getAverageMeanOfSeries(baseCon);
+        SensorError::AverageMeasurementError averageSensorTestResult = testEvaluatedValue(con,avgDepthOfSeries);
        //Keep sensor value but generate callback if not as acpected. 
-        if(averageSensorTestResult != Sensor::AverageMeasurmentOK)
+        if(averageSensorTestResult != SensorError::AverageMeasurmentOK)
         {
-             errorNewAverageDepth(averageSensorTestResult);
-             result = Sensor::SensorValueUnexpected;
+             logAverageDepthErrors(averageSensorTestResult);
+             result = Sensor::MeasurmentValueUnexpected;
         }
         Logger::logInt(Logger::INFO, "Tiefe [cm]: ", avgDepthOfSeries);
-	  
         Logger::log(Logger::INFO, "---------------------------------------");  
-        lastMeasurement = avgDepthOfSeries;
+        con->lastDepth = avgDepthOfSeries;
         return result;
     }
 
@@ -122,80 +120,92 @@ namespace DepthSensor
 	//    *measurementOfSeries = pressure;
     }
 
-    TestSeries::TestSeriesCheckResult testTestSeries()
+    static Sensor::TestSeriesCheckResult testDepthSeriesF(const Sensor::Sensor* sen)
     { 
-        Sensor::TestSeriesTestResult errorTypes = Sensor::TestSeriesOK;
-	TestSeries::MinMax res = TestSeries::evaluateMinMaxOfTestSeries(&depthMeasurementControll);
+        if(sen == NULL)
+            return Sensor::TestSeriesCancelMeasurement;
 
-	double meanVariation = res.max - res.min;
-	if(res.min < 0.0001 && res.max < 0.0001)
-	    errorTypes = Sensor::SensorOutOfFunction;
-	else if(res.min < MINIMAL_EXPECTED_DEPTH_SENSOR_VALUE)
-	    errorTypes = Sensor::TestSeriesUnderMinRange;
-	else if(res.max > MAXIMAL_EXPECTED_DEPTH_SENSOR_VALUE)
-	    errorTypes = Sensor::TestSeriesAboveMaxRange;
-	else if(meanVariation > ALLOWED_DEPTH_TEST_SERIES_VARIATION)
-	    errorTypes = Sensor::TestSeriesMeanVariationToBig;
+        using namespace SensorError;
 
-        errorHandlingTestSeriesError(errorTypes);
+        const Sensor::SensorConstraints* con = sen->sensorConstraints;
+        TestSeriesError errorTypes = TestSeriesOK;
+	    Sensor::MinMax res = sen->evaluateMinMaxOfTestSeries(sen);
+
+	    double meanVariation = res.max - res.min;
+	    if(res.min < 0.0001 && res.max < 0.0001)
+	        errorTypes = SensorOutOfFunction;
+	    else if(res.min < con->MINIMAL_EXPECTED_SENSOR_VALUE)
+	        errorTypes = TestSeriesUnderMinRange;
+	    else if(res.max > con->MAXIMAL_EXPECTED_SENSOR_VALUE)
+	        errorTypes = TestSeriesAboveMaxRange;
+	    else if(meanVariation > con->ALLOWED_TEST_SERIES_VARIATION)
+	        errorTypes = TestSeriesMeanVariationToBig;
+
+        logDepthTestSeriesError(errorTypes);
  
-        if(errorTypes == Sensor::SensorOutOfFunction)
-            return TestSeries::TestSeriesCancelMeasurement; //Cancel further       
-        if(errorTypes != Sensor::TestSeriesOK)
-            return TestSeries::TestSeriesInvalid;
-        
-	return TestSeries::TestSeriesOK;
+        if(errorTypes == SensorOutOfFunction)
+            return Sensor::TestSeriesCancelMeasurement; //Cancel further       
+        if(errorTypes != TestSeriesOK)
+            return Sensor::TestSeriesInvalid;
+            
+	    return Sensor::TestSeriesOK;
     }
 
-    Sensor::AverageMeasurementTestResult testEvaluatedValue(const Depth dep)
+    static SensorError::AverageMeasurementError testEvaluatedValue(const DepthSensor* sen, const Depth dep)
     {
-	    static Depth depthHistory = 0;
-	
-	    Sensor::AverageMeasurementTestResult res = Sensor::AverageMeasurmentOK;
-	    Depth depthDiff;
-	    //Calc diff between new and last Depth
-	    if(dep > depthHistory)
-		    depthDiff = dep - depthHistory;
-	    else	
-		    depthDiff = depthHistory - dep; 
+        static Depth depthHistory = 0;
+        const Sensor::SensorConstraints* con = sen->sensorConstraints;
+        if(con == NULL)
+        {
+            Logger::log(Logger::WARNING,"Could not test new depth because no constraint defined");        
+            return SensorError::AverageMeasurmentOK;
+        }
+        SensorError::AverageMeasurementError res = SensorError::AverageMeasurmentOK;
+        Depth depthDiff;
+        //Calc diff between new and last Depth
+        if(dep > depthHistory)
+            depthDiff = dep - depthHistory;
+	else	
+     depthDiff = depthHistory - dep; 
 
-	    if(depthHistory != 0 && depthDiff > MAX_ALLOWED_AVERAGED_DEPTH_VALUE_CHANGE)
-		    res = Sensor::AverageMeasurmentNotInRange;
-
-	    depthHistory = dep;	
-	    return res;
+        if(sen->lastDepth != 0 && depthDiff > con->MAX_ALLOWED_AVERAGED_VALUE_CHANGE)
+            res = SensorError::AverageMeasurmentNotInRange;
+       
+        return res;
     }
 
     //-------------------------------------- E r r o r s ------------------------
 
-    void errorHandlingTestSeriesError(Sensor::TestSeriesTestResult an)
+    void logDepthTestSeriesError(SensorError::TestSeriesError an)
     {
+      using namespace SensorError;
       switch(an)
       {
-          case Sensor::SensorOutOfFunction:
+          case SensorOutOfFunction:
               Logger::log(Logger::ERROR, "Sensor seams to be out of function. Only 0 measures");
           break;
-          case Sensor::TestSeriesUnderMinRange:
+          case TestSeriesUnderMinRange:
               Logger::log(Logger::ERROR, "On of the sensor's values is out of minimal range");
           break;
-          case Sensor::TestSeriesAboveMaxRange:
+          case TestSeriesAboveMaxRange:
               Logger::log(Logger::ERROR, "On of the sensor's values is out of maximal range");
           break;
-          case Sensor::TestSeriesMeanVariationToBig:
+          case TestSeriesMeanVariationToBig:
               Logger::log(Logger::ERROR, "Mean variaion of sensor's values is out of range");
           break;
-          case Sensor::TestSeriesOK:
+          case TestSeriesOK:
           break;
           default:
               Logger::log(Logger::ERROR, "General error in test series of depth sensor");
       }
     }
 
-    void errorNewAverageDepth(Sensor::AverageMeasurementTestResult b)
+    void logAverageDepthErrors(SensorError::AverageMeasurementError b)
     {
+        using namespace SensorError;
         switch(b)
         {
-            case Sensor::AverageMeasurmentNotInRange:
+            case AverageMeasurmentNotInRange:
                 Logger::log(Logger::ERROR, "Average measurement was out of defined range");
             break;
             default:
