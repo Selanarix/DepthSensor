@@ -147,10 +147,13 @@ namespace ADC_TLC_243
     {
         uint16_t resultMsb=0, resultLsb=0;
         actualCommand = changeInputForCommand(nextInputForConversion, actualCommand);
+        uint8_t tmp = SREG;
+        cli(); //Critical section Start
         digitalWrite(NSS_Pin,LOW);
         resultMsb=SPI.transfer(actualCommand);
         resultLsb=SPI.transfer(0x00);
         digitalWrite(NSS_Pin,HIGH);
+        SREG=tmp; //Critical section End
         return ((resultMsb<<8 | resultLsb) >> 4);
     }
 
@@ -168,9 +171,12 @@ namespace ADC_TLC_243
     {
         uint16_t result;
         actualCommand = changeInputForCommand(nextInputForConversion, actualCommand);
+        uint8_t tmp = SREG;
+        cli(); //Critical section Start
         digitalWrite(NSS_Pin,LOW);
         result=SPI.transfer(actualCommand);
         digitalWrite(NSS_Pin,HIGH);
+        SREG=tmp; //Critical section End
         return result;
     }    
 
