@@ -5,17 +5,17 @@ namespace TMP_102
 { 
     typedef enum
     {
+        ENABLE,
+        DISABLE
+    } FunctionStatus;
+
+    typedef enum
+    {
         GND = 0x48,
         VCC = 0x49,
         SCL = 0x4A,
         SDA = 0x4B
     } I2C_Addresses; 
-
-    typedef enum
-    {
-        NormalMode = 0x0, //normal temperatur range
-        ExtendetMode = 0x1 //above +128°C
-    } Mode;
 
     typedef enum
     {
@@ -53,17 +53,20 @@ namespace TMP_102
     
     typedef struct _TMP102 TMP102;
 
-    struct TMP102 
+    struct _TMP102 
     {
         I2C_Addresses addr;
         bool lowPowerMode;
+        bool isExtendetMode;
         TermostatLimits limits;
         double (*readTemperatur)(const TMP102* const);
         double (*oneShotRead)(const TMP102* const);
-        void (*setToLowPowerMode)(const TMP102* const);
-        void (*setTermostatMode)(const TMP102* const, double , double, TermostatMode, ConsecutiveFaults, AlertPinPolarity);
+        void (*setPowerMode)(TMP102* const, FunctionStatus status);
+        void (*setTermostatMode)(TMP102* const, double , double, TermostatMode, ConsecutiveFaults, AlertPinPolarity);
         const TermostatLimits* (*getTermostatLimits)(const TMP102* const);
         I2C_Addresses (*getAddress)(const TMP102* const);
+        void (*setExtendetMode)(TMP102* const, FunctionStatus);
+        void (*setMeasureFrequency)(const TMP102* const, ConversionRate);
     };
 
     bool construct(TMP102* thi,I2C_Addresses add); 
