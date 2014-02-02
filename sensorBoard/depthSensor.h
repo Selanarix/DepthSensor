@@ -30,8 +30,8 @@ namespace DepthSensor
         unsigned char (*getPin)(const DepthSensor*);
         //Abstract methods
         void (*readSensorValue)(double*);
-        Sensor::TestSeriesCheckResult(*checkTestSeries)(const Sensor::Sensor*);
-        void (*initSensorHW)(const Sensor::Sensor* con);
+        Sensor::TestSeriesCheckResult(*checkTestSeries)(const DepthSensor*);
+        void (*initSensorHW)(const DepthSensor* con);
         //extend base class
         //Data
         Depth lastDepth;

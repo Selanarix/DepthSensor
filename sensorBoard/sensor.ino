@@ -24,7 +24,6 @@ namespace Sensor
         if(con == NULL || constDa == NULL)
             return false;
 
-
         //init data
         if(testSeriesSize > TEST_SERIES_SIZE)
             con->sensorUsedSizeOfTestSeries = TEST_SERIES_SIZE;
@@ -32,18 +31,14 @@ namespace Sensor
             con->sensorUsedSizeOfTestSeries = testSeriesSize;
         con->sensorConstraints = constraint; 
         con->constData = constDa;
-        
-        Serial.println((uint32_t)&(con->takeTestSeries));
-      
         //init public functions
+        
         con->takeTestSeries = takeTestSeriesF;
-  return true;
         con->getAverageMeanOfSeries = getAverageMeanOfSeriesF;
         con->evaluateMinMaxOfTestSeries = evaluateMinMaxOfTestSeriesF;
         con->getSize = getSizeF;
         con->getID = getIDF;
         con->getPin = getPinF;
-
 
         //init abstract methods
         con->readSensorValue = NULL;

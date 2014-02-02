@@ -10,10 +10,10 @@
 //  ----------------------------------------------------------------------
 Sensor::SensorConstraints temperatureConstrain = 
 {
-        -10,       // MINIMAL_EXPECTED_SENSOR_VALUE;
-        60,        // MAXIMAL_EXPECTED_SENSOR_VALUE;
-        2,         // ALLOWED_TEST_SERIES_VARIATION;
-        10         // MAX_ALLOWED_AVERAGED_VALUE_CHANGE;
+        -10.0,       // MINIMAL_EXPECTED_SENSOR_VALUE;
+        60.0,        // MAXIMAL_EXPECTED_SENSOR_VALUE;
+        2.0,         // ALLOWED_TEST_SERIES_VARIATION;
+        10.0         // MAX_ALLOWED_AVERAGED_VALUE_CHANGE;
 };
 
 Sensor::TestSeriesControll tempControll = 
@@ -33,10 +33,10 @@ Sensor::SensorConstData temperatureConst =
 //  ----------------------------------------------------------------------
 Sensor::SensorConstraints depthConstrain = 
 {
-        0,             // MINIMAL_EXPECTED_SENSOR_VALUE;
-        1000,          // MAXIMAL_EXPECTED_SENSOR_VALUE;
-        2,             // ALLOWED_TEST_SERIES_VARIATION;
-        20             // MAX_ALLOWED_AVERAGED_VALUE_CHANGE;
+        0.0,             // MINIMAL_EXPECTED_SENSOR_VALUE;
+        1000.0,          // MAXIMAL_EXPECTED_SENSOR_VALUE;
+        2.0,             // ALLOWED_TEST_SERIES_VARIATION;
+        20.0             // MAX_ALLOWED_AVERAGED_VALUE_CHANGE;
 };
 
 Sensor::TestSeriesControll depthControll = 
@@ -62,10 +62,10 @@ void setup()
    // HAL::initBaseHW();
    // ProjectLED::initLedPins();
     if(!TemperatureSensor::construct(&temperatureSensor1, &temperatureConst, &temperatureConstrain, 5, TemperatureSensor::LM35))
-        Logger::log(Logger::ERROR,"Could not set up temperatur sensor");
+    //    Logger::log(Logger::ERROR,"Could not set up temperatur sensor");
     //temperatureSensor1.initSensorHW((Sensor::Sensor*)(&temperatureSensor1));
 
-  //  DepthSensor::construct(&depthSensor1, &depthSensorConst, &depthConstrain, 5, DepthSensor::MPX5500);
+   // DepthSensor::construct(&depthSensor1, &depthSensorConst, &depthConstrain, 5, DepthSensor::MPX5500);
   //  depthSensor1.initSensorHW((Sensor::Sensor*)(&depthSensor1));
 
 

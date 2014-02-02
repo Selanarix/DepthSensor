@@ -8,9 +8,9 @@ namespace DepthSensor
     //-------------------------- Private Types -------------------------------------
     //-------------------- Private Function Prototypes -----------------------------
 
-    static Sensor::TestSeriesCheckResult testDepthSeriesF(const Sensor::Sensor* con);
+    static Sensor::TestSeriesCheckResult testDepthSeriesF(const DepthSensor* con);
     static void readMPX5500SensorF(double* measurementOfSeries);
-    static void initDepthSensorHW_F(const Sensor::Sensor* con); 
+    static void initDepthSensorHW_F(const DepthSensor* con); 
     static Sensor::MeasurmentResult measureDepthF(DepthSensor* con);   
     static Depth getLastDepthF(const DepthSensor* con);
 
