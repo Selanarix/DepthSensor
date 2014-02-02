@@ -22,21 +22,21 @@ namespace TemperatureSensor //extends Sensor
         const Sensor::SensorConstraints* sensorConstraints; 
         const Sensor::SensorConstData* constData;
         //Methods
-        Sensor::TestSeriesCheckResult (*takeTestSeries)(const Sensor::Sensor* con);
-        double (*getAverageMeanOfSeries)(const Sensor::Sensor* con);
-        Sensor::MinMax (*evaluateMinMaxOfTestSeries)(const Sensor::Sensor* con);
-        unsigned int (*getSize)(const Sensor::Sensor*);
-        unsigned char (*getID)(const Sensor::Sensor*);
-        unsigned char (*getPin)(const Sensor::Sensor*);
+        Sensor::TestSeriesCheckResult (*takeTestSeries)(const TemperaturSensor* con);
+        double (*getAverageMeanOfSeries)(const TemperaturSensor* con);
+        Sensor::MinMax (*evaluateMinMaxOfTestSeries)(const TemperaturSensor* con);
+        unsigned int (*getSize)(const TemperaturSensor*);
+        unsigned char (*getID)(const TemperaturSensor*);
+        unsigned char (*getPin)(const TemperaturSensor*);
         //Abstract methods
         void (*readSensorValue)(double*);
-        Sensor::TestSeriesCheckResult(*checkTestSeries)(const Sensor::Sensor*);
-        void (*initSensorHW)(const Sensor::Sensor* con);
+        Sensor::TestSeriesCheckResult(*checkTestSeries)(const TemperaturSensor*);
+        void (*initSensorHW)(const TemperaturSensor*);
         //extend base class
         //Data
         Temperature lastTemperature;
         //Methods
-        Temperature (*getTemperatur)(const TemperaturSensor*); 
+        Temperature (*getTemperature)(const TemperaturSensor*); 
         Sensor::MeasurmentResult (*measureTemperature)(TemperaturSensor* con);
     };
     bool construct(TemperaturSensor* con, const Sensor::SensorConstData* constDa, const Sensor::SensorConstraints* constraint, unsigned int testSeriesSize, TemperaturSensorType t);

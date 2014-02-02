@@ -180,14 +180,14 @@ namespace TMP_102
         setConfig(thi, conf);
     }
 
+    //------------- Private Helpers -------------
+
     static bool initI2C(const TMP102* const thi)
     {
         pinMode(SDA_Pin, INPUT_PULLUP);
         pinMode(SCL_Pin, INPUT_PULLUP);
         return true;
     }
-
-//------------- Private Helpers -------------
 
     static inline void setPointerReg(const TMP102* const thi, PointerAddress pAddr)
     {

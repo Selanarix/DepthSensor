@@ -1,46 +1,76 @@
 #include "led.h"
 #include "tempSensor.h"
+#include "depthSensor.h"
 //#include "network.h"
 #include "logger.h"
-#include "hal.h"
+//#include "hal.h"
 #include "sensor.h"
 
-Sensor::SensorConstraints senConstraint = 
+// Set up temperatur sensor objects and their data
+//  ----------------------------------------------------------------------
+Sensor::SensorConstraints temperatureConstrain = 
 {
-        20,       // MINIMAL_EXPECTED_SENSOR_VALUE;
-        30,   // MAXIMAL_EXPECTED_SENSOR_VALUE;
-        10,   // ALLOWED_TEST_SERIES_VARIATION;
-        3    // MAX_ALLOWED_AVERAGED_VALUE_CHANGE;
+        -10,       // MINIMAL_EXPECTED_SENSOR_VALUE;
+        60,        // MAXIMAL_EXPECTED_SENSOR_VALUE;
+        2,         // ALLOWED_TEST_SERIES_VARIATION;
+        10         // MAX_ALLOWED_AVERAGED_VALUE_CHANGE;
 };
 
-Sensor::TestSeriesControll controll = 
+Sensor::TestSeriesControll tempControll = 
 {
-        2,// MAXIMAL_MEASUREMENT_RETRIES
-        5000,// DELAY_FOR_RETRY_ms
-        300// DELAY_BETWEEN_MEASUREMENTS_ms
+        5,         // MAXIMAL_MEASUREMENT_RETRIES
+        1000,      // DELAY_FOR_RETRY_IF_SERIES_ERROR
+        500        // DELAY_BETWEEN_MEASUREMENTS_ms
 };
 
-Sensor::SensorConstData constDa = 
+Sensor::SensorConstData temperatureConst = 
 {
-        &controll, //Test series controll struct
-        0, //PIN
-        5, //ID
+        &tempControll, //Test series controll struct
+        0,             //PIN
+        5,             //ID
+};
+// Set up depth sensor objects and their data
+//  ----------------------------------------------------------------------
+Sensor::SensorConstraints depthConstrain = 
+{
+        0,             // MINIMAL_EXPECTED_SENSOR_VALUE;
+        1000,          // MAXIMAL_EXPECTED_SENSOR_VALUE;
+        2,             // ALLOWED_TEST_SERIES_VARIATION;
+        20             // MAX_ALLOWED_AVERAGED_VALUE_CHANGE;
 };
 
-TemperatureSensor::TemperaturSensor sen1;
+Sensor::TestSeriesControll depthControll = 
+{
+        10,            // MAXIMAL_MEASUREMENT_RETRIES
+        5000,          // DELAY_FOR_RETRY_IF_SERIES_ERROR
+        1000           // DELAY_BETWEEN_MEASUREMENTS_ms
+};
+
+Sensor::SensorConstData depthSensorConst = 
+{
+        &depthControll, //Test series controll struct
+        1,              //PIN
+        0,              //ID
+};
+
+TemperatureSensor::TemperaturSensor temperatureSensor1;
+DepthSensor::DepthSensor depthSensor1;
 
 void setup()
 {    
     Logger::initLogger();
-    HAL::initBaseHW();
-    ProjectLED::initLedPins();
+   // HAL::initBaseHW();
+   // ProjectLED::initLedPins();
+    if(!TemperatureSensor::construct(&temperatureSensor1, &temperatureConst, &temperatureConstrain, 5, TemperatureSensor::LM35))
+        Logger::log(Logger::ERROR,"Could not set up temperatur sensor");
+    //temperatureSensor1.initSensorHW((Sensor::Sensor*)(&temperatureSensor1));
 
-    TemperatureSensor::construct(&sen1, &constDa, &senConstraint,5, TemperatureSensor::LM35);
-    sen1.initSensorHW((Sensor::Sensor*)&sen1);
+  //  DepthSensor::construct(&depthSensor1, &depthSensorConst, &depthConstrain, 5, DepthSensor::MPX5500);
+  //  depthSensor1.initSensorHW((Sensor::Sensor*)(&depthSensor1));
+
 
   //   Network::initNetworkStack();
-  // DepthSensor::initDepthSensorHW();
-  // TemperatureSensor::initTemperatureSensorHW();
+
     Logger::log(Logger::INFO,"System initialized");
 }
 
@@ -54,37 +84,21 @@ void flashLED_1s()
 
 void loop()
 {    
-    using namespace TemperatureSensor;
+  
    // DepthSensor::Depth dep = DepthSensor::measureDepth();
-    Sensor::MeasurmentResult res = sen1.measureTemperature(&sen1);
-    if(res == Sensor::MeasurmentOK)
-         Temperature a = sen1.getTemperatur(&sen1);
-    else
-         Logger::log(Logger::ERROR,"Could not measure");
+ //   Sensor::MeasurmentResult tempRes = temperatureSensor1.measureTemperature(&temperatureSensor1);
+ //   Sensor::MeasurmentResult depthRes = depthSensor1.measureDepth(&depthSensor1);
     
-  //   flashLED_1s();
-  
-    
-  /*
-    //Send depth sensor
-    Network::http_GET_Request(0, dep);
-    //Send temperatur sensor
-    Network::http_GET_Request(5,temp);
-    
-    flashLED_1s();
-    flashLED_1s();
-  if(ADC_TLC_243::testTLC243(ADC_TLC_243::V_Diff) == ADC_TLC_243::ADCOutOfFunction)
-    Logger::log(Logger::ERROR,"adc not working");
-  else
-    Logger::log(Logger::INFO,"workds :-)");
-    
- */
-//   Serial.println(ADC_TLC_243::analogReadPrepareNext(ADC_TLC_243::Channel0));
-  
-   /* if(ADC_TLC_243::testTLC243(ADC_TLC_243::V_Plus) == ADC_TLC_243::ADCOutOfFunction)
-    Logger::log(Logger::ERROR,"adc not working");
-  else
-    Logger::log(Logger::INFO,"workds :-)");
-*/
+  //  if(depthRes == Sensor::MeasurmentOK )//&& depthRes == Sensor::MeasurmentOK)
+  //  {
+    //    TemperatureSensor::Temperature tmp1 = temperatureSensor1.getTemperature(&temperatureSensor1);
+     //   DepthSensor::Depth dep1 = depthSensor1.getDepth(&depthSensor1);
+        //Send depth sensor
+       // Network::http_GET_Request(temperatureSensor1.getID((Sensor::Sensor*)&temperatureSensor1), tmp1);
+        //Send temperatur sensor
+      //  Network::http_GET_Request(depthSensor1.getID((Sensor::Sensor*)&depthSensor1), dep1); 
+  //  }
+    //flashLED_1s();
+    Logger::log(Logger::INFO,"Test");
     delay(2000);
 }

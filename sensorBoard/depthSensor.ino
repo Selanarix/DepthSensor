@@ -51,18 +51,23 @@ namespace DepthSensor
           return con->lastDepth;
     }
     
-    static void initDepthSensorHW_F(const Sensor::Sensor* con)
+    static void initDepthSensorHW_F(const DepthSensor* con)
     {
-        pinMode(con->getPin((Sensor::Sensor*)con),INPUT);
+        //pinMode(con->getPin((Sensor::Sensor*)con),INPUT);
         Logger::log(Logger::INFO, "depth sensor initialized");
     }
 
     static Sensor::MeasurmentResult measureDepthF(DepthSensor* con)
     {
-        Sensor::Sensor* baseCon = (Sensor::Sensor*)con;
+        if(con == NULL)
+        {
+            Logger::log(Logger::ERROR,"Can not measure for null instance of depth sensor");
+            return Sensor::MeasurmentError;
+        }    
+            
         Logger::log(Logger::INFO, "---------------------------------------");
-        Logger::logInt(Logger::INFO, "Start with test series for depth sensor with id: ",con->getID(baseCon));
-        Sensor::TestSeriesCheckResult res = con->takeTestSeries(baseCon);
+        Logger::logInt(Logger::INFO, "Start with test series for depth sensor with id: ",(uint32_t)con->getID(con));
+        Sensor::TestSeriesCheckResult res = con->takeTestSeries(con);
 
         if(res != Sensor::TestSeriesOK)
         {
@@ -73,7 +78,7 @@ namespace DepthSensor
         }
 	    //Process data out of test series
         Sensor::MeasurmentResult result = Sensor::MeasurmentOK;
-        Depth avgDepthOfSeries = con->getAverageMeanOfSeries(baseCon);
+        Depth avgDepthOfSeries = con->getAverageMeanOfSeries(con);
         SensorError::AverageMeasurementError averageSensorTestResult = testEvaluatedValue(con,avgDepthOfSeries);
        //Keep sensor value but generate callback if not as acpected. 
         if(averageSensorTestResult != SensorError::AverageMeasurmentOK)
@@ -89,7 +94,7 @@ namespace DepthSensor
 
     //------------------------------ Private Functions -----------------------------
 
-    void readMPX5500(double* measurementOfSeries)
+    void readMPX5500SensorF(double* measurementOfSeries)
     {
         //read value from sensor and assign it to measurementOfSeries
         double pressure = 0.0;
@@ -98,7 +103,6 @@ namespace DepthSensor
         const double offset = 0.19;
         
          static int ax = 0;
-       
         *measurementOfSeries = ax++; 
        /*
         adcvalue = (double)analogRead(depthSensorPin);
@@ -120,7 +124,7 @@ namespace DepthSensor
 	//    *measurementOfSeries = pressure;
     }
 
-    static Sensor::TestSeriesCheckResult testDepthSeriesF(const Sensor::Sensor* sen)
+    static Sensor::TestSeriesCheckResult testDepthSeriesF(const DepthSensor* sen)
     { 
         if(sen == NULL)
             return Sensor::TestSeriesCancelMeasurement;

@@ -7,9 +7,9 @@ namespace TemperatureSensor
     //-------------------------- Private Types -------------------------------------
     //-------------------- Private Function Prototypes -----------------------------
 
-    static Sensor::TestSeriesCheckResult testTestSeriesF(const Sensor::Sensor* con);
-    static void readXXXF(double* measurementOfSeries);
-    static void initADC_PIN(const Sensor::Sensor* con); 
+    static Sensor::TestSeriesCheckResult testTestSeriesF(const TemperaturSensor* con);
+    static void readLM35_F(double* measurementOfSeries);
+    static void initADC_PIN(const TemperaturSensor* con); 
     static Sensor::MeasurmentResult measureTemperatureF(TemperaturSensor* con);   
     static Temperature getLastMeasurementF(const TemperaturSensor* con);
 
@@ -28,7 +28,7 @@ namespace TemperatureSensor
         switch(t)
         {
             case LM35:
-                con->readSensorValue = readXXXF;
+                con->readSensorValue = readLM35_F;
                 con->initSensorHW = initADC_PIN;
             break;
             default:
@@ -38,7 +38,7 @@ namespace TemperatureSensor
         
         //extend object
         con->lastTemperature = 0.0;
-        con->getTemperatur = getLastMeasurementF;
+        con->getTemperature = getLastMeasurementF;
         con->measureTemperature = measureTemperatureF;
         return true;
     }
@@ -50,18 +50,22 @@ namespace TemperatureSensor
          return con->lastTemperature;
     }
  
-    static void initADC_PIN(const Sensor::Sensor* con)
+    static void initADC_PIN(const TemperaturSensor* con)
     {
-        pinMode(con->getPin((Sensor::Sensor*)con),INPUT);
+       // HAL::(con->getPin((Sensor::Sensor*)con),INPUT);
         Logger::log(Logger::INFO, "temperatur sensor initialized");
     }
 
     Sensor::MeasurmentResult measureTemperatureF(TemperaturSensor* con)
     {
-        Sensor::Sensor* baseCon = (Sensor::Sensor*)con;
+        if(con == NULL)
+        {
+            Logger::log(Logger::ERROR,"Can not measure for null instance of temperatur sensor");
+            return Sensor::MeasurmentError;
+        }    
         Logger::log(Logger::INFO, "---------------------------------------");
-        Logger::logInt(Logger::INFO, "Start with test series for temperature sensor with id: ",con->getID(baseCon));
-        Sensor::TestSeriesCheckResult res = con->takeTestSeries(baseCon);
+        Logger::logInt(Logger::INFO, "Start with test series for temperature sensor with id: ",(uint32_t)con->getID(con));
+        Sensor::TestSeriesCheckResult res = con->takeTestSeries(con);
         
         if(res != Sensor::TestSeriesOK)
         {
@@ -71,7 +75,7 @@ namespace TemperatureSensor
            return Sensor::MeasurmentError;
         }
         Sensor::MeasurmentResult result = Sensor::MeasurmentOK;
-        Temperature avgTemperaturOfSeries = con->getAverageMeanOfSeries(baseCon);
+        Temperature avgTemperaturOfSeries = con->getAverageMeanOfSeries(con);
         SensorError::AverageMeasurementError averageSensorTestResult = testEvaluatedValue(con,avgTemperaturOfSeries);
         //Keep sensor value but generate callback if not as acpected. 
         if(averageSensorTestResult != SensorError::AverageMeasurmentOK)
@@ -85,7 +89,7 @@ namespace TemperatureSensor
         return result;
     }
     
-    static void readXXXF(double* mes)
+    static void readLM35_F(double* mes)
     {
         static int a = 0;
         *mes = a++;
@@ -95,7 +99,7 @@ namespace TemperatureSensor
      */
     }  
     
-    static Sensor::TestSeriesCheckResult testTestSeriesF(const Sensor::Sensor* sen)
+    static Sensor::TestSeriesCheckResult testTestSeriesF(const TemperaturSensor* sen)
     { 
         if(sen == NULL)
             return Sensor::TestSeriesCancelMeasurement;
