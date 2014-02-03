@@ -30,8 +30,8 @@ namespace TemperatureSensor
                     TemperatureSensorType , uint32_t );
 
     Sensor::MeasurementResult measureTemperature(TemperatureSensor* con);   
-    Temperature getLastMeasurement(const TemperatureSensor* con);
-    void initADC_PIN(const TemperatureSensor* con);
+    Temperature getLastTemperature(const TemperatureSensor* con);
+    void initSensorHW(const TemperatureSensor* con);
 }
 
 #endif /* DEPTHSENSOR_H_ */

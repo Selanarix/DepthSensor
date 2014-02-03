@@ -1,7 +1,7 @@
 #include "led.h"
 #include "tempSensor.h"
 #include "testSeries.h"
-//#include "depthSensor.h"
+#include "depthSensor.h"
 //#include "network.h"
 #include "logger.h"
 //#include "hal.h"
@@ -31,7 +31,7 @@ const Sensor::SensorConstData temperatureConst =
 };
 // Set up depth sensor objects and their data
 //  ----------------------------------------------------------------------
-/*const Sensor::SensorConstraints depthConstrain = 
+const Sensor::SensorConstraints depthConstrain = 
 {
         0.0,             // MINIMAL_EXPECTED_SENSOR_VALUE;
         1000.0,          // MAXIMAL_EXPECTED_SENSOR_VALUE;
@@ -39,22 +39,21 @@ const Sensor::SensorConstData temperatureConst =
         20.0             // MAX_ALLOWED_AVERAGED_VALUE_CHANGE;
 };
 
-const Sensor::TestSeriesControll depthControll = 
+const TestSeries::TestSeriesControll depthControll = 
 {
         10,            // MAXIMAL_MEASUREMENT_RETRIES
         5000,          // DELAY_FOR_RETRY_IF_SERIES_ERROR
         1000           // DELAY_BETWEEN_MEASUREMENTS_ms
 };
 
-const Sensor::SensorConstData depthSensorConst = 
+const Sensor::SensorConstData depthConst = 
 {
-        &depthControll, //Test series controll struct
         1,              //PIN
         0,              //ID
-};*/
+};
 
 TemperatureSensor::TemperatureSensor temperatureSensor1;
-//DepthSensor::DepthSensor depthSensor1;
+DepthSensor::DepthSensor depthSensor1;
 
 void setup()
 {    
@@ -65,8 +64,9 @@ void setup()
        Logger::log(Logger::ERROR,F("Could not set up temperatur sensor"));
     //temperatureSensor1.initSensorHW((Sensor::Sensor*)(&temperatureSensor1));
 
-   // DepthSensor::construct(&depthSensor1, &depthSensorConst, &depthConstrain, 5, DepthSensor::MPX5500);
-  //  depthSensor1.initSensorHW((Sensor::Sensor*)(&depthSensor1));
+    if(!DepthSensor::construct(&depthSensor1, &depthConst, &depthControll, &depthConstrain, DepthSensor::MPX5500, 10))
+      Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
+    //  depthSensor1.initSensorHW((Sensor::Sensor*)(&depthSensor1
 
 
   //   Network::initNetworkStack();
@@ -87,13 +87,13 @@ void loop()
 {    
   
    // DepthSensor::Depth dep = DepthSensor::measureDepth();
- //   Sensor::MeasurmentResult tempRes = temperatureSensor1.measureTemperature(&temperatureSensor1);
- //   Sensor::MeasurmentResult depthRes = depthSensor1.measureDepth(&depthSensor1);
+    Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&temperatureSensor1);
+    Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
     
   //  if(depthRes == Sensor::MeasurmentOK )//&& depthRes == Sensor::MeasurmentOK)
   //  {
-    //    TemperatureSensor::Temperature tmp1 = temperatureSensor1.getTemperature(&temperatureSensor1);
-     //   DepthSensor::Depth dep1 = depthSensor1.getDepth(&depthSensor1);
+       TemperatureSensor::Temperature tmp1 = TemperatureSensor::getLastTemperature(&temperatureSensor1);
+        DepthSensor::Depth dep1 = DepthSensor::getLastDepth(&depthSensor1);
         //Send depth sensor
        // Network::http_GET_Request(temperatureSensor1.getID((Sensor::Sensor*)&temperatureSensor1), tmp1);
         //Send temperatur sensor

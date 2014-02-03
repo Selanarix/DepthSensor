@@ -29,7 +29,7 @@ namespace Logger
         Serial.println(message);
     }
 
-    void logInt(LogLevel level, __FlashStringHelper* message, unsigned int number )
+    void logInt(LogLevel level, const __FlashStringHelper* message, unsigned int number )
     {
         Serial.print(logLevelNames[level]);
         Serial.print(" : ");
