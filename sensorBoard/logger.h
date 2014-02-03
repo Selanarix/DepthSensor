@@ -14,9 +14,9 @@ namespace Logger
 
     void initLogger();
     
-    void log(LogLevel level, const char* message);
-    void logInt(LogLevel level, const char* message, unsigned int number );
-    void logDouble(LogLevel level, const char* message, double number );
+    void log(LogLevel level, const __FlashStringHelper* message);
+    void logInt(LogLevel level, const __FlashStringHelper* message, unsigned int number );
+    void logDouble(LogLevel level, const __FlashStringHelper* message, double number );
     void logString(LogLevel level, const String str);
 }
 #endif

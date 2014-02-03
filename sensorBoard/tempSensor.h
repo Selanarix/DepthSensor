@@ -1,45 +1,37 @@
-
 #ifndef TEMPSENSOR_H_
 #define TEMPSENSOR_H_
-#include "sensor.h"
 
-namespace TemperatureSensor //extends Sensor
+#include "sensor.h"
+#include "testSeries.h"
+
+namespace TemperatureSensor 
 {
-    typedef unsigned int Temperature;
+    typedef int32_t Temperature;
 
     typedef enum
     {
         LM35, //TODO
-    } TemperaturSensorType;
+    } TemperatureSensorType;
 
-    typedef struct _TemperaturSensor TemperaturSensor;
+    typedef struct _TemperatureSensor TemperatureSensor;
 
-    struct _TemperaturSensor
+    struct _TemperatureSensor
     {
-        //base class
-        //Data
-        unsigned int sensorUsedSizeOfTestSeries;
-        const Sensor::SensorConstraints* sensorConstraints; 
-        const Sensor::SensorConstData* constData;
-        //Methods
-        Sensor::TestSeriesCheckResult (*takeTestSeries)(const TemperaturSensor* con);
-        double (*getAverageMeanOfSeries)(const TemperaturSensor* con);
-        Sensor::MinMax (*evaluateMinMaxOfTestSeries)(const TemperaturSensor* con);
-        unsigned int (*getSize)(const TemperaturSensor*);
-        unsigned char (*getID)(const TemperaturSensor*);
-        unsigned char (*getPin)(const TemperaturSensor*);
-        //Abstract methods
-        void (*readSensorValue)(double*);
-        Sensor::TestSeriesCheckResult(*checkTestSeries)(const TemperaturSensor*);
-        void (*initSensorHW)(const TemperaturSensor*);
-        //extend base class
-        //Data
         Temperature lastTemperature;
-        //Methods
-        Temperature (*getTemperature)(const TemperaturSensor*); 
-        Sensor::MeasurmentResult (*measureTemperature)(TemperaturSensor* con);
+        const Sensor::SensorConstraints* constrains;
+        const Sensor::SensorConstData* constData;
+        TestSeries::TestSeries series;
     };
-    bool construct(TemperaturSensor* con, const Sensor::SensorConstData* constDa, const Sensor::SensorConstraints* constraint, unsigned int testSeriesSize, TemperaturSensorType t);
+
+    bool construct(TemperatureSensor*, 
+                    const Sensor::SensorConstData*, 
+                    const TestSeries::TestSeriesControll*,
+                    const Sensor::SensorConstraints*, 
+                    TemperatureSensorType , uint32_t );
+
+    Sensor::MeasurementResult measureTemperature(TemperatureSensor* con);   
+    Temperature getLastMeasurement(const TemperatureSensor* con);
+    void initADC_PIN(const TemperatureSensor* con);
 }
 
 #endif /* DEPTHSENSOR_H_ */

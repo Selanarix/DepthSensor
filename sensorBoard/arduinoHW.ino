@@ -50,17 +50,17 @@ namespace HAL
         //Test DAC
         if(testTLC243(ADC_TLC_243::V_Diff) == ADCOutOfFunction)
         {
-            Logger::log(Logger::ERROR, "Could not find a proper working external ADC");
+            Logger::log(Logger::ERROR, F("Could not find a proper working external ADC"));
             return false;
         }
         
         if(initAndPreorderConversion(Channel0, ADC_MSB, Unipolar, Bit16) != Initialized)
         {
-            Logger::log(Logger::ERROR, "Was not able to init external ADC");
+            Logger::log(Logger::ERROR, F("Was not able to init external ADC"));
             return false;
         }
         
-        Logger::log(Logger::INFO, "Set up external ADC successfully");
+        Logger::log(Logger::INFO, F("Set up external ADC successfully"));
         externalInit = true;
         return true;
     }
