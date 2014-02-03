@@ -1,11 +1,13 @@
 
 #ifndef DEPTHSENSOR_H_
 #define DEPTHSENSOR_H_
+
 #include "sensor.h"
+#include "testSeries.h"
 
 namespace DepthSensor 
 {
-    typedef unsigned int Depth;
+    typedef uint32_t Depth;
 
     typedef enum
     {
@@ -16,29 +18,20 @@ namespace DepthSensor
 
     struct _DepthSensor
     {
-        //base class
-        //Data
-        unsigned int sensorUsedSizeOfTestSeries;
-        const Sensor::SensorConstraints* sensorConstraints; 
-        const Sensor::SensorConstData* constData;
-        //Methods
-        Sensor::TestSeriesCheckResult (*takeTestSeries)(const DepthSensor* con);
-        double (*getAverageMeanOfSeries)(const DepthSensor* con);
-        Sensor::MinMax (*evaluateMinMaxOfTestSeries)(const DepthSensor* con);
-        unsigned int (*getSize)(const DepthSensor*);
-        unsigned char (*getID)(const DepthSensor*);
-        unsigned char (*getPin)(const DepthSensor*);
-        //Abstract methods
-        void (*readSensorValue)(double*);
-        Sensor::TestSeriesCheckResult(*checkTestSeries)(const DepthSensor*);
-        void (*initSensorHW)(const DepthSensor* con);
-        //extend base class
-        //Data
         Depth lastDepth;
-        //Methods
-        Depth (*getDepth)(const DepthSensor*); 
-        Sensor::MeasurmentResult (*measureDepth)(DepthSensor* con);
+        const Sensor::SensorConstraints* constrains;
+        const Sensor::SensorConstData* constData;
+        TestSeries::TestSeries series;
     };
-    bool construct(DepthSensor* con, const Sensor::SensorConstData* constDa, const Sensor::SensorConstraints* constraint, unsigned int testSeriesSize,  DepthSensorType t);
+    
+    bool construct(DepthSensor*, 
+                    const Sensor::SensorConstData*, 
+                    const TestSeries::TestSeriesControll*,
+                    const Sensor::SensorConstraints*, 
+                    DepthSensorType , uint32_t );
+
+    Sensor::MeasurementResult measureDepth(DepthSensor* con);   
+    Depth getLastDepth(const DepthSensor* con);
+    void initSensorHW(const DepthSensor* con);
 }
 #endif /* DEPTHSENSOR_H_ */

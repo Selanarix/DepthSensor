@@ -9,7 +9,7 @@ namespace TemperatureSensor
     //-------------------- Private Function Prototypes -----------------------------
     
     void readLM35(double* mes);
-    TestSeries::TestSeriesCheckResult testTestSeries(const void* s);
+    TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con);
     bool testEvaluatedValue(const TemperatureSensor* sen,const Temperature dep);
     
     static void logTemperaturTestSeriesError(SensorError::TestSeriesError ab);
@@ -35,25 +35,24 @@ namespace TemperatureSensor
         {
             case LM35:
                 return TestSeries::construct(&(tSen->series),  controll, readLM35, testTestSeries, size);                  
-            break;
         }              
         return false; 
     }
     
-    Temperature getLastMeasurementF(const TemperatureSensor* con)
+    Temperature getLastTemperature(const TemperatureSensor* con)
     {
          if(con == NULL)
               return 0;
          return con->lastTemperature;
     }
     
-    void initADC_PIN(const TemperatureSensor* con)
+    void initSensorHW(const TemperatureSensor* con)
     {
        // HAL::(con->getPin((Sensor::Sensor*)con),INPUT);
         Logger::log(Logger::INFO, F("temperatur sensor initialized"));
     }
     
-    Sensor::MeasurementResult measureTemperatureF(TemperatureSensor* tSen)
+    Sensor::MeasurementResult measureTemperature(TemperatureSensor* tSen)
     {
         if(tSen == NULL)
         {
@@ -62,7 +61,7 @@ namespace TemperatureSensor
         }    
         Logger::log(Logger::INFO, F("---------------------------------------"));
         Logger::logInt(Logger::INFO, F("Start with test series for temperature sensor with id: "),(uint32_t)tSen->constData->ID);
-        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(tSen->series));
+        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(tSen->series), tSen->constrains );
         
         if(res != TestSeries::TestSeriesOK)
         {
@@ -72,7 +71,7 @@ namespace TemperatureSensor
            return Sensor::MeasurementError;
         }
         Sensor::MeasurementResult result = Sensor::MeasurementOK;
-        Temperature avgTemperaturOfSeries = TestSeries::getAverageMeanOfSeries(&(tSen->series));
+        Temperature avgTemperaturOfSeries = (Temperature)TestSeries::getAverageMeanOfSeries(&(tSen->series));
        
         //Keep sensor value but generate callback if not as acpected. 
         if(!testEvaluatedValue(tSen,avgTemperaturOfSeries))
@@ -96,17 +95,15 @@ namespace TemperatureSensor
      */
     }  
     
-    TestSeries::TestSeriesCheckResult testTestSeries(const void* s)
+    TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con)
     { 
-        if(s == NULL)
+        if(s == NULL || con == NULL)
             return TestSeries::TestSeriesCancelMeasurement;
     
         using namespace SensorError;
-    
-        const Sensor::SensorConstraints* con = ((TemperatureSensor*) s)->constrains;
-    
+
         TestSeriesError errorTypes = TestSeriesOK;
-        TestSeries::MinMax res = TestSeries::evaluateMinMaxOfTestSeries(&(((TemperatureSensor*)s)->series));
+        TestSeries::MinMax res = TestSeries::evaluateMinMaxOfTestSeries(s);
     
         double meanVariation = res.max - res.min;
         if(res.min < 0.0001 && res.max < 0.0001)
@@ -149,8 +146,10 @@ namespace TemperatureSensor
             depthDiff = sen->lastTemperature - dep; 
         
         if(sen->lastTemperature != 0 && depthDiff >  con->MAX_ALLOWED_AVERAGED_VALUE_CHANGE)
+        {
             errorCode = SensorError::AverageMeasurmentNotInRange;
-    
+            res = false;        
+        }
         logAverageTemperaturErrors(errorCode); //log errors
     
         return true;

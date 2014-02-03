@@ -1,6 +1,8 @@
 #ifndef TEST_SERIES_H_
 #define TEST_SERIES_H_
+
 #include <Arduino.h>
+#include "sensor.h"
 
 #define TEST_SERIES_SIZE 10 
 
@@ -34,12 +36,15 @@ namespace TestSeries
         const double* testSeries;
         const TestSeriesControll* seriesControll;
         void (*readSensorValue)(double*);
-        TestSeriesCheckResult(*checkTestSeries)(const void*);
+        TestSeriesCheckResult(*checkTestSeries)(const TestSeries* , const Sensor::SensorConstraints* );
     };
 
-    bool construct(TestSeries* con, const TestSeriesControll* controll, void (*sensorRead)(double*), 
-                   TestSeriesCheckResult(*checkTestSeries)(const void*), uint32_t testSeriesSize);
-    TestSeriesCheckResult takeTestSeries(const TestSeries* con);
+    bool construct(TestSeries* con, 
+            const TestSeriesControll* controll, 
+            void (*sensorRead)(double*), 
+            TestSeriesCheckResult(*checkTestSeries)(const TestSeries*, const Sensor::SensorConstraints*), 
+            uint32_t testSeriesSize);
+    TestSeriesCheckResult takeTestSeries(const TestSeries* con, const Sensor::SensorConstraints*);
     double getAverageMeanOfSeries(const TestSeries* con);
     MinMax evaluateMinMaxOfTestSeries(const TestSeries* con);
 }
