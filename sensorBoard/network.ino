@@ -43,7 +43,7 @@ namespace Network
         // start the Ethernet connection:
         if (Ethernet.begin(mac) == 0) 
         {
-            Logger::log(Logger::WARNING,"Failed to configure Ethernet using DHCP");
+            Logger::log(Logger::WARNING,F("Failed to configure Ethernet using DHCP"));
             //congifure using IP address instead of DHCP
             Ethernet.begin(mac, ip);
         }
@@ -53,7 +53,7 @@ namespace Network
         String logStr = "My IP address: " + Ethernet.localIP();
         Logger::logString(Logger::INFO, logStr);
         delay(10);
-        Logger::log(Logger::INFO, "network initialized");
+        Logger::log(Logger::INFO, F("network initialized"));
         delay(10);
     }
 
@@ -63,7 +63,7 @@ namespace Network
       if (httpConnect())
       {
           // send the HTTP PUT request:
-          Logger::log(Logger::INFO, "send http GET request");
+          Logger::log(Logger::INFO, F("send http GET request"));
           client.print("PUT /input.php?sensor=");
           client.print(id);
           client.print("&value=");
@@ -79,10 +79,10 @@ namespace Network
         // if there's a successful connection:
         if (client.connect(server, 80)) 
         {
-            Logger::log(Logger::INFO, "tcp connection established");
+            Logger::log(Logger::INFO, F("tcp connection established"));
             return true;
         }
-        Logger::log(Logger::ERROR, "tcp connection failed");
+        Logger::log(Logger::ERROR, F("tcp connection failed"));
         client.stop();
         return false;
     }
@@ -90,7 +90,7 @@ namespace Network
     boolean httpDisconnect()
     {
         client.stop();
-        Logger::log(Logger::INFO, "close tcp connection");
+        Logger::log(Logger::INFO, F("close tcp connection"));
         return true;
     }
 }

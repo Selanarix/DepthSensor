@@ -1,4 +1,3 @@
-
 #ifndef OWN_LED_H_
 #define OWN_LED_H_
 
@@ -6,7 +5,7 @@ namespace ProjectLED
 {
   typedef enum
   {
-      LED0 = 3,  
+      LED0 = 3,
   } LED;
   
   void initLedPins();

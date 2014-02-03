@@ -1,24 +1,16 @@
-
 #ifndef TEST_SERIES_H_
 #define TEST_SERIES_H_
+#include <Arduino.h>
 
 #define TEST_SERIES_SIZE 10 
 
-namespace TestSeries 
-{ 
-    typedef struct
-    {
-        unsigned int maximalMeasurementRetries;
-        unsigned int delayForRetry_ms;
-        unsigned int delayBetweenMeasurements_ms;
-        unsigned int usedMeasurmentsPerTestSeries;
-    } TestSeriesControll;
-
+namespace TestSeries
+{   
     typedef enum
     {
-	TestSeriesOK,
+        TestSeriesOK,
         TestSeriesCancelMeasurement,
-	TestSeriesInvalid
+        TestSeriesInvalid
     } TestSeriesCheckResult;
   
     typedef struct
@@ -26,12 +18,29 @@ namespace TestSeries
         double min;
         double max;
     } MinMax;
-  
-    typedef void (*ReadValueCallback)(double*);
-    typedef TestSeriesCheckResult(*CheckTestSeriesCallback)(void);
 
-    TestSeriesCheckResult measure(const TestSeriesControll* con, CheckTestSeriesCallback testSeries, ReadValueCallback readSensor);
-    double getAverageMeanOfSeries(const TestSeriesControll* con);
-    MinMax evaluateMinMaxOfTestSeries(const TestSeriesControll* con);
+    typedef struct
+    {
+        const uint32_t MAXIMAL_MEASUREMENT_RETRIES;
+        const uint32_t DELAY_FOR_RETRY_ms;
+        const uint32_t DELAY_BETWEEN_MEASUREMENTS_ms;
+    } TestSeriesControll;
+
+    typedef struct _TestSeries TestSeries;
+
+    struct _TestSeries
+    {
+        uint32_t sensorUsedSizeOfTestSeries;
+        const double* testSeries;
+        const TestSeriesControll* seriesControll;
+        void (*readSensorValue)(double*);
+        TestSeriesCheckResult(*checkTestSeries)(const void*);
+    };
+
+    bool construct(TestSeries* con, const TestSeriesControll* controll, void (*sensorRead)(double*), 
+                   TestSeriesCheckResult(*checkTestSeries)(const void*), uint32_t testSeriesSize);
+    TestSeriesCheckResult takeTestSeries(const TestSeries* con);
+    double getAverageMeanOfSeries(const TestSeries* con);
+    MinMax evaluateMinMaxOfTestSeries(const TestSeries* con);
 }
-#endif /* DEPTHSENSOR_H_ */
+#endif

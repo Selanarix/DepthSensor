@@ -1,31 +1,27 @@
-
 #ifndef SENSOR_H_
 #define SENSOR_H_
 
-
-namespace Sensor 
+namespace Sensor
 {
-    typedef enum 
+    typedef struct
     {
-        SensorValueOK,
-        TestSeriesError,
-        SensorValueUnexpected
-    } SensorMeasurmentResult;
+        const double MINIMAL_EXPECTED_SENSOR_VALUE;
+        const double MAXIMAL_EXPECTED_SENSOR_VALUE;
+        const double ALLOWED_TEST_SERIES_VARIATION;
+        const double MAX_ALLOWED_AVERAGED_VALUE_CHANGE;
+    } SensorConstraints;
+
+    typedef struct
+    {
+        const unsigned char PIN;
+        const unsigned char ID;
+    } SensorConstData;
 
     typedef enum
     {
-         TestSeriesOK,
-         SensorOutOfFunction,
-         TestSeriesUnderMinRange,
-         TestSeriesAboveMaxRange,
-         TestSeriesMeanVariationToBig
-    } TestSeriesTestResult;
-
-    typedef enum
-    {
-        AverageMeasurmentOK,
-        AverageMeasurmentNotInRange
-    } AverageMeasurementTestResult;
+        MeasurementOK,
+        MeasurementValueUnexpected,
+        MeasurementError
+    } MeasurementResult;
 }
-
 #endif

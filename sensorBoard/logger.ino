@@ -22,14 +22,14 @@ namespace Logger
     {
         Serial.begin(serialBaudRate); 
     }
-    void log(LogLevel level, const char* message)
+    void log(LogLevel level, const __FlashStringHelper* message)
     {
         Serial.print(logLevelNames[level]);
         Serial.print(" : ");
         Serial.println(message);
     }
 
-    void logInt(LogLevel level, const char* message, unsigned int number )
+    void logInt(LogLevel level, __FlashStringHelper* message, unsigned int number )
     {
         Serial.print(logLevelNames[level]);
         Serial.print(" : ");
@@ -37,7 +37,7 @@ namespace Logger
         Serial.println(number);
     }
 
-    void logDouble(LogLevel level, const char* message, unsigned int number )
+    void logDouble(LogLevel level, __FlashStringHelper* message, unsigned int number )
     {
         Serial.print(logLevelNames[level]);
         Serial.print(" : ");
