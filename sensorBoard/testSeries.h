@@ -35,16 +35,16 @@ namespace TestSeries
         uint32_t sensorUsedSizeOfTestSeries;
         const double* testSeries;
         const TestSeriesControll* seriesControll;
-        void (*readSensorValue)(double*);
+        void (*readSensorValue)(double*, uint8_t);
         TestSeriesCheckResult(*checkTestSeries)(const TestSeries* , const Sensor::SensorConstraints* );
     };
 
     bool construct(TestSeries* con, 
             const TestSeriesControll* controll, 
-            void (*sensorRead)(double*), 
+            void (*sensorRead)(double*, uint8_t ), 
             TestSeriesCheckResult(*checkTestSeries)(const TestSeries*, const Sensor::SensorConstraints*), 
             uint32_t testSeriesSize);
-    TestSeriesCheckResult takeTestSeries(const TestSeries* con, const Sensor::SensorConstraints*);
+    TestSeriesCheckResult takeTestSeries(const TestSeries* con, const Sensor::SensorConstraints*, uint8_t);
     double getAverageMeanOfSeries(const TestSeries* con);
     MinMax evaluateMinMaxOfTestSeries(const TestSeries* con);
 }

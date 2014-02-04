@@ -4,7 +4,7 @@
 #include "depthSensor.h"
 //#include "network.h"
 #include "logger.h"
-//#include "hal.h"
+#include "hal.h"
 #include "sensor.h"
 
 // Set up temperatur sensor objects and their data
@@ -58,15 +58,15 @@ DepthSensor::DepthSensor depthSensor1;
 void setup()
 {    
     Logger::initLogger();
-   // HAL::initBaseHW();
-   // ProjectLED::initLedPins();
+    HAL::initBaseHW();
+    ProjectLED::initLedPins();
     if(!TemperatureSensor::construct(&temperatureSensor1, &temperatureConst, &tempControll, &temperatureConstrain, TemperatureSensor::LM35, 5))
        Logger::log(Logger::ERROR,F("Could not set up temperatur sensor"));
-    //temperatureSensor1.initSensorHW((Sensor::Sensor*)(&temperatureSensor1));
+    TemperatureSensor::initTemperatureSensorHW(&temperatureSensor1);
 
     if(!DepthSensor::construct(&depthSensor1, &depthConst, &depthControll, &depthConstrain, DepthSensor::MPX5100, 10))
       Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
-    //  depthSensor1.initSensorHW((Sensor::Sensor*)(&depthSensor1
+    DepthSensor::initDepthSensorHW(&depthSensor1);
 
 
   //   Network::initNetworkStack();

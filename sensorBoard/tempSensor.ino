@@ -1,14 +1,14 @@
 #include "tempSensor.h"
 #include "logger.h"
 #include "sensorErrorTypes.h"
+#include "hal.h"
 
 namespace TemperatureSensor
 {
     
     //-------------------------- Private Types -------------------------------------
     //-------------------- Private Function Prototypes -----------------------------
-    
-    void readLM35(double* mes);
+    void readLM35(double* mes, uint8_t channel);
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con);
     bool testEvaluatedValue(const TemperatureSensor* sen,const Temperature dep);
     
@@ -46,7 +46,7 @@ namespace TemperatureSensor
          return con->lastTemperature;
     }
     
-    void initSensorHW(const TemperatureSensor* con)
+    void initTemperatureSensorHW(const TemperatureSensor* con)
     {
        // HAL::(con->getPin((Sensor::Sensor*)con),INPUT);
         Logger::log(Logger::INFO, F("temperatur sensor initialized"));
@@ -61,7 +61,7 @@ namespace TemperatureSensor
         }    
         Logger::log(Logger::INFO, F("---------------------------------------"));
         Logger::logInt(Logger::INFO, F("Start with test series for temperature sensor with id: "),(uint32_t)tSen->constData->ID);
-        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(tSen->series), tSen->constrains );
+        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(tSen->series), tSen->constrains, tSen->constData->PIN);
         
         if(res != TestSeries::TestSeriesOK)
         {
@@ -85,14 +85,16 @@ namespace TemperatureSensor
     
     
     //------------------------------ Private Functions -----------------------------
-    void readLM35(double* mes)
+    void readLM35(double* mes, uint8_t channel)
     {
+       //For Test
         static int a = 0;
         *mes = a++;
-     /*   double tempvalue = (double)analogRead(tempSensorPin);
-        Logger::logDouble(Logger::INFO, "Temp [C]: ",(5000.0 /1024.0 * tempvalue / 10.0));
-        return  (temperatur)(5000.0 /1024.0 * tempvalue / 10.0);
-     */
+        return;
+       //For Test
+       
+        double tempvalue = (double)HAL::analogReadPin(channel);
+        *mes = (5000.0 /1024.0 * tempvalue / 10.0);
     }  
     
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con)
