@@ -5,7 +5,7 @@ namespace TestSeries
 {
     //-------------------------- Private Types -------------------------------------
     //-------------------- Private Function Prototypes -----------------------------
-    void measureSeries(const TestSeries* con, uint8_t channel);
+    void measureSeries(const TestSeries* con, const void*);
     //------------------------- Private Global Data ---------------------------------------
     static double testSeriesData[TEST_SERIES_SIZE] = {0};
     //------------------------ Read only ------------------------------------------
@@ -13,7 +13,7 @@ namespace TestSeries
     //------------------------------- Public Functions -----------------------------
     bool construct(TestSeries* con, 
             const TestSeriesControll* controll, 
-            void (*sensorRead)(double*,uint8_t ), 
+            void (*sensorRead)(double*, const void* ), 
             TestSeriesCheckResult(*checkTestSeries)(const TestSeries*, const Sensor::SensorConstraints*), 
             uint32_t testSeriesSize)
     {
@@ -35,7 +35,7 @@ namespace TestSeries
     }
     
     
-    TestSeriesCheckResult takeTestSeries(const TestSeries* con, const Sensor::SensorConstraints* constraints, uint8_t channel)
+    TestSeriesCheckResult takeTestSeries(const TestSeries* con, const Sensor::SensorConstraints* constraints, const void* b)
     {
         //Test parameters
         if(con == NULL || constraints == NULL)
@@ -56,7 +56,7 @@ namespace TestSeries
                                    seriesRetries < con->seriesControll->MAXIMAL_MEASUREMENT_RETRIES;
         seriesRetries++)
         {
-            measureSeries(con, channel);
+            measureSeries(con, b);
             seriesTestResult = con->checkTestSeries(con,constraints);
             if(seriesTestResult == TestSeriesCancelMeasurement)
             {
@@ -118,13 +118,13 @@ namespace TestSeries
     }
     
     //------------------------------ Private Functions -----------------------------
-    void measureSeries(const TestSeries* con, uint8_t channel)
+    void measureSeries(const TestSeries* con, const void* obj)
     {
         uint32_t measurement;
         
         for(measurement = 0; measurement < con->sensorUsedSizeOfTestSeries; measurement ++)
         {
-           con->readSensorValue(&(testSeriesData[measurement]),channel);
+           con->readSensorValue(&(testSeriesData[measurement]),obj);
            delay(con->seriesControll->DELAY_BETWEEN_MEASUREMENTS_ms);	
         }		
     }

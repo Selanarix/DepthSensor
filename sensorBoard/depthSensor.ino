@@ -1,7 +1,6 @@
 #include "depthSensor.h"  
 #include "logger.h"
 #include "sensorErrorTypes.h"
-#include "hal.h"
 
 namespace DepthSensor 
 {
