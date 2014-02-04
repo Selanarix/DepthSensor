@@ -8,6 +8,7 @@ namespace DepthSensor
     //-------------------- Private Function Prototypes -----------------------------
 
     void readMPX5500Sensor(double* measurementOfSeries);
+    void readMPX5100Sensor(double* measurementOfSeries);
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con);
     bool testEvaluatedValue(const DepthSensor* con, const Depth dep);
 
@@ -35,6 +36,8 @@ namespace DepthSensor
         {
             case MPX5500:
                 return TestSeries::construct(&(tSen->series),  controll, readMPX5500Sensor, testTestSeries, size); 
+            case MPX5100:
+                return TestSeries::construct(&(tSen->series),  controll, readMPX5100Sensor, testTestSeries, size); 
         }
   
         return false;
@@ -87,6 +90,35 @@ namespace DepthSensor
     }
 
     //------------------------------ Private Functions -----------------------------
+    void readMPX5100Sensor(double* measurementOfSeries)
+    {
+        //read value from sensor and assign it to measurementOfSeries
+        double pressure = 0.0;
+        double adcvalue = 0.0;
+        double sensorVoltageADC = 0.0;
+        const double offset = 185.;
+        uint8_t depthSensorPin=2;
+        
+    /*     static int ax = 0;
+        *measurementOfSeries = ax++; */
+             
+        adcvalue = (double)analogRead(depthSensorPin);
+        //      Serial.print("Rohwert [ADC]: ");
+        //      Serial.println(adcvalue);
+        
+        //Formel aus Datenblatt (in kPa): Vout = Vs*(0,009*p+0,04)        
+        //Umgestellt nach p (in hPa!!): p=(Vout-200)/4.5
+
+        sensorVoltageADC = (adcvalue)*(5000.0/4096.0);
+        //      Serial.print("Rohwert [mV]: ");
+        //      Serial.println(sensorVoltageADC);
+
+        pressure = (sensorVoltageADC-offset)/3.88;
+        //      Serial.print("Druck [hPa]: ");
+        //      Serial.println(pressure);
+      
+	//    *measurementOfSeries = pressure;
+    }
 
     void readMPX5500Sensor(double* measurementOfSeries)
     {
@@ -106,7 +138,7 @@ namespace DepthSensor
         //Formel aus Datenblatt (in kPa): Vout = Vs*(0,0018*p+0,04)        
         //Umgestellt nach p (in hPa!!): p=(Vout-0,2)/(9*10^-4)
 
-        sensorVoltageADC = (adcvalue)*(5.0/1024.0);
+        sensorVoltageADC = (adcvalue)*(5.0/4096.0);
         //      Serial.print("Rohwert [V]: ");
         //      Serial.println(sensorVoltageADC);
 

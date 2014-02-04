@@ -64,7 +64,7 @@ void setup()
        Logger::log(Logger::ERROR,F("Could not set up temperatur sensor"));
     //temperatureSensor1.initSensorHW((Sensor::Sensor*)(&temperatureSensor1));
 
-    if(!DepthSensor::construct(&depthSensor1, &depthConst, &depthControll, &depthConstrain, DepthSensor::MPX5500, 10))
+    if(!DepthSensor::construct(&depthSensor1, &depthConst, &depthControll, &depthConstrain, DepthSensor::MPX5100, 10))
       Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
     //  depthSensor1.initSensorHW((Sensor::Sensor*)(&depthSensor1
 
@@ -85,7 +85,7 @@ void flashLED_1s()
 
 void loop()
 {    
-  
+ /* 
    // DepthSensor::Depth dep = DepthSensor::measureDepth();
     Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&temperatureSensor1);
     Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
@@ -100,5 +100,20 @@ void loop()
       //  Network::http_GET_Request(depthSensor1.getID((Sensor::Sensor*)&depthSensor1), dep1); 
   //  }
     //flashLED_1s();
+    */
+ /*   uint16_t digValue = analogRead(0);
+    digValue += analogRead(0)+analogRead(0)+analogRead(0)+analogRead(0)+analogRead(0)+analogRead(0)+analogRead(0)+analogRead(0)+analogRead(0);
+    digValue /= 10;
+    double anaValue = (double) digValue*5000.0/1024.0;
+    Serial.print(F("Wert aus MXP5100 [ADC]: "));
+    Serial.println(digValue);
+        Serial.print(F("Spannung aus MXP5100 [mV]: "));
+    Serial.println(anaValue);
+        Serial.print(F("Wasserstand aus MXP5100 [cm]: "));
+    Serial.println((anaValue-185.55)/3.88);*/
+    
+    
+    Serial.println(DepthSensor::measureDepth(&depthSensor1));
+    
     delay(2000);
 }
