@@ -33,6 +33,6 @@ namespace DepthSensor
 
     Sensor::MeasurementResult measureDepth(DepthSensor* con);   
     Depth getLastDepth(const DepthSensor* con);
-    void initSensorHW(const DepthSensor* con);
+    void initDepthSensorHW(const DepthSensor* con);
 }
 #endif /* DEPTHSENSOR_H_ */

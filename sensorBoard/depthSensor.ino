@@ -7,8 +7,8 @@ namespace DepthSensor
     //-------------------------- Private Types -------------------------------------
     //-------------------- Private Function Prototypes -----------------------------
 
-    void readMPX5500Sensor(double* measurementOfSeries, uint8_t channel);
-    void readMPX5100Sensor(double* measurementOfSeries);
+    void readMPX5500Sensor(double* measurementOfSeries, const void* b);
+    void readMPX5100Sensor(double* measurementOfSeries, const void* c);
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con);
     bool testEvaluatedValue(const DepthSensor* con, const Depth dep);
 
@@ -66,7 +66,7 @@ namespace DepthSensor
             
         Logger::log(Logger::INFO, F("---------------------------------------"));
         Logger::logInt(Logger::INFO, F("Start with test series for depth sensor with id: "),(uint32_t)pSen->constData->ID);
-        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(pSen->series), pSen->constrains, pSen->constData->PIN);
+        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(pSen->series), pSen->constrains, pSen);
 
         if(res != TestSeries::TestSeriesOK)
         {
@@ -90,7 +90,7 @@ namespace DepthSensor
     }
 
     //------------------------------ Private Functions -----------------------------
-    void readMPX5100Sensor(double* measurementOfSeries)
+    void readMPX5100Sensor(double* measurementOfSeries, const void* ob)
     {
         //read value from sensor and assign it to measurementOfSeries
         double pressure = 0.0;
@@ -99,17 +99,23 @@ namespace DepthSensor
         const double offset = 185.;
         uint8_t depthSensorPin=2;
         
+        if(ob == NULL)
+            return;
+            
+        const DepthSensor* thi = (DepthSensor*)ob;
+        
     /*     static int ax = 0;
         *measurementOfSeries = ax++; */
              
-        adcvalue = (double)analogRead(depthSensorPin);
+        *measurementOfSeries = (double)HAL::analogReadPin(thi->constData->PIN);     
         //      Serial.print("Rohwert [ADC]: ");
         //      Serial.println(adcvalue);
         
         //Formel aus Datenblatt (in kPa): Vout = Vs*(0,009*p+0,04)        
         //Umgestellt nach p (in hPa!!): p=(Vout-200)/4.5
-
-    void readMPX5500Sensor(double* measurementOfSeries, uint8_t channel)
+    }
+    
+    void readMPX5500Sensor(double* measurementOfSeries, const void* ob)
     {
         //read value from sensor and assign it to measurementOfSeries
         double pressure = 0.0;
@@ -117,13 +123,18 @@ namespace DepthSensor
         double sensorVoltageADC = 0.0;
         const double offset = 0.19;
         
+        if(ob == NULL)
+            return;
+        
+        const DepthSensor* thi = (DepthSensor*)ob;
+        
         //For Testing
         static int ax = 0;
         *measurementOfSeries = ax++; 
         return;
         //For Testing
        
-        adcvalue = (double)HAL::analogReadPin(channel);
+        adcvalue = (double)HAL::analogReadPin(thi->constData->PIN);
         sensorVoltageADC = (adcvalue)*(5.0/4096.0);
         pressure = (sensorVoltageADC-offset)*1111;
         

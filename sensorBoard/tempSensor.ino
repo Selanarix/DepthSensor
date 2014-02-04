@@ -104,9 +104,10 @@ namespace TemperatureSensor
     //------------------------------ Private Functions -----------------------------
     void readLM35(double* mes, const void* ob)
     {
-       const TemperatureSensor* thi = (TemperatureSensor*)ob;
        if(ob == NULL)
            return;
+     
+         const TemperatureSensor* thi = (TemperatureSensor*)ob;
        //For Test
         static int a = 0;
         *mes = a++;
