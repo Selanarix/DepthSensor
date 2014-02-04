@@ -31,7 +31,7 @@ namespace TemperatureSensor
 
     Sensor::MeasurementResult measureTemperature(TemperatureSensor* con);   
     Temperature getLastTemperature(const TemperatureSensor* con);
-    void initSensorHW(const TemperatureSensor* con);
+    void initTemperatureSensorHW(const TemperatureSensor* con);
 }
 
 #endif /* DEPTHSENSOR_H_ */

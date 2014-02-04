@@ -1,13 +1,14 @@
 #include "depthSensor.h"  
 #include "logger.h"
 #include "sensorErrorTypes.h"
+#include "hal.h"
 
 namespace DepthSensor 
 {
     //-------------------------- Private Types -------------------------------------
     //-------------------- Private Function Prototypes -----------------------------
 
-    void readMPX5500Sensor(double* measurementOfSeries);
+    void readMPX5500Sensor(double* measurementOfSeries, uint8_t channel);
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con);
     bool testEvaluatedValue(const DepthSensor* con, const Depth dep);
 
@@ -63,7 +64,7 @@ namespace DepthSensor
             
         Logger::log(Logger::INFO, F("---------------------------------------"));
         Logger::logInt(Logger::INFO, F("Start with test series for depth sensor with id: "),(uint32_t)pSen->constData->ID);
-        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(pSen->series), pSen->constrains );
+        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(pSen->series), pSen->constrains, pSen->constData->PIN);
 
         if(res != TestSeries::TestSeriesOK)
         {
@@ -88,7 +89,7 @@ namespace DepthSensor
 
     //------------------------------ Private Functions -----------------------------
 
-    void readMPX5500Sensor(double* measurementOfSeries)
+    void readMPX5500Sensor(double* measurementOfSeries, uint8_t channel)
     {
         //read value from sensor and assign it to measurementOfSeries
         double pressure = 0.0;
@@ -96,26 +97,17 @@ namespace DepthSensor
         double sensorVoltageADC = 0.0;
         const double offset = 0.19;
         
-         static int ax = 0;
+        //For Testing
+        static int ax = 0;
         *measurementOfSeries = ax++; 
-       /*
-        adcvalue = (double)analogRead(depthSensorPin);
-        //      Serial.print("Rohwert [ADC]: ");
-        //      Serial.println(adcvalue);
-        
-        //Formel aus Datenblatt (in kPa): Vout = Vs*(0,0018*p+0,04)        
-        //Umgestellt nach p (in hPa!!): p=(Vout-0,2)/(9*10^-4)
-
+        return;
+        //For Testing
+       
+        adcvalue = (double)HAL::analogReadPin(channel);
         sensorVoltageADC = (adcvalue)*(5.0/1024.0);
-        //      Serial.print("Rohwert [V]: ");
-        //      Serial.println(sensorVoltageADC);
-
-        //        pressure = (sensorVoltageADC*10.0-(offset*10))*1000/9;
         pressure = (sensorVoltageADC-offset)*1111;
-        //      Serial.print("Druck [hPa]: ");
-        //      Serial.println(pressure);
-      */
-	//    *measurementOfSeries = pressure;
+        
+	*measurementOfSeries = pressure;
     }
 
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con)
