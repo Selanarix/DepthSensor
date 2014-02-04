@@ -1,8 +1,9 @@
 #include "TMP_102.h"
 #include <Wire.h>
 
-namespace TMP_102
+namespace TMP102
 {
+      //-------------------------- Private Types -------------------------------------
     typedef enum
     {
         Temperatur = 0x00,
@@ -10,7 +11,15 @@ namespace TMP_102
         T_Low = 0x02,
         T_High = 0x02,
     } PointerAddress;
-
+    //-------------------- Private Function Prototypes -----------------------------
+    static bool initI2C(const TMP102* const thi);
+    static inline void setPointerReg(const TMP102* const thi, PointerAddress pAddr);
+    static inline uint16_t temperatureToInt16_t(const TMP102* const thi, double n);
+    static inline uint16_t getConfig(const TMP102* const thi);
+    static inline void setConfig(const TMP102* const thi,uint16_t conf);
+    static inline int16_t readTempReg(const TMP102* const thi);
+    //------------------------- Private Data ---------------------------------------
+    //------------------------ Read only ------------------------------------------
     const uint32_t SDA_Pin = A4;
     const uint32_t SCL_Pin = A5;
     const double DegreePerTick = 0.0625;
@@ -19,25 +28,8 @@ namespace TMP_102
     const uint16_t oneShotModeBit = 0x8000;
     const uint16_t extendedModeBit = 0x10;
 
-    //Methods
-    static double simpleRead(const TMP102* const thi);
-    static double oneRead(const TMP102* const thi);
-    static void powerMode(TMP102* const thi, FunctionStatus status);
-    static void termostatEnable(TMP102* const thi, double min, double max, TermostatMode mod, ConsecutiveFaults faul, AlertPinPolarity pol);
-    static const TermostatLimits* getLimit(const TMP102* const thi);
-    static I2C_Addresses getAddr(const TMP102* const thi);
-    static void setExtendetMod( TMP102* const thi, FunctionStatus status);
-    static void setMeasureFrequ(const TMP102* const thi, ConversionRate rate);
+    //------------------------------- Public Functions -----------------------------
   
-
-    static bool initI2C(const TMP102* const thi);
-    static inline void setPointerReg(const TMP102* const thi, PointerAddress pAddr);
-    static inline uint16_t temperatureToInt16_t(const TMP102* const thi, double n);
-    static inline uint16_t getConfig(const TMP102* const thi);
-    static inline void setConfig(const TMP102* const thi,uint16_t conf);
-    static inline int16_t readTempReg(const TMP102* const thi);
-    
-
     bool construct(TMP102* thi,I2C_Addresses add)
     {
         if(thi == NULL)
@@ -49,30 +41,21 @@ namespace TMP_102
         thi->isExtendetMode = false;
         thi->limits.min = 0.0;
         thi->limits.max = 0.0;
-
-        thi->readTemperatur = simpleRead;
-        thi->oneShotRead = oneRead;
-        thi->setPowerMode = powerMode;
-        thi->setTermostatMode = termostatEnable;
-        thi->getTermostatLimits = getLimit; 
-        thi->getAddress = getAddr;
-        thi->setExtendetMode = setExtendetMod;
-        thi->setMeasureFrequency = setMeasureFrequ;
-
+        
         return initI2C(thi);
     }
 
-    static I2C_Addresses getAddr(const TMP102* const thi)
+    I2C_Addresses getAddr(const TMP102* const thi)
     {
         return thi->addr;
     }
 
-    static const TermostatLimits* getLimit(const TMP102* const thi)
+    const TermostatLimits* getLimit(const TMP102* const thi)
     {
         return &thi->limits;
     }
 
-    static double oneRead(const TMP102* const thi)
+    double oneRead(const TMP102* const thi)
     {
         if(!thi->lowPowerMode)
             return 0.0;
@@ -93,7 +76,7 @@ namespace TMP_102
         return (double)value * DegreePerTick;
     }
 
-    static double simpleRead(const TMP102* const thi)
+    double simpleRead(const TMP102* const thi)
     {
         setPointerReg(thi, Temperatur);
         Wire.endTransmission();
@@ -105,7 +88,7 @@ namespace TMP_102
         return (double)value * DegreePerTick;
     }
 
-    static void setExtendetMod(TMP102* const thi, FunctionStatus status)
+    void setExtendetMod(TMP102* const thi, FunctionStatus status)
     {
         uint16_t conf = getConfig(thi);
         if(status == ENABLE)
@@ -121,7 +104,7 @@ namespace TMP_102
         setConfig(thi, conf);
     }
 
-    static void setMeasureFrequ(const TMP102* const thi, ConversionRate rate)
+    void setMeasureFrequ(const TMP102* const thi, ConversionRate rate)
     {
         uint16_t conf = getConfig(thi);
 
@@ -133,7 +116,7 @@ namespace TMP_102
         setConfig(thi, conf);
     }
 
-    static void powerMode(TMP102* const thi, FunctionStatus status)
+    void powerMode(TMP102* const thi, FunctionStatus status)
     {
         uint16_t conf = getConfig(thi);
         if(status == ENABLE)
@@ -150,7 +133,7 @@ namespace TMP_102
     }
 
 
-    static void termostatEnable(TMP102* const thi, double min, double max, TermostatMode mod, ConsecutiveFaults faul, AlertPinPolarity pol)
+    void termostatEnable(TMP102* const thi, double min, double max, TermostatMode mod, ConsecutiveFaults faul, AlertPinPolarity pol)
     {
         if(thi == NULL || min > max)
             return;
@@ -180,7 +163,7 @@ namespace TMP_102
         setConfig(thi, conf);
     }
 
-    //------------- Private Helpers -------------
+    //------------------------------ Private Functions -----------------------------
 
     static bool initI2C(const TMP102* const thi)
     {

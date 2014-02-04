@@ -3,6 +3,7 @@
 
 #include "sensor.h"
 #include "testSeries.h"
+#include "TMP_102.h"
 
 namespace TemperatureSensor 
 {
@@ -10,7 +11,8 @@ namespace TemperatureSensor
 
     typedef enum
     {
-        LM35, //TODO
+        LM35, 
+        TMP102,
     } TemperatureSensorType;
 
     typedef struct _TemperatureSensor TemperatureSensor;
@@ -21,6 +23,7 @@ namespace TemperatureSensor
         const Sensor::SensorConstraints* constrains;
         const Sensor::SensorConstData* constData;
         TestSeries::TestSeries series;
+        TMP102::TMP102* digitalSensor;
     };
 
     bool construct(TemperatureSensor*, 
@@ -28,7 +31,13 @@ namespace TemperatureSensor
                     const TestSeries::TestSeriesControll*,
                     const Sensor::SensorConstraints*, 
                     TemperatureSensorType , uint32_t );
-
+                    
+    bool constructDigital(TemperatureSensor* tSen, 
+                    const Sensor::SensorConstData* constDa, 
+                    const TestSeries::TestSeriesControll* controll,
+                    const Sensor::SensorConstraints* cons, 
+                    TemperatureSensorType t, uint32_t size, TMP102::TMP102* sen);
+                    
     Sensor::MeasurementResult measureTemperature(TemperatureSensor* con);   
     Temperature getLastTemperature(const TemperatureSensor* con);
     void initTemperatureSensorHW(const TemperatureSensor* con);

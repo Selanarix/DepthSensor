@@ -1,7 +1,7 @@
 #ifndef  TMP_102_H_
 #define  TMP_102_H_
 
-namespace TMP_102
+namespace TMP102
 { 
     typedef enum
     {
@@ -59,16 +59,16 @@ namespace TMP_102
         bool lowPowerMode;
         bool isExtendetMode;
         TermostatLimits limits;
-        double (*readTemperatur)(const TMP102* const);
-        double (*oneShotRead)(const TMP102* const);
-        void (*setPowerMode)(TMP102* const, FunctionStatus status);
-        void (*setTermostatMode)(TMP102* const, double , double, TermostatMode, ConsecutiveFaults, AlertPinPolarity);
-        const TermostatLimits* (*getTermostatLimits)(const TMP102* const);
-        I2C_Addresses (*getAddress)(const TMP102* const);
-        void (*setExtendetMode)(TMP102* const, FunctionStatus);
-        void (*setMeasureFrequency)(const TMP102* const, ConversionRate);
     };
 
     bool construct(TMP102* thi,I2C_Addresses add); 
+    I2C_Addresses getAddr(const TMP102* const thi);
+    const TermostatLimits* getLimit(const TMP102* const thi);
+    double oneRead(const TMP102* const thi);
+    double simpleRead(const TMP102* const thi);
+    void setExtendetMod(TMP102* const thi, FunctionStatus status);
+    void setMeasureFrequ(const TMP102* const thi, ConversionRate rate);
+    void powerMode(TMP102* const thi, FunctionStatus status);
+    void termostatEnable(TMP102* const thi, double min, double max, TermostatMode mod, ConsecutiveFaults faul, AlertPinPolarity pol);
 }
 #endif

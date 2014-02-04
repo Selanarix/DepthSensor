@@ -5,10 +5,10 @@
 
 namespace TemperatureSensor
 {
-    
     //-------------------------- Private Types -------------------------------------
     //-------------------- Private Function Prototypes -----------------------------
-    void readLM35(double* mes, uint8_t channel);
+    void readLM35(double* mes, const void*);
+    void readTMP_102(double* mes, const void*);
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con);
     bool testEvaluatedValue(const TemperatureSensor* sen,const Temperature dep);
     
@@ -31,12 +31,29 @@ namespace TemperatureSensor
         tSen->lastTemperature = 0.0;
         tSen->constrains = cons;
         tSen->constData = constDa;    
+        tSen->digitalSensor = NULL;
         switch(t)
         {
             case LM35:
-                return TestSeries::construct(&(tSen->series),  controll, readLM35, testTestSeries, size);                  
+                return TestSeries::construct(&(tSen->series),  controll, readLM35, testTestSeries, size);  
         }              
         return false; 
+    }
+    
+    bool constructDigital(TemperatureSensor* tSen, 
+                    const Sensor::SensorConstData* constDa, 
+                    const TestSeries::TestSeriesControll* controll,
+                    const Sensor::SensorConstraints* cons, 
+                    TemperatureSensorType t, uint32_t size, TMP102::TMP102* sen)
+    {
+        if(sen == NULL)
+            return false;
+        if(!construct(tSen,constDa,controll, cons, t,size))
+            return false;
+ 
+        tSen->digitalSensor = sen;
+        
+        return TestSeries::construct(&(tSen->series),  controll, readTMP_102, testTestSeries, size);
     }
     
     Temperature getLastTemperature(const TemperatureSensor* con)
@@ -48,7 +65,7 @@ namespace TemperatureSensor
     
     void initTemperatureSensorHW(const TemperatureSensor* con)
     {
-       // HAL::(con->getPin((Sensor::Sensor*)con),INPUT);
+        
         Logger::log(Logger::INFO, F("temperatur sensor initialized"));
     }
     
@@ -61,7 +78,7 @@ namespace TemperatureSensor
         }    
         Logger::log(Logger::INFO, F("---------------------------------------"));
         Logger::logInt(Logger::INFO, F("Start with test series for temperature sensor with id: "),(uint32_t)tSen->constData->ID);
-        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(tSen->series), tSen->constrains, tSen->constData->PIN);
+        TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(tSen->series), tSen->constrains, tSen);
         
         if(res != TestSeries::TestSeriesOK)
         {
@@ -85,16 +102,31 @@ namespace TemperatureSensor
     
     
     //------------------------------ Private Functions -----------------------------
-    void readLM35(double* mes, uint8_t channel)
+    void readLM35(double* mes, const void* ob)
     {
+       const TemperatureSensor* thi = (TemperatureSensor*)ob;
+       if(ob == NULL)
+           return;
        //For Test
         static int a = 0;
         *mes = a++;
         return;
        //For Test
        
-        double tempvalue = (double)HAL::analogReadPin(channel);
+        double tempvalue = (double)HAL::analogReadPin(thi->constData->PIN);
         *mes = (5000.0 /1024.0 * tempvalue / 10.0);
+    }  
+    
+    void readTMP_102(double* mes, const void* ob)
+    {
+        if(ob == NULL)
+            return;
+      
+        const TemperatureSensor* thi = (TemperatureSensor*)ob;
+        if(thi->digitalSensor == NULL)
+            return;
+    
+        *mes = TMP102::simpleRead(thi->digitalSensor);
     }  
     
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con)
