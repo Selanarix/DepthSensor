@@ -89,7 +89,7 @@ namespace HAL
         if(!testPin(p))
               return;    
         
-        uint8_t tmp = SREG;
+        volatile uint8_t tmp = SREG;
         cli(); //Critical section Start
         if(p < 8)
             PORTD = PORTD | (1 << p); 
@@ -103,7 +103,7 @@ namespace HAL
         if(!testPin(p))
               return;    
    
-        uint8_t tmp = SREG;
+        volatile uint8_t tmp = SREG;
         cli(); //Critical section Start
         if(p < 8)
             PORTD = PORTD & ~(1 << p);
@@ -117,7 +117,7 @@ namespace HAL
         if(!testPin(p))
             return;    
          
-        uint8_t tmp = SREG;
+        volatile int8_t tmp = SREG;
         cli(); //Critical section Start
         if(p < 8)
             PORTD = PORTD ^ ~(1 << p); //Use XOR
@@ -131,7 +131,7 @@ namespace HAL
         if(!testPin(p))
             return PIN_LOW;
             
-        uint8_t res = 0;
+        volatile uint8_t res = 0;
          if(p < 8)
             res = PIND & (1 << p);
         else

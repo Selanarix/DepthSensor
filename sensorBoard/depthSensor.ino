@@ -31,8 +31,7 @@ namespace DepthSensor
         tSen->lastDepth = 0.0;
         tSen->constrains = cons;
         tSen->constData = constDa; 
-
-        //specify abstract object       
+  
         switch(t)
         {
             case MPX5500:

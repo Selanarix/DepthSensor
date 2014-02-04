@@ -144,9 +144,9 @@ namespace ADC_TLC_243
     */
     unsigned short read16BitAndPreorder(InputChannel nextInputForConversion)
     {
-        uint16_t resultMsb=0, resultLsb=0;
+        volatile uint16_t resultMsb=0, resultLsb=0;
         actualCommand = changeInputForCommand(nextInputForConversion, actualCommand);
-        uint8_t tmp = SREG;
+        volatile uint8_t tmp = SREG;
         cli(); //Critical section Start
         digitalWrite(NSS_Pin,LOW);
         resultMsb=SPI.transfer(actualCommand);
@@ -168,9 +168,9 @@ namespace ADC_TLC_243
     */
     unsigned short read8BitAndPreorder(InputChannel nextInputForConversion)
     {
-        uint16_t result;
+        volatile uint16_t result;
         actualCommand = changeInputForCommand(nextInputForConversion, actualCommand);
-        uint8_t tmp = SREG;
+        volatile uint8_t tmp = SREG;
         cli(); //Critical section Start
         digitalWrite(NSS_Pin,LOW);
         result=SPI.transfer(actualCommand);

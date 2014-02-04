@@ -65,7 +65,6 @@ namespace TemperatureSensor
     
     void initTemperatureSensorHW(const TemperatureSensor* con)
     {
-        
         Logger::log(Logger::INFO, F("temperatur sensor initialized"));
     }
     
