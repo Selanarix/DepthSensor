@@ -12,7 +12,7 @@ namespace DepthSensor
     typedef enum
     {
         MPX5500,
-        MPX5100,
+        MPX5100
     } DepthSensorType;
     
     typedef struct _DepthSensor DepthSensor;

@@ -9,6 +9,7 @@ namespace DepthSensor
 
     void readMPX5500Sensor(double* measurementOfSeries, const void* b);
     void readMPX5100Sensor(double* measurementOfSeries, const void* c);
+
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con);
     bool testEvaluatedValue(const DepthSensor* con, const Depth dep);
 
@@ -96,8 +97,7 @@ namespace DepthSensor
         double pressure = 0.0;
         double adcvalue = 0.0;
         double sensorVoltageADC = 0.0;
-        const double offset = 185.;
-        uint8_t depthSensorPin=2;
+        const double offset = 185.55;
         
         if(ob == NULL)
             return;
@@ -108,13 +108,11 @@ namespace DepthSensor
         *measurementOfSeries = ax++; */
              
         *measurementOfSeries = (double)HAL::analogReadPin(thi->constData->PIN);     
-        //      Serial.print("Rohwert [ADC]: ");
-        //      Serial.println(adcvalue);
-        
+
         //Formel aus Datenblatt (in kPa): Vout = Vs*(0,009*p+0,04)        
         //Umgestellt nach p (in hPa!!): p=(Vout-200)/4.5
     }
-    
+
     void readMPX5500Sensor(double* measurementOfSeries, const void* ob)
     {
         //read value from sensor and assign it to measurementOfSeries
