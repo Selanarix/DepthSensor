@@ -12,6 +12,7 @@ namespace DepthSensor
     typedef enum
     {
         MPX5500,
+        MPX5100,
     } DepthSensorType;
     
     typedef struct _DepthSensor DepthSensor;
@@ -32,6 +33,6 @@ namespace DepthSensor
 
     Sensor::MeasurementResult measureDepth(DepthSensor* con);   
     Depth getLastDepth(const DepthSensor* con);
-    void initDepthSensorHW(const DepthSensor* con);
+    void initSensorHW(const DepthSensor* con);
 }
 #endif /* DEPTHSENSOR_H_ */
