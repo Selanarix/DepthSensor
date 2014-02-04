@@ -48,7 +48,7 @@ const TestSeries::TestSeriesControll depthControll =
 
 const Sensor::SensorConstData depthConst = 
 {
-        1,              //PIN
+        2,              //PIN
         0,              //ID
 };
 
@@ -66,7 +66,7 @@ void setup()
 
     if(!DepthSensor::construct(&depthSensor1, &depthConst, &depthControll, &depthConstrain, DepthSensor::MPX5100, 10))
       Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
-    DepthSensor::initDepthSensorHW(&depthSensor1);
+    DepthSensor::initSensorHW(&depthSensor1);
 
 
   //   Network::initNetworkStack();
@@ -111,7 +111,6 @@ void loop()
     Serial.println(anaValue);
         Serial.print(F("Wasserstand aus MXP5100 [cm]: "));
     Serial.println((anaValue-185.55)/3.88);*/
-    
     
     Serial.println(DepthSensor::measureDepth(&depthSensor1));
     

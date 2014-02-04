@@ -9,7 +9,7 @@ namespace DepthSensor
     //-------------------- Private Function Prototypes -----------------------------
 
     void readMPX5500Sensor(double* measurementOfSeries, uint8_t channel);
-    void readMPX5100Sensor(double* measurementOfSeries);
+    void readMPX5100Sensor(double* measurementOfSeries, uint8_t channel);
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con);
     bool testEvaluatedValue(const DepthSensor* con, const Depth dep);
 
@@ -51,7 +51,7 @@ namespace DepthSensor
           return con->lastDepth;
     }
     
-    void initDepthSensorHW(const DepthSensor* con)
+    void initSensorHW(const DepthSensor* con)
     {
         //pinMode(con->getPin((Sensor::Sensor*)con),INPUT);
         Logger::log(Logger::INFO, F("depth sensor initialized"));
@@ -91,24 +91,31 @@ namespace DepthSensor
     }
 
     //------------------------------ Private Functions -----------------------------
-    void readMPX5100Sensor(double* measurementOfSeries)
+    void readMPX5100Sensor(double* measurementOfSeries, uint8_t channel)
     {
         //read value from sensor and assign it to measurementOfSeries
         double pressure = 0.0;
         double adcvalue = 0.0;
         double sensorVoltageADC = 0.0;
-        const double offset = 185.;
-        uint8_t depthSensorPin=2;
+        const double offset = 185.55;
         
-    /*     static int ax = 0;
-        *measurementOfSeries = ax++; */
-             
-        adcvalue = (double)analogRead(depthSensorPin);
-        //      Serial.print("Rohwert [ADC]: ");
-        //      Serial.println(adcvalue);
+  /*      
+        //For testing
+        static int ax = 0;
+        *measurementOfSeries = ax++;
+        return;
+        //For Testing
+     */        
+        adcvalue = (double)HAL::analogReadPin(channel);
+        sensorVoltageADC = (adcvalue)*(5000.0/4096.0);
+        //Formel aus Datenblatt (in kPa und V): Vout = Vs*(0,009*p+0,04)        
+        //Umgestellt nach p (in hPa und mV!!): p=(Vout-200)/4.5
+        pressure = (sensorVoltageADC-offset)/3.88;
         
-        //Formel aus Datenblatt (in kPa): Vout = Vs*(0,009*p+0,04)        
-        //Umgestellt nach p (in hPa!!): p=(Vout-200)/4.5
+	*measurementOfSeries = pressure;
+    }
+        
+
 
     void readMPX5500Sensor(double* measurementOfSeries, uint8_t channel)
     {
