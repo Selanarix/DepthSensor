@@ -1,14 +1,9 @@
 #ifndef  TMP_102_H_
 #define  TMP_102_H_
+#include "generalTypes.h"
 
 namespace TMP102
 { 
-    typedef enum
-    {
-        ENABLE,
-        DISABLE
-    } FunctionStatus;
-
     typedef enum
     {
         GND = 0x48,

@@ -227,6 +227,8 @@ namespace DepthSensor
         using namespace SensorError;
         switch(b)
         {
+            case AverageMeasurmentOK:
+                return;
             case AverageMeasurmentNotInRange:
                 Logger::log(Logger::ERROR, F("Average measurement was out of defined range"));
             break;
