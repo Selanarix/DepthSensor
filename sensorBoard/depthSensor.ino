@@ -106,10 +106,15 @@ namespace DepthSensor
     /*     static int ax = 0;
         *measurementOfSeries = ax++; */
              
-        *measurementOfSeries = (double)HAL::analogReadPin(thi->constData->PIN);     
+
 
         //Formel aus Datenblatt (in kPa): Vout = Vs*(0,009*p+0,04)        
         //Umgestellt nach p (in hPa!!): p=(Vout-200)/4.5
+        adcvalue = (double)HAL::analogReadPin(thi->constData->PIN);
+        sensorVoltageADC = (adcvalue)*(5000.0/4096.0);
+        pressure = (sensorVoltageADC-offset)/3.88;
+        
+       *measurementOfSeries = pressure;
     }
 
     void readMPX5500Sensor(double* measurementOfSeries, const void* ob)
