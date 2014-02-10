@@ -23,6 +23,7 @@ namespace HAL
     bool initBaseHW();
     void initPin(PinID, PinType);
     int analogReadPin(PinID p);
+    double analogReadVoltage(PinID p);
     void digitalSetPinHeigh(PinID p);
     void digitalSetPinLow(PinID p);
     void digitalTogglePin(PinID p);
