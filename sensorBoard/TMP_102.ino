@@ -80,10 +80,9 @@ namespace TMP102
     {
         setPointerReg(thi, Temperatur);
         Wire.endTransmission();
-
         Wire.requestFrom(thi->addr, 2);
 
-        uint16_t value = readTempReg(thi);
+        int16_t value = readTempReg(thi);
 
         return (double)value * DegreePerTick;
     }
@@ -167,8 +166,8 @@ namespace TMP102
 
     static bool initI2C(const TMP102* const thi)
     {
-        pinMode(SDA_Pin, INPUT_PULLUP);
-        pinMode(SCL_Pin, INPUT_PULLUP);
+        pinMode(SDA_Pin, INPUT);
+        pinMode(SCL_Pin, INPUT);
         return true;
     }
 
@@ -218,14 +217,13 @@ namespace TMP102
 
     static inline int16_t readTempReg(const TMP102* const thi)
     {
-        uint16_t msb = Wire.read();
-        uint16_t lsb = Wire.read();
-        int16_t res = ((msb<<8 | lsb));
-        
+        int16_t msb = Wire.read();
+        int16_t lsb = Wire.read();
+        int16_t res = ((msb<<8) | lsb);
+
         if(!thi->isExtendetMode)
-            return res >> 4;
+             return res >> 4;
         else 
-            return res >> 3;
-        
+             return res >> 3;
     }
 }

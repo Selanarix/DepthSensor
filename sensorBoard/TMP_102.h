@@ -14,7 +14,7 @@ namespace TMP102
 
     typedef enum
     {
-        F_250kHz = 0x0, 
+        F_250milliHz = 0x0, 
         F_1Hz = 0x1,
         F_4Hz = 0x2,
         F_8Hz = 0x3
@@ -57,7 +57,7 @@ namespace TMP102
     };
 
     bool construct(TMP102* thi,I2C_Addresses add); 
-    I2C_Addresses getAddr(const TMP102* const thi);
+    I2C_Addresses getAddr(const TMP102* const thi); 
     const TermostatLimits* getLimit(const TMP102* const thi);
     double oneRead(const TMP102* const thi);
     double simpleRead(const TMP102* const thi);
