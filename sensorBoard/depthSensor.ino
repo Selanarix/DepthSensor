@@ -121,12 +121,6 @@ namespace DepthSensor
         
         const DepthSensor* thi = (DepthSensor*)ob;
         
-        //For Testing
-        static int ax = 0;
-        *measurementOfSeries = ax++; 
-        return;
-        //For Testing
-       
         adcvalue = (double)HAL::analogReadPin(thi->constData->PIN);
         sensorVoltageADC = (adcvalue)*(5.0/4096.0);
         pressure = (sensorVoltageADC-offset)*1111;

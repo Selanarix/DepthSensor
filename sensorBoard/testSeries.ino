@@ -125,6 +125,7 @@ namespace TestSeries
         for(measurement = 0; measurement < con->sensorUsedSizeOfTestSeries; measurement ++)
         {
            con->readSensorValue(&(testSeriesData[measurement]),obj);
+           Logger::logDouble(Logger::DEBUG,F("Measurement result: "),testSeriesData[measurement]);
            delay(con->seriesControll->DELAY_BETWEEN_MEASUREMENTS_ms);	
         }		
     }

@@ -106,14 +106,11 @@ namespace TemperatureSensor
        if(ob == NULL)
            return;
      
-         const TemperatureSensor* thi = (TemperatureSensor*)ob;
-       //For Test
-        static int a = 0;
-        *mes = a++;
-        return;
-       //For Test
-       
+        const TemperatureSensor* thi = (TemperatureSensor*)ob;
+        
         double tempvalue = (double)HAL::analogReadPin(thi->constData->PIN);
+        Logger::logInt(Logger::DEBUG,F("LM35 on pin: "),thi->constData->PIN);
+        Logger::logInt(Logger::DEBUG,F("LM35 ADC value: "),tempvalue);
         *mes = (5000.0 /1024.0 * tempvalue / 10.0);
     }  
     

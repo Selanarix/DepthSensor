@@ -2,7 +2,7 @@
 #include "tempSensor.h"
 #include "testSeries.h"
 #include "depthSensor.h"
-//#include "network.h"
+#include "network.h"
 #include "logger.h"
 #include "hal.h"
 #include "sensor.h"
@@ -50,7 +50,7 @@ const TestSeries::TestSeriesControll depthControll =
 
 const Sensor::SensorConstData depthConst =
 {
-        1, //PIN
+        2, //PIN
         0, //ID
 };
 
@@ -59,17 +59,23 @@ DepthSensor::DepthSensor depthSensor1;
 
 void setup()
 {
-    Logger::initLogger();
-    HAL::initBaseHW();
     ProjectLED::initLedPins();
+    ProjectLED::LED_On(ProjectLED::LED0); //Indicate init procedure on board
+    
+    Logger::initLogger();
+    Logger::changeOutputLogLevel(Logger::DEBUG);
+    
+    HAL::initBaseHW();
     if(!TemperatureSensor::construct(&temperatureSensor1, &temperatureConst, &tempControll, &temperatureConstrain, TemperatureSensor::LM35, 5))
        Logger::log(Logger::ERROR,F("Could not set up temperatur sensor"));
    
     if(!DepthSensor::construct(&depthSensor1, &depthConst, &depthControll, &depthConstrain, DepthSensor::MPX5500, 10))
       Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
+      
     setUpRealTimeClock();
-    // Network::initNetworkStack();
-    Logger::log(Logger::INFO,F("System initialized"));
+    //Network::initNetworkStack();
+    Logger::log(Logger::INFO, F("System initialized"));
+    ProjectLED::LED_Off(ProjectLED::LED0); //Indicate end of init on board
 }
 
 void flashLED_1s()
@@ -83,21 +89,19 @@ void flashLED_1s()
 void cycleTask()
 {
    
- /*  // DepthSensor::Depth dep = DepthSensor::measureDepth();
     Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&temperatureSensor1);
     Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
     
-  // if(depthRes == Sensor::MeasurmentOK )//&& depthRes == Sensor::MeasurmentOK)
-  // {
+    if(depthRes == Sensor::MeasurementOK && depthRes == Sensor::MeasurementOK)
+    {
        TemperatureSensor::Temperature tmp1 = TemperatureSensor::getLastTemperature(&temperatureSensor1);
-        DepthSensor::Depth dep1 = DepthSensor::getLastDepth(&depthSensor1);
+       DepthSensor::Depth dep1 = DepthSensor::getLastDepth(&depthSensor1);
         //Send depth sensor
        // Network::http_GET_Request(temperatureSensor1.getID((Sensor::Sensor*)&temperatureSensor1), tmp1);
         //Send temperatur sensor
       // Network::http_GET_Request(depthSensor1.getID((Sensor::Sensor*)&depthSensor1), dep1);
-  // }
-    //flashLED_1s(); */
-   Serial.println("Hallo");   
+    }
+    flashLED_1s();
 }
 
 void loop()
