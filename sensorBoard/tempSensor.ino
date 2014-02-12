@@ -108,10 +108,9 @@ namespace TemperatureSensor
      
         const TemperatureSensor* thi = (TemperatureSensor*)ob;
         
-        double tempvalue = (double)HAL::analogReadPin(thi->constData->PIN);
-        Logger::logInt(Logger::DEBUG,F("LM35 on pin: "),thi->constData->PIN);
-        Logger::logInt(Logger::DEBUG,F("LM35 ADC value: "),tempvalue);
-        *mes = (5000.0 /1024.0 * tempvalue / 10.0);
+        double sensor_mV = (double)HAL::analogReadVoltage(thi->constData->PIN);
+        *mes = (sensor_mV*-0.5)+3150; //amplified->non-amplified
+        *mes = (*mes-909)/10.0; //minus diode offset and 10mV/degree
     }  
     
     void readTMP_102(double* mes, const void* ob)
