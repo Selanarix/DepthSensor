@@ -36,6 +36,9 @@ namespace TemperatureSensor
         {
             case LM35:
                 return TestSeries::construct(&(tSen->series),  controll, readLM35, testTestSeries, size);  
+                
+            case TMP102:
+                return true;
         }              
         return false; 
     }
@@ -48,9 +51,10 @@ namespace TemperatureSensor
     {
         if(sen == NULL)
             return false;
+            
         if(!construct(tSen,constDa,controll, cons, t,size))
             return false;
- 
+            
         tSen->digitalSensor = sen;
         
         return TestSeries::construct(&(tSen->series),  controll, readTMP_102, testTestSeries, size);
