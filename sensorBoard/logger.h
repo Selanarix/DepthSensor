@@ -7,6 +7,7 @@ namespace Logger
 {
     typedef enum
     {
+      DEBUG,
       INFO,
       WARNING,
       ERROR  
@@ -14,6 +15,7 @@ namespace Logger
 
     void initLogger();
     
+    void changeOutputLogLevel(LogLevel level);
     void log(LogLevel level, const __FlashStringHelper* message);
     void logInt(LogLevel level, const __FlashStringHelper* message, unsigned int number );
     void logDouble(LogLevel level, const __FlashStringHelper* message, double number );
