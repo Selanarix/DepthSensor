@@ -23,6 +23,15 @@ namespace Display
         User3 = 202,
         User4 = 203
     } TextFonts;
+    
+    typedef enum
+    {
+        AND = '&',
+        XOR = '|',
+        OR = '^',
+        NOT = '!'
+    } PixelDisplayLogic;
+
 
     typedef enum
     {
@@ -42,16 +51,17 @@ namespace Display
 
     void initSerialHW(SerialBaudrate rate);
     void setCursor(FunctionStatus status);
+    void setDisplayMode(PixelDisplayLogic a);
     void setGraphicPosition(Coord x, Coord y);
     void drawLineTo(Coord x, Coord y);
     void drawLine(Coord x1, Coord y1,Coord x2, Coord y2);
-    void drawFilledRectangle(Coord x, Coord y);
+    void drawFilledRectangle(Coord x, Coord y,Dimension width, Dimension height);
     void drawRectangle(Coord x1, Coord y1, Dimension width, Dimension height);
     void clearDisplay();
-    void changePowerStatus(FunctionStatus status);
-    void drawCircle();
+    void drawFilledCircle(Coord x1, Coord y1, Dimension radius);
+    void drawCircle(Coord x1, Coord y1, Dimension radius);
     void drawPixel(Coord x, Coord y);
-    void drawImg(Coord x, Coord y, Dimension width, Dimension height, uint8_t data, uint32_t size);
+    void drawImg(Coord x, Coord y, Dimension width, Dimension height, uint8_t* data, uint32_t size);
     void setCursor(TextGrid x, TextGrid y);
     void setFontType(TextFonts font);
     void newline();

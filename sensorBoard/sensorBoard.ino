@@ -1,12 +1,12 @@
 #include "led.h"
 #include "tempSensor.h"
-#include "testSeries.h"
 #include "depthSensor.h"
 #include "network.h"
 #include "logger.h"
 #include "hal.h"
 #include "sensor.h"
 #include "realTimeClock.h"
+#include "display.h"
 
 
 // Set up temperatur sensor objects and their data
@@ -70,7 +70,14 @@ void setup()
     ProjectLED::LED_On(ProjectLED::LED0); //Indicate init procedure on board
     
     Logger::initLogger();
+    Logger::changeLoggerStatus(DISABLE);
     Logger::changeOutputLogLevel(Logger::DEBUG);
+    
+    Display::initSerialHW(Display::B_9600);
+    Display::clearDisplay();
+    Display::drawPixel(239, 63);
+    Display::setFontType(Display::Font1);
+    
     
     HAL::initBaseHW();
     if(!TemperatureSensor::construct(&analogTemperature, &analogTemperatureConstData, &tempControll, &temperatureConstrain, TemperatureSensor::LM35, 5))
@@ -102,8 +109,8 @@ void flashLED_1s()
 
 void cycleTask()
 {
-   
-    Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
+    Display::setAndWriteString(3,5,"Hallo");
+      /*  Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
     Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
     Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
     
@@ -116,7 +123,7 @@ void cycleTask()
         //Send temperatur sensor
       // Network::http_GET_Request(depthSensor1.getID((Sensor::Sensor*)&depthSensor1), dep1);
     }
-    flashLED_1s();
+    flashLED_1s(); */
 }
 
 void loop()

@@ -64,14 +64,14 @@ namespace DepthSensor
             return Sensor::MeasurementError;
         }    
             
-        Logger::log(Logger::INFO, F("---------------------------------------"));
+        Logger::printSeperator();//------------------------------------------
         Logger::logInt(Logger::INFO, F("Start with test series for depth sensor with id: "),(uint32_t)pSen->constData->ID);
         TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(pSen->series), pSen->constrains, pSen);
 
         if(res != TestSeries::TestSeriesOK)
         {
-           Logger::log(Logger::ERROR,F("Could not measure depth"));
-           Logger::log(Logger::INFO, F("---------------------------------------"));
+            Logger::log(Logger::ERROR,F("Could not measure depth"));
+            Logger::printSeperator();//------------------------------------------
             pSen->lastDepth = 0.0;
             return Sensor::MeasurementError;
         }
@@ -84,7 +84,7 @@ namespace DepthSensor
             result = Sensor::MeasurementValueUnexpected;
 
         Logger::logInt(Logger::INFO, F("Tiefe [cm]: "), avgDepthOfSeries);
-        Logger::log(Logger::INFO, F("---------------------------------------")); 
+        Logger::printSeperator();//------------------------------------------
         pSen->lastDepth = avgDepthOfSeries;
         return result;
     }

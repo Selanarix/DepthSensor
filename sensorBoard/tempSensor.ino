@@ -79,14 +79,14 @@ namespace TemperatureSensor
             Logger::log(Logger::ERROR,F("Can not measure for null instance of temperatur sensor"));
             return Sensor::MeasurementError;
         }    
-        Logger::log(Logger::INFO, F("---------------------------------------"));
+        Logger::printSeperator();//------------------------------------------
         Logger::logInt(Logger::INFO, F("Start with test series for temperature sensor with id: "),(uint32_t)tSen->constData->ID);
         TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(tSen->series), tSen->constrains, tSen);
         
         if(res != TestSeries::TestSeriesOK)
         {
            Logger::log(Logger::ERROR,F("Could not measure temperature"));
-           Logger::log(Logger::INFO, F("---------------------------------------"));
+           Logger::printSeperator();//------------------------------------------
            tSen->lastTemperature = 0.0;
            return Sensor::MeasurementError;
         }
@@ -98,7 +98,7 @@ namespace TemperatureSensor
             result = Sensor::MeasurementValueUnexpected;
     
         Logger::logInt(Logger::INFO, F("Temperatur [C]: "), avgTemperaturOfSeries);
-        Logger::log(Logger::INFO, F("---------------------------------------"));
+        Logger::printSeperator();//------------------------------------------
         tSen->lastTemperature = avgTemperaturOfSeries;
         return result;
     }

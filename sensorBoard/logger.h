@@ -1,6 +1,7 @@
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
+#include "generalTypes.h"
 #include <Arduino.h>
 
 namespace Logger
@@ -10,13 +11,14 @@ namespace Logger
       DEBUG,
       INFO,
       WARNING,
-      ERROR  
+      ERROR 
     } LogLevel;
 
     void initLogger();
-    
+    void changeLoggerStatus(FunctionStatus status);
     void changeOutputLogLevel(LogLevel level);
     void log(LogLevel level, const __FlashStringHelper* message);
+    void printSeperator();
     void logInt(LogLevel level, const __FlashStringHelper* message, unsigned int number );
     void logDouble(LogLevel level, const __FlashStringHelper* message, double number );
     void logString(LogLevel level, const String str);
