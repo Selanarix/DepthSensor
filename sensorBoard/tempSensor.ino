@@ -113,7 +113,7 @@ namespace TemperatureSensor
         const TemperatureSensor* thi = (TemperatureSensor*)ob;
         
         double sensor_mV = (double)HAL::analogReadVoltage(thi->constData->PIN);
-        *mes = (sensor_mV*-0.5)+3150; //amplified->non-amplified
+        *mes = (sensor_mV*-0.485)+3100; //amplified->non-amplified
         *mes = (*mes-909)/10.0; //minus diode offset and 10mV/degree
     }  
     

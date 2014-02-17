@@ -73,7 +73,7 @@ namespace Display
     void writeUint(uint32_t b);
     void writeDouble(double b);  
 
-    void setAndWriteFString(TextGrid x, TextGrid y,const __FlashStringHelper* message)
+    void setAndWriteFString(TextGrid x, TextGrid y,const __FlashStringHelper* message);
     void setAndWriteString(TextGrid x, TextGrid y, const char* b);
     void setAndWriteInt(TextGrid x, TextGrid y, int32_t b);
     void setAndWriteUInt(TextGrid x, TextGrid y, uint32_t b);
