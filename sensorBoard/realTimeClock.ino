@@ -2,17 +2,19 @@
 #include <avr/power.h>
 #include <avr/wdt.h>
 #include "realTimeClock.h"
+#include "logger.h"
 
 volatile int f_wdt=1;
+static uint32_t systemTicks = 0;
+static bool tickOverrun = false;
+
 
 ISR(WDT_vect)
 {
   if(f_wdt == 0)
-  {
-    f_wdt=1;
-  }
+      f_wdt=1;
   else
-  {} //Overrun
+      Logger::log(Logger::ERROR,F("Realtime clock overrun."));
 }
 
 void setUpRealTimeClock()
@@ -56,3 +58,23 @@ void enterSleep(void)
   /* Re-enable the peripherals. */
   power_all_enable();
 }
+
+bool isTickOverrun()
+{
+    return tickOverrun;
+}
+
+void resetTick()
+{
+    systemTicks = 0;
+    tickOverrun = false;
+}
+
+void updateTick()
+{
+    tickOverrun = false;
+    if(systemTicks == 0xffffff)
+        tickOverrun = true;
+    systemTicks ++;
+}
+

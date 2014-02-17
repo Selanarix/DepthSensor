@@ -13,8 +13,8 @@ namespace Sensor
 
     typedef struct
     {
-        const unsigned char PIN;
-        const unsigned char ID;
+        const uint8_t PIN;
+        const uint8_t ID;
     } SensorConstData;
 
     typedef enum

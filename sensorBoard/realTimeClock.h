@@ -1,5 +1,12 @@
 #ifndef MY_RTC_H
 #define MY_RTC_H
+#include <Arduino.h>
+
+const uint32_t timeBase_s = 8; //Seconds
+
+bool isTickOverrun();
+void resetTick();
+void updateTick();
 
 void setUpRealTimeClock();
 bool isRTC_FlagAndClear();
