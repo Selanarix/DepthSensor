@@ -142,7 +142,17 @@ namespace Display
         Serial.print(b);
         terminateByteStream();
     }
+    void writeFString(const __FlashStringHelper* message)
+    {
+        sendTextCommand();
+        Serial.print(message);
+    }
 
+    void setAndWriteFString(TextGrid x, TextGrid y,const __FlashStringHelper* message)
+    {
+          setCursor(x, y);
+          writeFString(message);
+    }
     void setAndWriteString(TextGrid x, TextGrid y, const char* b)
     {
           setCursor(x, y);

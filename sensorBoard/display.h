@@ -67,11 +67,13 @@ namespace Display
     void setFontType(TextFonts font);
     void newline();
 
+    void writeFString(const __FlashStringHelper* message);
     void writeString(const char* b);
     void writeInt(int32_t b);
     void writeUint(uint32_t b);
     void writeDouble(double b);  
 
+    void setAndWriteFString(TextGrid x, TextGrid y,const __FlashStringHelper* message)
     void setAndWriteString(TextGrid x, TextGrid y, const char* b);
     void setAndWriteInt(TextGrid x, TextGrid y, int32_t b);
     void setAndWriteUInt(TextGrid x, TextGrid y, uint32_t b);
