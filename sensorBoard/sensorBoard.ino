@@ -1,12 +1,12 @@
 #include "led.h"
 #include "tempSensor.h"
-#include "testSeries.h"
 #include "depthSensor.h"
 #include "network.h"
 #include "logger.h"
 #include "hal.h"
 #include "sensor.h"
 #include "realTimeClock.h"
+#include "displayControl.h"
 
 
 // Set up temperatur sensor objects and their data
@@ -26,7 +26,12 @@ const TestSeries::TestSeriesControll tempControll =
         500 // DELAY_BETWEEN_MEASUREMENTS_ms
 };
 
-const Sensor::SensorConstData temperatureConst =
+const Sensor::SensorConstData analogTemperatureConstData =
+{
+        0, //PIN
+        5, //ID
+};
+const Sensor::SensorConstData digitalTemperatureConstData =
 {
         0, //PIN
         5, //ID
@@ -54,24 +59,35 @@ const Sensor::SensorConstData depthConst =
         0, //ID
 };
 
-TemperatureSensor::TemperatureSensor temperatureSensor1;
+TemperatureSensor::TemperatureSensor analogTemperature;
+TemperatureSensor::TemperatureSensor digitalTemperature;
 DepthSensor::DepthSensor depthSensor1;
+TMP102::TMP102 tmp102;
 
 void setup()
 {
     ProjectLED::initLedPins();
     ProjectLED::LED_On(ProjectLED::LED0); //Indicate init procedure on board
     
+    DisplayControl::setUpDisplay();
+    
     Logger::initLogger();
     Logger::changeOutputLogLevel(Logger::DEBUG);
-    
+        
     HAL::initBaseHW();
-    if(!TemperatureSensor::construct(&temperatureSensor1, &temperatureConst, &tempControll, &temperatureConstrain, TemperatureSensor::LM35, 5))
+    if(!TemperatureSensor::construct(&analogTemperature, &analogTemperatureConstData, &tempControll, &temperatureConstrain, TemperatureSensor::LM35, 5))
        Logger::log(Logger::ERROR,F("Could not set up temperatur sensor"));
+       
+    //Set upt digital Sensor
+    if(!TMP102::construct(&tmp102,TMP102::GND))
+       Logger::log(Logger::ERROR,F("Could not set up tmp102"));  
    
+    if(!TemperatureSensor::constructDigital(&digitalTemperature, &digitalTemperatureConstData, &tempControll, &temperatureConstrain, TemperatureSensor::TMP102, 5, &tmp102))
+       Logger::log(Logger::ERROR,F("Could not set up digital temperature sensor"));
+    
     if(!DepthSensor::construct(&depthSensor1, &depthConst, &depthControll, &depthConstrain, DepthSensor::MPX5500, 10))
       Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
-      
+       
     setUpRealTimeClock();
     //Network::initNetworkStack();
     Logger::log(Logger::INFO, F("System initialized"));
@@ -88,20 +104,23 @@ void flashLED_1s()
 
 void cycleTask()
 {
-   
-    Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&temperatureSensor1);
+      DisplayControl::showIndicator(DisplayControl::MEASUREMENT);
+      delay(1000);
+      DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
+      /*  Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
+    Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
     Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
     
     if(depthRes == Sensor::MeasurementOK && depthRes == Sensor::MeasurementOK)
     {
-       TemperatureSensor::Temperature tmp1 = TemperatureSensor::getLastTemperature(&temperatureSensor1);
+       TemperatureSensor::Temperature tmp1 = TemperatureSensor::getLastTemperature(&analogTemperature);
        DepthSensor::Depth dep1 = DepthSensor::getLastDepth(&depthSensor1);
         //Send depth sensor
-       // Network::http_GET_Request(temperatureSensor1.getID((Sensor::Sensor*)&temperatureSensor1), tmp1);
+       // Network::http_GET_Request(analogTemperature.getID((Sensor::Sensor*)&analogTemperature), tmp1);
         //Send temperatur sensor
       // Network::http_GET_Request(depthSensor1.getID((Sensor::Sensor*)&depthSensor1), dep1);
     }
-    flashLED_1s();
+    flashLED_1s(); */
 }
 
 void loop()

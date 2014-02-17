@@ -8,7 +8,7 @@ namespace Logger
 
     //------------------------- Private Data ---------------------------------------
     LogLevel outputLevel = INFO;
-    
+    bool enabled = true;
     //------------------------ Read only ------------------------------------------
     const uint32_t serialBaudRate = 9600;
     
@@ -23,15 +23,30 @@ namespace Logger
     //------------------------------- Public Functions -----------------------------
     void initLogger()
     {
+        if(!enabled)
+            return;
         Serial.begin(serialBaudRate); 
     }
     void log(LogLevel level, const __FlashStringHelper* message)
     {
-        if(level < outputLevel)
+       if(!enabled || level < outputLevel)
             return;
         Serial.print(logLevelNames[level]);
         Serial.print(" : ");
         Serial.println(message);
+    }
+    
+    void changeLoggerStatus(FunctionStatus status)
+    {
+        if(status == ENABLE)
+          enabled = true;
+        else
+          enabled = false;
+    }
+
+    void printSeperator()
+    {
+        Logger::log(Logger::INFO, F("---------------------------------------"));
     }
 
     void changeOutputLogLevel(LogLevel level)
@@ -43,7 +58,7 @@ namespace Logger
 
     void logInt(LogLevel level, const __FlashStringHelper* message, unsigned int number )
     {
-        if(level < outputLevel)
+       if(!enabled || level < outputLevel)
             return;
         Serial.print(logLevelNames[level]);
         Serial.print(" : ");
@@ -53,7 +68,7 @@ namespace Logger
 
     void logDouble(LogLevel level, const __FlashStringHelper* message, double number )
     {
-        if(level < outputLevel)
+       if(!enabled || level < outputLevel)
             return;
         Serial.print(logLevelNames[level]);
         Serial.print(" : ");
@@ -63,7 +78,7 @@ namespace Logger
     
     void logString(LogLevel level, const String str)
     {
-        if(level < outputLevel)
+       if(!enabled || level < outputLevel)
             return;
         Serial.print(logLevelNames[level]);
         Serial.print(" : ");
