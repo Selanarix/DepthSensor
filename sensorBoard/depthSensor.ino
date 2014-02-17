@@ -9,6 +9,8 @@ namespace DepthSensor
 
     void readMPX5500Sensor(double* measurementOfSeries, const void* b);
     void readMPX5100Sensor(double* measurementOfSeries, const void* c);
+    static inline Depth roundToDepth(double);
+      
 
     TestSeries::TestSeriesCheckResult testTestSeries(const TestSeries::TestSeries* s, const Sensor::SensorConstraints* con);
     bool testEvaluatedValue(const DepthSensor* con, const Depth dep);
@@ -77,7 +79,7 @@ namespace DepthSensor
         }
 	    //Process data out of test series
         Sensor::MeasurementResult result = Sensor::MeasurementOK;
-        Depth avgDepthOfSeries = (Depth)TestSeries::getAverageMeanOfSeries(&(pSen->series));
+        Depth avgDepthOfSeries = roundToDepth(TestSeries::getAverageMeanOfSeries(&(pSen->series)));
       
         //Keep sensor value but generate callback if not as acpected. 
         if(!testEvaluatedValue(pSen,avgDepthOfSeries))
@@ -94,7 +96,7 @@ namespace DepthSensor
     {
         //read value from sensor and assign it to measurementOfSeries
         double sensor_mV = 0.0;
-        const double offset = 185.55;
+        const double offset = 200.0;
         
         if(ob == NULL)
             return;
@@ -103,9 +105,12 @@ namespace DepthSensor
           
         //Formel aus Datenblatt (in kPa): Vout = Vs*(0,009*p+0,04)        
         //Umgestellt nach p (in hPa!!): p=(Vout-200)/4.5
-        sensor_mV = (double)HAL::analogReadVoltage(thi->constData->PIN);
+     sensor_mV = (double)HAL::analogReadVoltage(thi->constData->PIN);
+                Serial.print("ADC-Temp [mV]: ");
+                Serial.println(sensor_mV);
 
         *measurementOfSeries = (sensor_mV-offset)/3.88;
+
     }
 
     void readMPX5500Sensor(double* measurementOfSeries, const void* ob)
@@ -184,6 +189,15 @@ namespace DepthSensor
         logAverageDepthErrors(errorCode); //log errors
        
         return res;
+    }
+    
+    static inline Depth roundToDepth(double roundedDepth)
+    {
+      Depth result = (Depth)roundedDepth;
+      if (roundedDepth - result > 0.5)
+          return result+1;
+      
+      return result;
     }
 
     //-------------------------------------- E r r o r s ------------------------
