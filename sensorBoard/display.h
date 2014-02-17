@@ -56,6 +56,7 @@ namespace Display
     void drawLineTo(Coord x, Coord y);
     void drawLine(Coord x1, Coord y1,Coord x2, Coord y2);
     void drawFilledRectangle(Coord x, Coord y,Dimension width, Dimension height);
+    void drawHorizontalBar(Dimension height, Coord y);
     void drawRectangle(Coord x1, Coord y1, Dimension width, Dimension height);
     void clearDisplay();
     void drawFilledCircle(Coord x1, Coord y1, Dimension radius);

@@ -6,7 +6,7 @@
 #include "hal.h"
 #include "sensor.h"
 #include "realTimeClock.h"
-#include "display.h"
+#include "displayControl.h"
 
 
 // Set up temperatur sensor objects and their data
@@ -69,16 +69,11 @@ void setup()
     ProjectLED::initLedPins();
     ProjectLED::LED_On(ProjectLED::LED0); //Indicate init procedure on board
     
+    DisplayControl::setUpDisplay();
+    
     Logger::initLogger();
-    Logger::changeLoggerStatus(DISABLE);
     Logger::changeOutputLogLevel(Logger::DEBUG);
-    
-    Display::initSerialHW(Display::B_9600);
-    Display::clearDisplay();
-    Display::drawPixel(239, 63);
-    Display::setFontType(Display::Font1);
-    
-    
+        
     HAL::initBaseHW();
     if(!TemperatureSensor::construct(&analogTemperature, &analogTemperatureConstData, &tempControll, &temperatureConstrain, TemperatureSensor::LM35, 5))
        Logger::log(Logger::ERROR,F("Could not set up temperatur sensor"));
@@ -109,7 +104,9 @@ void flashLED_1s()
 
 void cycleTask()
 {
-    Display::setAndWriteString(3,5,"Hallo");
+      DisplayControl::showIndicator(DisplayControl::MEASUREMENT);
+      delay(1000);
+      DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
       /*  Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
     Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
     Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);

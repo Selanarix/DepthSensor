@@ -61,6 +61,12 @@ namespace Display
         sendCommand(a, sizeof(a));
     }
     
+    void drawHorizontalBar(Dimension height, Coord y)
+    {
+        uint8_t a[] = {'F','R', 0, y, 239, y + height};
+        sendCommand(a, sizeof(a));
+    }
+    
     void drawRectangle(Coord x1, Coord y1, Dimension width, Dimension height)
     {
         uint8_t a[] = {'D','R', x1, y1, x1 + width, y1 + height};

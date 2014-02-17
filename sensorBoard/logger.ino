@@ -23,6 +23,8 @@ namespace Logger
     //------------------------------- Public Functions -----------------------------
     void initLogger()
     {
+        if(!enabled)
+            return;
         Serial.begin(serialBaudRate); 
     }
     void log(LogLevel level, const __FlashStringHelper* message)
