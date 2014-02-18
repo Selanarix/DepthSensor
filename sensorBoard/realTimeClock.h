@@ -6,7 +6,6 @@ const uint32_t timeBase_s = 8; //Seconds
 
 bool isTickOverrun();
 void resetTick();
-void updateTick();
 
 void setUpRealTimeClock();
 bool isRTC_FlagAndClear();

@@ -17,6 +17,11 @@ namespace TemperatureSensor
     
     //------------------------ Private Data ----------------------------------------
     //------------------------ Read only -------------------------------------------
+    const char* sensorNames [] = 
+    {
+        "LM35",
+        "TMP_102"
+    };
     //------------------------ Public Functions ------------------------------------
     
     bool construct(TemperatureSensor* tSen, 
@@ -31,6 +36,7 @@ namespace TemperatureSensor
         tSen->lastTemperature = 0.0;
         tSen->constrains = cons;
         tSen->constData = constDa;    
+        tSen->type = t;    
         tSen->digitalSensor = NULL;
         switch(t)
         {
@@ -80,7 +86,8 @@ namespace TemperatureSensor
             return Sensor::MeasurementError;
         }    
         Logger::printSeperator();//------------------------------------------
-        Logger::logInt(Logger::INFO, F("Start with test series for temperature sensor with id: "),(uint32_t)tSen->constData->ID);
+        Logger::logString(Logger::INFO, F("Measure temperature sensor: "), sensorNames[tSen->type]);
+        Logger::logInt(Logger::DEBUG, F("Sensor id: "),(uint32_t)tSen->constData->ID);
         TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(tSen->series), tSen->constrains, tSen);
         
         if(res != TestSeries::TestSeriesOK)

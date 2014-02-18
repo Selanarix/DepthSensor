@@ -11,8 +11,8 @@ namespace DepthSensor
 
     typedef enum
     {
-        MPX5500,
-        MPX5100
+        MPX5500 = 0,
+        MPX5100 = 1
     } DepthSensorType;
     
     typedef struct _DepthSensor DepthSensor;
@@ -20,6 +20,7 @@ namespace DepthSensor
     struct _DepthSensor
     {
         Depth lastDepth;
+        DepthSensorType type;
         const Sensor::SensorConstraints* constrains;
         const Sensor::SensorConstData* constData;
         TestSeries::TestSeries series;

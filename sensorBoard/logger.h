@@ -21,6 +21,7 @@ namespace Logger
     void printSeperator();
     void logInt(LogLevel level, const __FlashStringHelper* message, unsigned int number );
     void logDouble(LogLevel level, const __FlashStringHelper* message, double number );
-    void logString(LogLevel level, const String str);
+    void logOString(LogLevel level, const String str);
+    void logString(LogLevel level, const __FlashStringHelper* message, const char* str);
 }
 #endif

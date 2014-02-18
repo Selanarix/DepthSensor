@@ -46,7 +46,7 @@ namespace Logger
 
     void printSeperator()
     {
-        Logger::log(Logger::INFO, F("---------------------------------------"));
+        Serial.println(F("---------------------------------------"));
     }
 
     void changeOutputLogLevel(LogLevel level)
@@ -76,13 +76,23 @@ namespace Logger
         Serial.println(number);
     }
     
-    void logString(LogLevel level, const String str)
+    void logOString(LogLevel level, const String str)
     {
        if(!enabled || level < outputLevel)
             return;
         Serial.print(logLevelNames[level]);
         Serial.print(" : ");
         Serial.print(str);
+    }
+    
+    void logString(LogLevel level, const __FlashStringHelper* message, const char* str)
+    {
+       if(!enabled || level < outputLevel)
+            return;
+        Serial.print(logLevelNames[level]);
+        Serial.print(" : ");
+        Serial.print(message);
+        Serial.println(str);
     }
     //------------------------------ Private Functions -----------------------------
 

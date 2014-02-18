@@ -20,6 +20,12 @@ namespace DepthSensor
 
     //------------------------ Private Data ----------------------------------------
     //------------------------ Read only -------------------------------------------
+    static const char* sensorNames[] = 
+    {
+      "MPX5500",
+      "MPX5100"
+    };
+    
     //------------------------ Public Functions ------------------------------------
     bool construct(DepthSensor* tSen, 
                     const Sensor::SensorConstData* constDa, 
@@ -32,7 +38,8 @@ namespace DepthSensor
  
         tSen->lastDepth = 0.0;
         tSen->constrains = cons;
-        tSen->constData = constDa; 
+        tSen->constData = constDa;
+        tSen->type = t;
   
         switch(t)
         {
@@ -67,7 +74,8 @@ namespace DepthSensor
         }    
             
         Logger::printSeperator();//------------------------------------------
-        Logger::logInt(Logger::INFO, F("Start with test series for depth sensor with id: "),(uint32_t)pSen->constData->ID);
+        Logger::logString(Logger::INFO, F("Measure depth sensor: "), sensorNames[pSen->type]);
+        Logger::logInt(Logger::DEBUG, F("Sensor id: "),(uint32_t)pSen->constData->ID);
         TestSeries::TestSeriesCheckResult res = TestSeries::takeTestSeries(&(pSen->series), pSen->constrains, pSen);
 
         if(res != TestSeries::TestSeriesOK)

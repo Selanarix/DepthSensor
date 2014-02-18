@@ -51,7 +51,7 @@ namespace Network
      // give the Ethernet shield a second to initialize:
         delay(500);
         String logStr = "My IP address: " + Ethernet.localIP();
-        Logger::logString(Logger::INFO, logStr);
+        Logger::logOString(Logger::DEBUG, logStr);
         delay(10);
         Logger::log(Logger::INFO, F("network initialized"));
         delay(10);

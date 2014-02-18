@@ -11,8 +11,8 @@ namespace TemperatureSensor
 
     typedef enum
     {
-        LM35, 
-        TMP102,
+        LM35 = 0, 
+        TMP102 = 1,
     } TemperatureSensorType;
 
     typedef struct _TemperatureSensor TemperatureSensor;
@@ -20,6 +20,7 @@ namespace TemperatureSensor
     struct _TemperatureSensor
     {
         Temperature lastTemperature;
+        TemperatureSensorType type;
         const Sensor::SensorConstraints* constrains;
         const Sensor::SensorConstData* constData;
         TestSeries::TestSeries series;

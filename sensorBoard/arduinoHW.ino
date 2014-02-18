@@ -62,7 +62,7 @@ namespace HAL
             return false;
         }
         
-        Logger::log(Logger::INFO, F("Set up external ADC successfully"));
+        Logger::log(Logger::DEBUG, F("Set up external ADC successfully"));
         externalInit = true;
         return true;
     }

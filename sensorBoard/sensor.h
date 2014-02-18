@@ -1,7 +1,7 @@
 #ifndef SENSOR_H_
 #define SENSOR_H_
 
-#include <arduino.h>
+#include <Arduino.h>
 
 namespace Sensor
 {

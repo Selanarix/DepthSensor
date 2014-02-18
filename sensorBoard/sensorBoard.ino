@@ -8,6 +8,7 @@
 #include "realTimeClock.h"
 #include "displayControl.h"
 
+static bool initialized = false;
 
 // Set up temperatur sensor objects and their data
 // ----------------------------------------------------------------------
@@ -74,24 +75,38 @@ void setup()
     Logger::initLogger();
     Logger::changeOutputLogLevel(Logger::DEBUG);
         
-    HAL::initBaseHW();
+    if(!HAL::initBaseHW())
+    {
+        Logger::log(Logger::ERROR,F("Could not set up HAL successfully"));
+        return;
+    }
     if(!TemperatureSensor::construct(&analogTemperature, &analogTemperatureConstData, &tempControll, &temperatureConstrain, TemperatureSensor::LM35, 5))
-       Logger::log(Logger::ERROR,F("Could not set up temperatur sensor"));
-       
+    {
+        Logger::log(Logger::ERROR,F("Could not set up temperatur sensor"));
+        return;
+    }
+    
     //Set upt digital Sensor
     if(!TMP102::construct(&tmp102,TMP102::GND))
-       Logger::log(Logger::ERROR,F("Could not set up tmp102"));  
-   
+    {
+        Logger::log(Logger::ERROR,F("Could not set up tmp102"));  
+        return;
+    } 
     if(!TemperatureSensor::constructDigital(&digitalTemperature, &digitalTemperatureConstData, &tempControll, &temperatureConstrain, TemperatureSensor::TMP102, 5, &tmp102))
-       Logger::log(Logger::ERROR,F("Could not set up digital temperature sensor"));
-    
+    {
+        Logger::log(Logger::ERROR,F("Could not set up digital temperature sensor"));
+        return;
+    }  
     if(!DepthSensor::construct(&depthSensor1, &depthConst, &depthControll, &depthConstrain, DepthSensor::MPX5100, 10))
-      Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
-       
+    {
+        Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
+        return;
+    }    
     setUpRealTimeClock();
     //Network::initNetworkStack();
     Logger::log(Logger::INFO, F("System initialized"));
     ProjectLED::LED_Off(ProjectLED::LED0); //Indicate end of init on board
+    initialized = true;
 }
 
 void flashLED_1s()
@@ -125,6 +140,12 @@ void cycleTask()
 
 void loop()
 {
+    if(!initialized)
+    {
+        Logger::log(Logger::INFO, F("System error"));
+        enterSleep();
+        return;
+    }
     if(isRTC_FlagAndClear())
     {
         cycleTask();

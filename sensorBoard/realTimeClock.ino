@@ -4,6 +4,8 @@
 #include "realTimeClock.h"
 #include "logger.h"
 
+static inline void updateTick();
+
 volatile int f_wdt=1;
 static uint32_t systemTicks = 0;
 static bool tickOverrun = false;
@@ -13,8 +15,7 @@ ISR(WDT_vect)
 {
   if(f_wdt == 0)
       f_wdt=1;
-  else
-      Logger::log(Logger::ERROR,F("Realtime clock overrun."));
+  updateTick();
 }
 
 void setUpRealTimeClock()
@@ -70,7 +71,7 @@ void resetTick()
     tickOverrun = false;
 }
 
-void updateTick()
+static inline void updateTick()
 {
     tickOverrun = false;
     if(systemTicks == 0xffffff)
