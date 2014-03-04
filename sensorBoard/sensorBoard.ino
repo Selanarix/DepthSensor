@@ -8,6 +8,9 @@
 #include "realTimeClock.h"
 #include "displayControl.h"
 
+
+     #include "display.h"
+
 static bool initialized = false;
 
 // Set up temperatur sensor objects and their data
@@ -70,7 +73,7 @@ void setup()
     ProjectLED::initLedPins();
     ProjectLED::LED_On(ProjectLED::LED0); //Indicate init procedure on board
     
-    //DisplayControl::setUpDisplay();
+    DisplayControl::setUpDisplay();
     
     Logger::initLogger();
     Logger::changeOutputLogLevel(Logger::DEBUG);
@@ -86,7 +89,7 @@ void setup()
         return;
     }
     
-    //Set upt digital Sensor
+    //Set up Sensors
     if(!TMP102::construct(&tmp102,TMP102::GND))
     {
         Logger::log(Logger::ERROR,F("Could not set up tmp102"));  
@@ -102,6 +105,7 @@ void setup()
         Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
         return;
     }    
+    
     setUpRealTimeClock();
     //Network::initNetworkStack();
     Logger::log(Logger::INFO, F("System initialized"));
@@ -122,10 +126,33 @@ void cycleTask()
 //      DisplayControl::showIndicator(DisplayControl::MEASUREMENT);
 //      delay(1000);
 //      DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
-        Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
-    Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
-    Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
+//    DisplayControl::showIndicator(DisplayControl::MEASUREMENT);
+ //   Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
+  //  Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
+  //  Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
+     delay(1000);
+
+      Display::setDisplayMode(Display::OR);
+     Display::setAndWriteFString(0, 1,F("hallo"));
+      delay(700);
+     Display::setCursor(0, 1);
+    flashLED_1s(); 
+      delay(700);
+     Display::setAndWriteFString(0, 1,F("hall"));
+     
+//    DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
     
+ /*   Sensor::SensorStringInformation data = DepthSensor::sensorGetStringInfo();
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space0, &data, 120);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space1, &data, 120);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space2, &data, 120);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space3, &data, 120);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space4, &data, 120);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space5, &data, 120);
+    
+    DisplayControl::showIndicator(DisplayControl::NETWORK);
+    delay(1000);
+    DisplayControl::hideIndicator(DisplayControl::NETWORK);*/
 /*    if(depthRes == Sensor::MeasurementOK && depthRes == Sensor::MeasurementOK)
     {
        TemperatureSensor::Temperature tmp1 = TemperatureSensor::getLastTemperature(&analogTemperature);
@@ -135,17 +162,20 @@ void cycleTask()
         //Send temperatur sensor
       // Network::http_GET_Request(depthSensor1.getID((Sensor::Sensor*)&depthSensor1), dep1);
     }
-    flashLED_1s(); */
+    */
+    flashLED_1s(); 
 }
 
 void loop()
 {
     if(!initialized)
     {
-        Logger::log(Logger::INFO, F("System error"));
-        enterSleep();
+        Logger::log(Logger::ERROR, F("System error"));
+        delay(100);
+        enterSleep(); //Sleep will never wake up here!
         return;
     }
+    
     if(isRTC_FlagAndClear())
     {
         cycleTask();

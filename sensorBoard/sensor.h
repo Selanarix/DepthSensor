@@ -2,6 +2,7 @@
 #define SENSOR_H_
 
 #include <Arduino.h>
+#include "generalTypes.h"
 
 namespace Sensor
 {
@@ -25,5 +26,11 @@ namespace Sensor
         MeasurementValueUnexpected,
         MeasurementError
     } MeasurementResult;
+
+    typedef struct
+    {
+        const __FlashStringHelper* desc;
+        const Unit unit;     
+    } SensorStringInformation;
 }
 #endif

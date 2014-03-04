@@ -59,6 +59,16 @@ namespace DepthSensor
           return con->lastDepth;
     }
     
+    const Sensor::SensorStringInformation sensorGetStringInfo()
+    {
+       Sensor::SensorStringInformation res
+       {
+          F("Depth: "),
+          UNIT_mm
+       };
+       return res;
+    }
+    
     void initDepthSensorHW(const DepthSensor* con)
     {
         //pinMode(con->getPin((Sensor::Sensor*)con),INPUT);
@@ -114,9 +124,6 @@ namespace DepthSensor
         //Formel aus Datenblatt (in kPa): Vout = Vs*(0,009*p+0,04)        
         //Umgestellt nach p (in hPa!!): p=(Vout-200)/4.5
      sensor_mV = (double)HAL::analogReadVoltage(thi->constData->PIN);
-                Serial.print("ADC-Temp [mV]: ");
-                Serial.println(sensor_mV);
-
         *measurementOfSeries = (sensor_mV-offset)/3.88;
 
     }

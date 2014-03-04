@@ -1,16 +1,23 @@
 #include "displayControl.h"
 #include "display.h"
 #include "logger.h"
+#include "generalTypes.h"
 
 namespace DisplayControl
 {
     //-------------------------- Private Types -------------------------------------
     typedef struct
     {
-       const char* desc;
-       Display::Coord pixCord;
-       Display::TextGrid gridCord;
+         const char* desc;
+         Display::Coord pixCord;
+         Display::TextGrid gridCord;
     } IndicatorData;
+    
+    typedef struct
+    {
+        Display::TextGrid x;
+        Display::TextGrid y;
+    } MeasurmentOutputSpace;
     
     //-------------------- Private Function Prototypes -----------------------------
     static inline void setUpIndicator(const IndicatorData* data);
@@ -21,6 +28,16 @@ namespace DisplayControl
      {"E", 200 ,23}, //Error
      {"N", 230 ,27}, //Network
      {"M", 170 ,19}, //Measurement
+    };
+    
+    static const MeasurmentOutputSpace slots[] = 
+    {
+      {0,3},
+      {20,3},
+      {40,3},
+      {0,6},
+      {20,6},
+      {40,6},
     };
     //------------------------------- Public Functions -----------------------------
     void setUpDisplay()
@@ -37,6 +54,8 @@ namespace DisplayControl
         using namespace Display;
         drawHorizontalBar(12, 0);
         setDisplayMode(NOT);
+        setFontType(Default);
+
         setAndWriteString(0, 0, "Sensor Board");
 
         setUpIndicator(&indies[0]);
@@ -56,6 +75,19 @@ namespace DisplayControl
          using namespace Display;
          setDisplayMode(NOT);
          drawFilledCircle(indies[b].pixCord, 5, 3);
+    }
+    
+    void updatedepthMeasurementOutputSpace(MeasurementOutputSpace a, const Sensor::SensorStringInformation* data, int32_t value)
+    {
+        using namespace Display;
+        if(data == NULL)
+            return;
+        setDisplayMode(OR);
+        setFontType(Font1);
+        setAndWriteFString(slots[a].x, slots[a].y, data->desc);
+        //writeInt(value);
+        //writeString(getUnitString(data->unit));
+        //setAndWriteString(slots[a].x, slots[a].y + 20, "23 min old");
     }
     //------------------------------ Private Functions -----------------------------
     static inline void setUpIndicator(const IndicatorData* data)

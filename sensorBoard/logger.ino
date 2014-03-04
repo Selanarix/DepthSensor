@@ -46,7 +46,8 @@ namespace Logger
 
     void printSeperator()
     {
-        Serial.println(F("---------------------------------------"));
+        if(enabled)
+            Serial.println(F("---------------------------------------"));
     }
 
     void changeOutputLogLevel(LogLevel level)

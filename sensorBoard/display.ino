@@ -146,6 +146,7 @@ namespace Display
     {
         sendTextCommand();
         Serial.print(message);
+        terminateByteStream();
     }
 
     void setAndWriteFString(TextGrid x, TextGrid y,const __FlashStringHelper* message)
