@@ -120,39 +120,32 @@ void flashLED_1s()
     ProjectLED::LED_Off(ProjectLED::LED0);
     delay(500);
 }
-
+ int b = 0;
+    
 void cycleTask()
 {
-//      DisplayControl::showIndicator(DisplayControl::MEASUREMENT);
-//      delay(1000);
-//      DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
-//    DisplayControl::showIndicator(DisplayControl::MEASUREMENT);
+      DisplayControl::showIndicator(DisplayControl::MEASUREMENT);
+      delay(1000);
+      DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
  //   Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
   //  Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
   //  Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
      delay(1000);
-
-      Display::setDisplayMode(Display::OR);
-     Display::setAndWriteFString(0, 1,F("hallo"));
-      delay(700);
-     Display::setCursor(0, 1);
-    flashLED_1s(); 
-      delay(700);
-     Display::setAndWriteFString(0, 1,F("hall"));
      
 //    DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
     
- /*   Sensor::SensorStringInformation data = DepthSensor::sensorGetStringInfo();
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space0, &data, 120);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space1, &data, 120);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space2, &data, 120);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space3, &data, 120);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space4, &data, 120);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space5, &data, 120);
+    Sensor::SensorStringInformation data = DepthSensor::sensorGetStringInfo();
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space0, &data, b++);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space1, &data, b++);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space2, &data, b++);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space3, &data, b++);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space4, &data, b++);
+    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space5, &data, b++);
+    b %= 50;
     
     DisplayControl::showIndicator(DisplayControl::NETWORK);
     delay(1000);
-    DisplayControl::hideIndicator(DisplayControl::NETWORK);*/
+    DisplayControl::hideIndicator(DisplayControl::NETWORK);
 /*    if(depthRes == Sensor::MeasurementOK && depthRes == Sensor::MeasurementOK)
     {
        TemperatureSensor::Temperature tmp1 = TemperatureSensor::getLastTemperature(&analogTemperature);

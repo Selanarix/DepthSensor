@@ -43,9 +43,11 @@ namespace DisplayControl
     void setUpDisplay()
     {
         Logger::changeLoggerStatus(DISABLE);
+        fillUnitNameArray();
         using namespace Display; 
         initSerialHW(B_9600);
         clearDisplay();
+        setCursor(DISABLE);
         prepareStaticDisplay();
     }
 
@@ -85,9 +87,10 @@ namespace DisplayControl
         setDisplayMode(OR);
         setFontType(Font1);
         setAndWriteFString(slots[a].x, slots[a].y, data->desc);
-        //writeInt(value);
-        //writeString(getUnitString(data->unit));
-        //setAndWriteString(slots[a].x, slots[a].y + 20, "23 min old");
+        writeInt(value);
+        writeFString(getUnitString(data->unit));
+        setAndWriteString(slots[a].x, slots[a].y+1, "23 min old");
+        Serial.println();
     }
     //------------------------------ Private Functions -----------------------------
     static inline void setUpIndicator(const IndicatorData* data)

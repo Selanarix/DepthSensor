@@ -64,7 +64,7 @@ namespace DepthSensor
        Sensor::SensorStringInformation res
        {
           F("Depth: "),
-          UNIT_mm
+          UNIT_cm
        };
        return res;
     }

@@ -16,18 +16,21 @@ typedef enum
   UNIT_m
 } Unit;
 
-const char* unitNames[] = {
-  "mV"
-  "degC"
-  "cm"
-  "mm"
-  "m"
-};
+const __FlashStringHelper* unitNames[5]; //Amount of Units
 
-static const char* getUnitString(Unit a)
+void fillUnitNameArray()
+{
+    unitNames[UNIT_mV] = F("mV");
+    unitNames[UNIT_degC] = F("degC");
+    unitNames[UNIT_cm] = F("cm");
+    unitNames[UNIT_mm] = F("mm");
+    unitNames[UNIT_m] = F("m");
+}
+
+const __FlashStringHelper* getUnitString(Unit a)
 {
     if(a > UNIT_m)
-        return "";
+        return F("");
     return unitNames[a];
 }
 

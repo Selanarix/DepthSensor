@@ -27,8 +27,8 @@ namespace Display
     typedef enum
     {
         AND = '&',
-        XOR = '|',
-        OR = '^',
+        XOR = '^',
+        OR = '|',
         NOT = '!'
     } PixelDisplayLogic;
 
