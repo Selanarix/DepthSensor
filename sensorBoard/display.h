@@ -29,7 +29,8 @@ namespace Display
         AND = '&',
         XOR = '^',
         OR = '|',
-        NOT = '!'
+        NOT = '!',
+        OVERWRITE = ' '
     } PixelDisplayLogic;
 
 
@@ -54,6 +55,8 @@ namespace Display
     void setDisplayMode(PixelDisplayLogic a);
     void setGraphicPosition(Coord x, Coord y);
     void drawLineTo(Coord x, Coord y);
+    void setTextPosBack();
+    void displayStartScreen(FunctionStatus status);
     void drawLine(Coord x1, Coord y1,Coord x2, Coord y2);
     void drawFilledRectangle(Coord x, Coord y,Dimension width, Dimension height);
     void drawHorizontalBar(Dimension height, Coord y);

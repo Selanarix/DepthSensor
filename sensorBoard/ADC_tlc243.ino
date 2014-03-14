@@ -76,6 +76,7 @@ namespace ADC_TLC_243
         readFunction((InputChannel)testChannel); //Configure test channel and discard result
         delay(10); //Give conversion time
         uint16_t res = readFunction(Channel0);
+        Logger::logInt(Logger::DEBUG,F("Level measured is: "), res);
         const uint32_t delta = 10;
         switch(testChannel)
         {
@@ -186,7 +187,8 @@ namespace ADC_TLC_243
     */
     void initPeripheral()
     {
-        /* Init chip select*/        
+        /* Init chip select*/    
+        digitalWrite(NSS_Pin,HIGH); 
         pinMode(NSS_Pin,OUTPUT);
         
         /* Init SPI Bus*/

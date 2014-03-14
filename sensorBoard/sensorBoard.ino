@@ -8,9 +8,6 @@
 #include "realTimeClock.h"
 #include "displayControl.h"
 
-
-     #include "display.h"
-
 static bool initialized = false;
 
 // Set up temperatur sensor objects and their data
@@ -88,7 +85,6 @@ void setup()
         Logger::log(Logger::ERROR,F("Could not set up temperatur sensor"));
         return;
     }
-    
     //Set up Sensors
     if(!TMP102::construct(&tmp102,TMP102::GND))
     {
@@ -106,6 +102,7 @@ void setup()
         return;
     }    
     
+   
     setUpRealTimeClock();
     //Network::initNetworkStack();
     Logger::log(Logger::INFO, F("System initialized"));
@@ -120,32 +117,38 @@ void flashLED_1s()
     ProjectLED::LED_Off(ProjectLED::LED0);
     delay(500);
 }
- int b = 0;
-    
+
+
 void cycleTask()
 {
       DisplayControl::showIndicator(DisplayControl::MEASUREMENT);
-      delay(1000);
+      Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
+      Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
+      Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
       DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
- //   Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
-  //  Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
-  //  Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
-     delay(1000);
+      
+      TemperatureSensor::Temperature digiTemp= 0;
+      TemperatureSensor::Temperature analogTemp= 0;
+      DepthSensor::Depth depth = 0;
+      
+      if(tempRes == Sensor::MeasurementOK)
+          digiTemp = TemperatureSensor::getLastTemperature(&digitalTemperature);
+      
+      if(analogtempRes == Sensor::MeasurementOK)
+          analogTemp = TemperatureSensor::getLastTemperature(&analogTemperature);
+      
+      if(depthRes == Sensor::MeasurementOK)
+          depth = DepthSensor::getLastDepth(&depthSensor1);
      
-//    DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
+     Sensor::SensorStringInformation depthInfo = DepthSensor::sensorGetStringInfo();
+     Sensor::SensorStringInformation tempInfo = TemperatureSensor::sensorGetStringInfo();
+     DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space0, &depthInfo, depth);
+     DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space1, &tempInfo, digiTemp);
+     DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space2, &tempInfo, analogTemp);
     
-    Sensor::SensorStringInformation data = DepthSensor::sensorGetStringInfo();
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space0, &data, b++);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space1, &data, b++);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space2, &data, b++);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space3, &data, b++);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space4, &data, b++);
-    DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space5, &data, b++);
-    b %= 50;
-    
-    DisplayControl::showIndicator(DisplayControl::NETWORK);
-    delay(1000);
-    DisplayControl::hideIndicator(DisplayControl::NETWORK);
+     DisplayControl::showIndicator(DisplayControl::NETWORK);
+     delay(1000);
+     DisplayControl::hideIndicator(DisplayControl::NETWORK);
 /*    if(depthRes == Sensor::MeasurementOK && depthRes == Sensor::MeasurementOK)
     {
        TemperatureSensor::Temperature tmp1 = TemperatureSensor::getLastTemperature(&analogTemperature);
@@ -163,7 +166,7 @@ void loop()
 {
     if(!initialized)
     {
-        Logger::log(Logger::ERROR, F("System error"));
+        Logger::log(Logger::ERROR, F("System error! Going to sleep for eternity"));
         delay(100);
         enterSleep(); //Sleep will never wake up here!
         return;

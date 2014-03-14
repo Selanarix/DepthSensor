@@ -9,6 +9,7 @@ static inline void updateTick();
 volatile int f_wdt=1;
 static uint32_t systemTicks = 0;
 static bool tickOverrun = false;
+static uint8_t tickPerSecond = 0;
 
 
 ISR(WDT_vect)

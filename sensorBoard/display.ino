@@ -31,6 +31,20 @@ namespace Display
         sendCommand(a, sizeof(a));
     }
     
+    void displayStartScreen(FunctionStatus status)
+    {
+       uint8_t a[] = {'D','S','S',0};
+       if(status == ENABLE)
+            a[3] = 1;
+       sendCommand(a, sizeof(a));
+    }
+    
+    void setTextPosBack()
+    {
+        uint8_t a[] = {'E','T', 'B'};
+        sendCommand(a, sizeof(a));
+    }
+    
     void setDisplayMode(PixelDisplayLogic g)
     {
         uint8_t a[] = {'D','M', g};

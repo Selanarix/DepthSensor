@@ -66,6 +66,16 @@ namespace TemperatureSensor
         return TestSeries::construct(&(tSen->series),  controll, readTMP_102, testTestSeries, size);
     }
     
+    const Sensor::SensorStringInformation sensorGetStringInfo()
+    {
+       Sensor::SensorStringInformation res
+       {
+          F("Temp: "),
+          UNIT_degC
+       };
+       return res;
+    }
+    
     Temperature getLastTemperature(const TemperatureSensor* con)
     {
          if(con == NULL)

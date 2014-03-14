@@ -46,6 +46,7 @@ namespace DisplayControl
         fillUnitNameArray();
         using namespace Display; 
         initSerialHW(B_9600);
+        displayStartScreen(DISABLE);
         clearDisplay();
         setCursor(DISABLE);
         prepareStaticDisplay();
@@ -84,8 +85,9 @@ namespace DisplayControl
         using namespace Display;
         if(data == NULL)
             return;
-        setDisplayMode(OR);
-        setFontType(Font1);
+       
+        setFontType(Font1);    
+        setDisplayMode(OVERWRITE);
         setAndWriteFString(slots[a].x, slots[a].y, data->desc);
         writeInt(value);
         writeFString(getUnitString(data->unit));
