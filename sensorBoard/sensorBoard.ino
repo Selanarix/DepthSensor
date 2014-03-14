@@ -8,6 +8,8 @@
 #include "realTimeClock.h"
 #include "displayControl.h"
 
+#define ONBOARD_DISPLAY 1
+
 static bool initialized = false;
 
 // Set up temperatur sensor objects and their data
@@ -70,7 +72,9 @@ void setup()
     ProjectLED::initLedPins();
     ProjectLED::LED_On(ProjectLED::LED0); //Indicate init procedure on board
     
+#if ONBOARD_DISPLAY == 1
     DisplayControl::setUpDisplay();
+#endif
     
     Logger::initLogger();
     Logger::changeOutputLogLevel(Logger::DEBUG);
@@ -121,11 +125,15 @@ void flashLED_1s()
 
 void cycleTask()
 {
+#if ONBOARD_DISPLAY == 1 
       DisplayControl::showIndicator(DisplayControl::MEASUREMENT);
+#endif      
       Sensor::MeasurementResult tempRes = TemperatureSensor::measureTemperature(&analogTemperature);
       Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
       Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
+#if ONBOARD_DISPLAY == 1       
       DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
+#endif
       
       TemperatureSensor::Temperature digiTemp= 0;
       TemperatureSensor::Temperature analogTemp= 0;
@@ -142,13 +150,17 @@ void cycleTask()
      
      Sensor::SensorStringInformation depthInfo = DepthSensor::sensorGetStringInfo();
      Sensor::SensorStringInformation tempInfo = TemperatureSensor::sensorGetStringInfo();
+    
+#if ONBOARD_DISPLAY == 1
      DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space0, &depthInfo, depth);
      DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space1, &tempInfo, digiTemp);
      DisplayControl::updatedepthMeasurementOutputSpace(DisplayControl::Space2, &tempInfo, analogTemp);
-    
+#endif
+#if ONBOARD_DISPLAY == 1 
      DisplayControl::showIndicator(DisplayControl::NETWORK);
      delay(1000);
      DisplayControl::hideIndicator(DisplayControl::NETWORK);
+#endif
 /*    if(depthRes == Sensor::MeasurementOK && depthRes == Sensor::MeasurementOK)
     {
        TemperatureSensor::Temperature tmp1 = TemperatureSensor::getLastTemperature(&analogTemperature);
