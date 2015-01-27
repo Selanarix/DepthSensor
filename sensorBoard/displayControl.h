@@ -4,6 +4,9 @@
 #include <Arduino.h>
 #include "sensor.h"
 
+#define DISPLAY_ERROR_LINES 3
+#define DISPLAY_CHARS_PER_ERROR 40
+
 namespace DisplayControl
 {   
     typedef enum
@@ -24,9 +27,14 @@ namespace DisplayControl
     }MeasurementOutputSpace;
     
     void setUpDisplay();
+    boolean isNewLogInfo();
+    void showLogMessageScreen();
     void prepareStaticDisplay();
     void showIndicator(Indicator b);
     void hideIndicator(Indicator b);
+    void setUpMeasurementWarning(MeasurementOutputSpace a);
+    void setUpMeasurementError(MeasurementOutputSpace a);
+    void clearMeasurmentIcon(MeasurementOutputSpace a);
     void updatedepthMeasurementOutputSpace(MeasurementOutputSpace a, const Sensor::SensorStringInformation* data, int32_t value);
 }
 #endif

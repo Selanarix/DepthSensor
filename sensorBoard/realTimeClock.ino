@@ -9,7 +9,7 @@ static inline void updateTick();
 volatile int f_wdt=1;
 static uint32_t systemTicks = 0;
 static bool tickOverrun = false;
-static uint8_t tickPerSecond = 0;
+const uint32_t timeBase_s = 8; //Seconds
 
 
 ISR(WDT_vect)
@@ -36,7 +36,7 @@ void setUpRealTimeClock()
     WDTCSR |= _BV(WDIE);
 }
 
-bool isRTC_FlagAndClear()
+boolean isRTC_FlagAndClear()
 {
     if(f_wdt == 1)
     {
@@ -61,9 +61,16 @@ void enterSleep(void)
   power_all_enable();
 }
 
-bool isTickOverrun()
+boolean isTimePeriodOver(uint32_t period)
 {
-    return tickOverrun;
+    return systemTicks % (period / timeBase_s) == 0;
+}
+
+boolean isTickOverrunAndReset()
+{
+    bool res = tickOverrun;
+    tickOverrun = false;
+    return res;
 }
 
 void resetTick()
@@ -74,7 +81,6 @@ void resetTick()
 
 static inline void updateTick()
 {
-    tickOverrun = false;
     if(systemTicks == 0xffffff)
         tickOverrun = true;
     systemTicks ++;

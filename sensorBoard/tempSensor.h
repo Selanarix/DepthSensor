@@ -41,6 +41,7 @@ namespace TemperatureSensor
                     
     Sensor::MeasurementResult measureTemperature(TemperatureSensor* con);   
     Temperature getLastTemperature(const TemperatureSensor* con);
+    uint8_t getSensorID(const TemperatureSensor* con);
     const Sensor::SensorStringInformation sensorGetStringInfo();
     void initTemperatureSensorHW(const TemperatureSensor* con);
 }

@@ -75,6 +75,13 @@ namespace TemperatureSensor
        };
        return res;
     }
+   
+    uint8_t getSensorID(const TemperatureSensor* con)
+    {
+         if(con == NULL)
+              return 0;
+         return con->constData->ID;
+    }
     
     Temperature getLastTemperature(const TemperatureSensor* con)
     {
@@ -130,7 +137,7 @@ namespace TemperatureSensor
         const TemperatureSensor* thi = (TemperatureSensor*)ob;
         
         double sensor_mV = (double)HAL::analogReadVoltage(thi->constData->PIN);
-        *mes = (sensor_mV*-0.485)+3100; //amplified->non-amplified
+        *mes = (sensor_mV*-0.485)+3200; //amplified->non-amplified
         *mes = (*mes-909)/10.0; //minus diode offset and 10mV/degree
     }  
     
@@ -183,10 +190,10 @@ namespace TemperatureSensor
             Logger::log(Logger::WARNING,F("Could not test new temperature because no constraint defined"));        
             return false;
         }   
-    
+        
+        boolean res = true;
         const Sensor::SensorConstraints* con = sen->constrains;
        
-        bool res = true;
         SensorError::AverageMeasurementError errorCode = SensorError::AverageMeasurmentOK;
         Temperature depthDiff;
     
@@ -203,7 +210,7 @@ namespace TemperatureSensor
         }
         logAverageTemperaturErrors(errorCode); //log errors
     
-        return true;
+        return res;
     }
     
     //-------------------------------------- E r r o r s ------------------------

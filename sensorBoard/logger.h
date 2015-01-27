@@ -15,11 +15,10 @@ namespace Logger
     } LogLevel;
 
     void initLogger();
-    void changeLoggerStatus(FunctionStatus status);
     void changeOutputLogLevel(LogLevel level);
     void log(LogLevel level, const __FlashStringHelper* message);
     void printSeperator();
-    void logInt(LogLevel level, const __FlashStringHelper* message, unsigned int number );
+    void logInt(LogLevel level, const __FlashStringHelper* message, int32_t number );
     void logDouble(LogLevel level, const __FlashStringHelper* message, double number );
     void logOString(LogLevel level, const String str);
     void logString(LogLevel level, const __FlashStringHelper* message, const char* str);

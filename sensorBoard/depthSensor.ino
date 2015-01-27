@@ -52,6 +52,13 @@ namespace DepthSensor
         return false;
     }    
 
+    uint8_t getSensorID(const DepthSensor* con)
+    {
+          if(con == NULL)
+              return 0;
+          return con->constData->ID;
+    }
+
     Depth getLastDepth(const DepthSensor* con)
     {
           if(con == NULL)
@@ -114,7 +121,7 @@ namespace DepthSensor
     {
         //read value from sensor and assign it to measurementOfSeries
         double sensor_mV = 0.0;
-        const double offset = 200.0;
+        const double offset = 190.0;
         
         if(ob == NULL)
             return;
@@ -134,7 +141,7 @@ namespace DepthSensor
         double pressure = 0.0;
         double adcvalue = 0.0;
         double sensorVoltageADC = 0.0;
-        const double offset = 0.19;
+        const double offset = 0.180;
         
         if(ob == NULL)
             return;

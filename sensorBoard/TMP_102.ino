@@ -190,7 +190,6 @@ namespace TMP102
 
     static inline void setConfig(const TMP102* const thi,uint16_t conf)
     {
-        uint16_t res = 0;
         setPointerReg(thi, Config);
         Wire.write((uint8_t)(conf>>8));
         Wire.write((uint8_t)conf);
