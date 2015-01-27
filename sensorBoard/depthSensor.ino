@@ -1,6 +1,7 @@
 #include "depthSensor.h"  
 #include "logger.h"
 #include "sensorErrorTypes.h"
+#include "WString.h"
 
 namespace DepthSensor 
 {
@@ -52,6 +53,13 @@ namespace DepthSensor
         return false;
     }    
 
+    uint8_t getSensorID(const DepthSensor* con)
+    {
+          if(con == NULL)
+              return 0;
+          return con->constData->ID;
+    }
+
     Depth getLastDepth(const DepthSensor* con)
     {
           if(con == NULL)
@@ -61,7 +69,7 @@ namespace DepthSensor
     
     const Sensor::SensorStringInformation sensorGetStringInfo()
     {
-       Sensor::SensorStringInformation res
+       Sensor::SensorStringInformation res = 
        {
           F("Depth: "),
           UNIT_cm

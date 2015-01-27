@@ -31,6 +31,24 @@ namespace Display
         sendCommand(a, sizeof(a));
     }
     
+    void clearArea(Coord x, Coord y,Dimension width, Dimension height)
+    {
+        uint8_t a[] = {'D','I','M', x, y, width, height};
+        sendCommand(a, sizeof(a));
+        
+        uint32_t byteForPixelWidth = 0;
+        
+        if(width%8 == 0)
+            byteForPixelWidth = width/8;
+        else
+            byteForPixelWidth = width/8 + 1;       
+           
+  
+        for(uint32_t blanks = 0; blanks < byteForPixelWidth * height; blanks++)
+            terminateByteStream();
+        
+    }
+    
     void displayStartScreen(FunctionStatus status)
     {
        uint8_t a[] = {'D','S','S',0};
@@ -108,7 +126,7 @@ namespace Display
         uint8_t a[] = {'D','P', x, y};
         sendCommand(a, sizeof(a));
     }
-    void drawImg(Coord x, Coord y, Dimension width, Dimension height, uint8_t* data, uint32_t size)
+    void drawImg(Coord x, Coord y, Dimension width, Dimension height, const uint8_t* data, uint32_t size)
     {
         uint8_t a[] = {'D','I','M', x, y, width, height};
         sendCommand(a, sizeof(a));

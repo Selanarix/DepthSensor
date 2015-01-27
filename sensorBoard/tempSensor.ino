@@ -68,12 +68,19 @@ namespace TemperatureSensor
     
     const Sensor::SensorStringInformation sensorGetStringInfo()
     {
-       Sensor::SensorStringInformation res
+       Sensor::SensorStringInformation res = 
        {
           F("Temp: "),
           UNIT_degC
        };
        return res;
+    }
+   
+    uint8_t getSensorID(const TemperatureSensor* con)
+    {
+         if(con == NULL)
+              return 0;
+         return con->constData->ID;
     }
     
     Temperature getLastTemperature(const TemperatureSensor* con)
@@ -183,10 +190,10 @@ namespace TemperatureSensor
             Logger::log(Logger::WARNING,F("Could not test new temperature because no constraint defined"));        
             return false;
         }   
-    
+        
+        boolean res = true;
         const Sensor::SensorConstraints* con = sen->constrains;
        
-        bool res = true;
         SensorError::AverageMeasurementError errorCode = SensorError::AverageMeasurmentOK;
         Temperature depthDiff;
     
@@ -203,7 +210,7 @@ namespace TemperatureSensor
         }
         logAverageTemperaturErrors(errorCode); //log errors
     
-        return true;
+        return res;
     }
     
     //-------------------------------------- E r r o r s ------------------------

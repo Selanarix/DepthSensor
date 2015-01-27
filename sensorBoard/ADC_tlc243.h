@@ -5,8 +5,8 @@
 
 namespace ADC_TLC_243
 { 
-    const uint32_t ADC_MAX_VALUE = 4096;
-    const uint32_t ADC_MAX_VOLTAGE_mV = 5000;
+    const uint16_t ADC_MAX_VALUE = 4096;
+    const uint16_t ADC_MAX_VOLTAGE_mV = 5000;
     const double ADC_mV_PER_TICK = (double)ADC_MAX_VOLTAGE_mV/(double)ADC_MAX_VALUE;
     
     const unsigned short InvalidCaptureChannel = 0x80;

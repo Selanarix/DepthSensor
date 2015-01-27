@@ -65,10 +65,11 @@ namespace Display
     void drawFilledCircle(Coord x1, Coord y1, Dimension radius);
     void drawCircle(Coord x1, Coord y1, Dimension radius);
     void drawPixel(Coord x, Coord y);
-    void drawImg(Coord x, Coord y, Dimension width, Dimension height, uint8_t* data, uint32_t size);
+    void drawImg(Coord x, Coord y, Dimension width, Dimension height, const uint8_t* data, uint32_t size);
     void setCursor(TextGrid x, TextGrid y);
     void setFontType(TextFonts font);
     void newline();
+    void clearArea(Coord x, Coord y,Dimension width, Dimension height);
 
     void writeFString(const __FlashStringHelper* message);
     void writeString(const char* b);

@@ -2,6 +2,7 @@
 #define SENSOR_H_
 
 #include <Arduino.h>
+#include <WString.h>
 #include "generalTypes.h"
 
 namespace Sensor

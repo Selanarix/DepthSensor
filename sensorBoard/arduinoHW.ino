@@ -1,5 +1,8 @@
 #include "hal.h"
 #include <Arduino.h>
+#include <SPI.h>
+#include <Ethernet.h>
+
 #include "atmega328_registers.h"
 #include "ADC_tlc243.h"
 #include "logger.h"
@@ -21,8 +24,8 @@ namespace HAL
     //------------------------- Private Data ---------------------------------------
     static bool externalInit = false;
     //------------------------ Read only ------------------------------------------
-    static const uint32_t INTERNAL_ADC_MAX_VALUE = 1024.0;
-    static const uint32_t INTERNAL_ADC_MAX_VOLTAGE_mV = 5000.0;
+    static const uint16_t INTERNAL_ADC_MAX_VALUE = 1024;
+    static const uint16_t INTERNAL_ADC_MAX_VOLTAGE_mV = 5000;
     static const double INTERNAL_ADC_mV_PER_TICK = (double)INTERNAL_ADC_MAX_VOLTAGE_mV/(double)INTERNAL_ADC_MAX_VALUE;
     static const uint8_t maxPinNumber = 13;
     static const ADC_Source usedSource = ExternalADC;

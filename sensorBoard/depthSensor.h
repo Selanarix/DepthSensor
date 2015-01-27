@@ -34,6 +34,7 @@ namespace DepthSensor
 
     Sensor::MeasurementResult measureDepth(DepthSensor* con);   
     Depth getLastDepth(const DepthSensor* con);
+    uint8_t getSensorID(const DepthSensor* con);
     void initDepthSensorHW(const DepthSensor* con);
     const Sensor::SensorStringInformation sensorGetStringInfo();
 }
