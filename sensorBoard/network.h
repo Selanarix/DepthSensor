@@ -1,7 +1,6 @@
 #ifndef NETWORK_H_
 #define NETWORK_H_
 
-
 namespace Network 
 {
   void initNetworkStack();

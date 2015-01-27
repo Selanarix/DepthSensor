@@ -1,8 +1,5 @@
 #include "hal.h"
 #include <Arduino.h>
-#include <SPI.h>
-#include <Ethernet.h>
-
 #include "atmega328_registers.h"
 #include "ADC_tlc243.h"
 #include "logger.h"

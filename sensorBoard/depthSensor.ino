@@ -1,7 +1,6 @@
 #include "depthSensor.h"  
 #include "logger.h"
 #include "sensorErrorTypes.h"
-#include "WString.h"
 
 namespace DepthSensor 
 {
@@ -69,7 +68,7 @@ namespace DepthSensor
     
     const Sensor::SensorStringInformation sensorGetStringInfo()
     {
-       Sensor::SensorStringInformation res = 
+       Sensor::SensorStringInformation res
        {
           F("Depth: "),
           UNIT_cm
@@ -122,7 +121,7 @@ namespace DepthSensor
     {
         //read value from sensor and assign it to measurementOfSeries
         double sensor_mV = 0.0;
-        const double offset = 200.0;
+        const double offset = 190.0;
         
         if(ob == NULL)
             return;
@@ -142,7 +141,7 @@ namespace DepthSensor
         double pressure = 0.0;
         double adcvalue = 0.0;
         double sensorVoltageADC = 0.0;
-        const double offset = 0.19;
+        const double offset = 0.180;
         
         if(ob == NULL)
             return;

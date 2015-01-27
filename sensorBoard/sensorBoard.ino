@@ -8,13 +8,13 @@
 #include "realTimeClock.h"
 #include "displayControl.h"
 
-#define ONBOARD_DISPLAY 1
+#define ONBOARD_DISPLAY 0
 
 static boolean initialized = false;
 
 // Set up temperatur sensor objects and their data
 // ----------------------------------------------------------------------
-/*const Sensor::SensorConstraints temperatureConstrain =
+const Sensor::SensorConstraints temperatureConstrain =
 {
         -10.0, // MINIMAL_EXPECTED_SENSOR_VALUE;
         60.0, // MAXIMAL_EXPECTED_SENSOR_VALUE;
@@ -60,7 +60,7 @@ const Sensor::SensorConstData depthConst =
 {
         1, //PIN
         0, //ID
-};*/
+};
 
 TemperatureSensor::TemperatureSensor analogTemperature;
 TemperatureSensor::TemperatureSensor digitalTemperature;
@@ -79,7 +79,7 @@ void setup()
     Logger::initLogger();
     Logger::changeOutputLogLevel(Logger::DEBUG);
         
- /*   if(!HAL::initBaseHW())
+    if(!HAL::initBaseHW())
     {
         Logger::log(Logger::ERROR,F("Could not set up HAL successfully"));
         return;
@@ -105,7 +105,8 @@ void setup()
     {
         Logger::log(Logger::ERROR,F("Could not set up depth sensor"));
         return;
-    }    */
+    }   
+    
     setUpRealTimeClock();
     //Network::initNetworkStack();
     Logger::log(Logger::INFO, F("System initialized"));
@@ -158,9 +159,9 @@ void cycleTask()
 #endif
     ProjectLED::LED_On(ProjectLED::LED0); //Measure LED
     //Measure sensors
-//    Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&analogTemperature);
-//    Sensor::MeasurementResult digitaltempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
-//    Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
+    Sensor::MeasurementResult analogtempRes = TemperatureSensor::measureTemperature(&analogTemperature);
+    Sensor::MeasurementResult digitaltempRes = TemperatureSensor::measureTemperature(&digitalTemperature);
+    Sensor::MeasurementResult depthRes = DepthSensor::measureDepth(&depthSensor1);
     ProjectLED::LED_Off(ProjectLED::LED0); //Measure LED
 #if ONBOARD_DISPLAY == 1       
       DisplayControl::hideIndicator(DisplayControl::MEASUREMENT);
@@ -172,14 +173,14 @@ void cycleTask()
     TemperatureSensor::Temperature analogTemp= 0;
     DepthSensor::Depth depth = 0;
     
-/*    if(digitaltempRes == Sensor::MeasurementOK)
+    if(digitaltempRes == Sensor::MeasurementOK)
         digiTemp = TemperatureSensor::getLastTemperature(&digitalTemperature);
     
     if(analogtempRes == Sensor::MeasurementOK)
         analogTemp = TemperatureSensor::getLastTemperature(&analogTemperature);
     
     if(depthRes == Sensor::MeasurementOK)
-        depth = DepthSensor::getLastDepth(&depthSensor1); */
+        depth = DepthSensor::getLastDepth(&depthSensor1);
     
      //Update display
 #if ONBOARD_DISPLAY == 1

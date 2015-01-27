@@ -1,6 +1,6 @@
 #include "network.h"  
 #include "logger.h"
-#include <SPI.h>
+//#include <SPI.h>
 #include <Ethernet.h>
 
 
