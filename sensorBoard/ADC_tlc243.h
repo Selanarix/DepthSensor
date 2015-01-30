@@ -1,8 +1,6 @@
 #ifndef  ADC_TLC_243_H_
 #define  ADC_TLC_243_H_
 
-#include <Arduino.h>
-
 namespace ADC_TLC_243
 { 
     const uint16_t ADC_MAX_VALUE = 4096;

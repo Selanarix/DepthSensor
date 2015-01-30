@@ -1,7 +1,7 @@
 #include "hal.h"
+#include "ADC_tlc243.h"
 #include <Arduino.h>
 #include "atmega328_registers.h"
-#include "ADC_tlc243.h"
 #include "logger.h"
 
 namespace HAL

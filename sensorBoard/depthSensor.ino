@@ -68,7 +68,7 @@ namespace DepthSensor
     
     const Sensor::SensorStringInformation sensorGetStringInfo()
     {
-       Sensor::SensorStringInformation res
+       Sensor::SensorStringInformation res = 
        {
           F("Depth: "),
           UNIT_cm
